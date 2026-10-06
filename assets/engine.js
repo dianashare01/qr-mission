@@ -126,6 +126,7 @@
     document.title = CFG.title;
     text('brand', CFG.title);
 
+    text('hero-note', s.heroNote || '키비주얼 영역 [디자이너]');
     text('start-title', s.startTitle);
     text('start-body', s.startBody);
     text('nick-label', s.nickLabel);
