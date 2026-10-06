@@ -216,7 +216,9 @@ h1 {
 .placeholder.hero { height: 180px; }
 .placeholder.card { height: 150px; }
 
-/* ── 획득 화면 ───────────────────────────────────── */
+/* ── 획득 화면 ───────────────────────────────────
+   수집품은 디자인 확정 전까지 임시 페이지 모양입니다.
+   일러스트가 나오면 .item-card 안을 이미지로 바꾸면 됩니다. */
 .item-card {
   align-self: center;
   width: 200px;
@@ -236,6 +238,7 @@ h1 {
   font-size: 34px;
   font-weight: 700;
 }
+.item-card .place { font-size: 13px; font-weight: 700; color: var(--ink-sub); }
 .item-card .cap { font-size: 12px; color: var(--ink-sub); text-align: center; padding: 0 12px; }
 .center { text-align: center; }
 

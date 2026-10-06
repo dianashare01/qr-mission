@@ -295,7 +295,11 @@
     var n = doneCount();
     var ord = CFG.strings.ordinals[n - 1] || n;
 
+    // 수집품은 임시 페이지 모양 — 일러스트 확정 전까지 PAGE N 과 구역명만 보여 준다
     text('c-name', cur.item.name);
+    text('c-place', cur.item.label || cur.place);
+    text('c-cap', '페이지 일러스트 [디자이너]');
+
     text('c-title', (CFG.strings.collectTitleFormat || '{ord} 번째').replace('{ord}', ord));
     $('c-cta').onclick = boardScreen;
 
