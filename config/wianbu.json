@@ -1,0 +1,305 @@
+{
+  "_주의": "모든 문구는 초안입니다. 발주처·자문 컨펌 후 확정본으로 교체하세요. 코드 수정 없이 이 파일만 바꾸면 반영됩니다.",
+
+  "project": "wianbu",
+  "title": "증언: 다음 페이지",
+  "mission": "여섯 장의 페이지",
+  "languages": ["ko"],
+
+  "theme": {
+    "bg": "#141A26",
+    "surface": "#1E2636",
+    "ink": "#F1EEE6",
+    "inkSub": "#B5BDCB",
+    "accent": "#E8E2D2",
+    "line": "#46536B",
+    "fontDisplay": "Noto Serif KR",
+    "fontBody": "Noto Sans KR",
+    "radius": 2
+  },
+
+  "tone": {
+    "knowledgeLabel": "기록 확인",
+    "preferenceLabel": "나의 생각",
+    "correctLabel": "기록에 따르면",
+    "wrongLabel": "기록에 따르면",
+    "celebrate": false,
+    "collectVerb": "페이지"
+  },
+
+  "strings": {
+    "startTitle": "여섯 장의 페이지를 넘겨 주세요.",
+    "startBody": "전시장 여섯 곳의 QR을 찍으면 페이지가 한 장씩 열립니다. 마지막 장은 당신이 씁니다.",
+    "nickLabel": "기록에 남길 이름",
+    "nickPlaceholder": "두 글자 이상",
+    "startCta": "첫 페이지 열기",
+    "privacyNote": "이름 외의 개인정보는 받지 않습니다.",
+
+    "knowledgeCta": "확인",
+    "feedbackCta": "다음",
+    "preferenceCta": "페이지 넘기기",
+
+    "collectTitleFormat": "{ord} 번째 페이지가 열렸습니다",
+    "collectNote": "기록은 읽는 사람이 있을 때 이어집니다.",
+    "collectCta": "페이지 모아 보기",
+
+    "boardTitle": "나의 페이지",
+    "boardCountFormat": "{total}장 중 {done}장",
+    "boardNextLabel": "다음 페이지",
+    "boardFreeOrder": "순서는 자유입니다. 천천히 둘러보세요.",
+    "boardLockedCta": "나의 다음 페이지 ({total}장을 모으면 열립니다)",
+    "boardOpenCta": "나의 다음 페이지 열기",
+    "recoveryLabel": "이어 하기 번호",
+    "recoveryNote": "브라우저가 바뀌면 이 번호로 이어서 할 수 있습니다.",
+
+    "resultEyebrow": "나의 다음 페이지",
+    "resultCurationTitle": "당신에게 건네는 것",
+    "resultCta": "2,745번째 기록 남기기",
+    "resultSaveCta": "카드 저장",
+
+    "finishBadge": "마지막 페이지",
+    "finishTitle": "2,745번째 기록",
+    "finishBody": "문장 하나를 골라 주세요. 당신의 이름과 함께 기록으로 남습니다.",
+    "finishNote": "문장 목록은 발주처 승인본으로 교체 · 자유 입력 없음",
+    "finishCta": "기록 남기기",
+    "finishDoneTitle": "기록되었습니다",
+    "finishDoneBody": "당신의 문장이 2,745번째 기록으로 남았습니다.",
+
+    "alreadyTitle": "이미 넘긴 페이지입니다",
+    "alreadyBody": "같은 페이지는 한 번만 열립니다. 모아 보기로 돌아갑니다.",
+    "badTokenTitle": "페이지를 찾지 못했습니다",
+    "badTokenBody": "전시장의 QR을 다시 찍어 주세요.",
+    "closedTitle": "전시가 종료되었습니다",
+    "closedBody": "그동안 함께해 주셔서 고맙습니다.",
+    "ordinals": ["첫", "두", "세", "네", "다섯", "여섯", "일곱"]
+  },
+
+  "spots": [
+    {
+      "id": "s1",
+      "order": 1,
+      "place": "서문 연표",
+      "placeNote": "연표 통로 끝 지점. 통로 폭 1,600이므로 벽면 부착, 체류 유도 금지",
+      "hint": "연표 통로 끝",
+      "token": "CHANGE-ME-1",
+      "item": { "name": "PAGE 1", "label": "서문 연표" },
+      "knowledge": {
+        "q": "김학순 님이 피해 사실을 공개 증언한 해는 언제일까요?",
+        "options": ["1965년", "1991년", "2015년"],
+        "answer": 1,
+        "explainTitle": "공개 증언",
+        "explainValue": "1991년",
+        "explain": "1991년 8월 14일 김학순 님의 공개 증언입니다. 이날은 기림의 날로 이어집니다."
+      },
+      "preference": {
+        "q": "연표 앞에서 가장 오래 눈이 머문 것은 무엇인가요?",
+        "options": [
+          { "label": "처음 침묵을 깬 순간", "tag": "L" },
+          { "label": "기록으로 남은 날짜들", "tag": "R" },
+          { "label": "거리로 나온 사람들", "tag": "T" },
+          { "label": "아직 비어 있는 칸", "tag": "Q" }
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "order": 2,
+      "place": "1부 2744개 기록",
+      "placeNote": "기록 벽 측면",
+      "hint": "기록 벽 옆",
+      "token": "CHANGE-ME-2",
+      "item": { "name": "PAGE 2", "label": "2744개 기록" },
+      "knowledge": {
+        "q": "유네스코 세계기록유산에 등재를 신청한 일본군'위안부' 관련 기록물은 몇 건일까요?",
+        "options": ["274건", "2,744건", "27,440건"],
+        "answer": 1,
+        "explainTitle": "등재 신청 기록물",
+        "explainValue": "2,744건",
+        "explain": "공문서, 피해자가 남긴 기록, 시민들의 운동 기록이 함께 묶여 있습니다. 지금도 '등재 신청' 상태입니다."
+      },
+      "preference": {
+        "q": "2,744건의 기록 앞에서 든 생각은 무엇인가요?",
+        "options": [
+          { "label": "한 건 한 건 읽어 보고 싶다", "tag": "L" },
+          { "label": "사라지지 않게 지켜야 한다", "tag": "R" },
+          { "label": "더 많은 사람이 알아야 한다", "tag": "T" },
+          { "label": "왜 아직 '신청' 상태일까", "tag": "Q" }
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "order": 3,
+      "place": "2부 증언의 바다",
+      "placeNote": "암전 공간 내부 금지. 출구 쪽 벽면",
+      "hint": "출구 쪽",
+      "token": "CHANGE-ME-3",
+      "item": { "name": "PAGE 3", "label": "증언의 바다" },
+      "knowledge": {
+        "q": "방금 들은 목소리는 몇 분의 증언이었을까요?",
+        "options": ["세 분", "다섯 분", "일곱 분"],
+        "answer": 1,
+        "explainTitle": "증언하신 분",
+        "explainValue": "다섯 분",
+        "explain": "김복동 님, 강일출 님, 이옥선 님, 송신도 님, 길원옥 님의 목소리입니다."
+      },
+      "preference": {
+        "q": "목소리를 듣고 난 지금, 나는",
+        "options": [
+          { "label": "조금 더 듣고 싶다", "tag": "L" },
+          { "label": "한 문장을 적어 두고 싶다", "tag": "R" },
+          { "label": "누군가에게 들려주고 싶다", "tag": "T" },
+          { "label": "묻고 싶은 것이 생겼다", "tag": "Q" }
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "order": 4,
+      "place": "2부 삶이 보여준 증언",
+      "placeNote": "유물의 복도. 복도 폭 1,500. 복도 끝 지점",
+      "hint": "복도 끝",
+      "token": "CHANGE-ME-4",
+      "item": { "name": "PAGE 4", "label": "삶이 보여준 증언" },
+      "knowledge": {
+        "q": "이 복도의 작품은 누가 만든 것일까요?",
+        "options": ["피해자만", "작가만", "피해자·작가·시민 모두"],
+        "answer": 2,
+        "explainTitle": "함께 놓인 것",
+        "explainValue": "피해자·작가·시민",
+        "explain": "세 부문의 창작물이 함께 놓여 있습니다."
+      },
+      "preference": {
+        "q": "가장 마음에 남은 것은 무엇인가요?",
+        "options": [
+          { "label": "그린 사람의 마음", "tag": "L" },
+          { "label": "남겨진 물건의 시간", "tag": "R" },
+          { "label": "함께 만든 사람들", "tag": "T" },
+          { "label": "작품이 던지는 질문", "tag": "Q" }
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "order": 5,
+      "place": "3부 기억이 된 기록",
+      "placeNote": "숫자 카드 책상 옆",
+      "hint": "숫자 카드 책상 옆",
+      "token": "CHANGE-ME-5",
+      "item": { "name": "PAGE 5", "label": "기억이 된 기록" },
+      "knowledge": {
+        "q": "수요시위가 처음 열린 해는 언제일까요?",
+        "options": ["1988년", "1992년", "2000년"],
+        "answer": 1,
+        "explainTitle": "첫 수요시위",
+        "explainValue": "1992년",
+        "explain": "1992년 1월 8일 첫 수요시위가 열렸습니다."
+      },
+      "preference": {
+        "q": "숫자 카드를 뒤집으며 떠올린 것은 무엇인가요?",
+        "options": [
+          { "label": "숫자 뒤의 한 사람", "tag": "L" },
+          { "label": "숫자로 남긴 사실", "tag": "R" },
+          { "label": "숫자를 만든 연대", "tag": "T" },
+          { "label": "아직 세어지지 않은 것", "tag": "Q" }
+        ]
+      }
+    },
+    {
+      "id": "s6",
+      "order": 6,
+      "place": "3부 서고의 숲",
+      "placeNote": "서가 측면. 결과 확인은 사유의 방에서 하도록 안내",
+      "hint": "서가 옆",
+      "token": "CHANGE-ME-6",
+      "item": { "name": "PAGE 6", "label": "서고의 숲" },
+      "knowledge": {
+        "q": "2,744 다음, 2,745번째 기록은 누구의 것일까요?",
+        "options": ["연구자", "정부", "오늘 이곳에 온 나"],
+        "answer": 2,
+        "explainTitle": "다음 기록",
+        "explainValue": "오늘 이곳에 온 나",
+        "explain": "관람객이 남긴 메시지가 다음 기록이 됩니다."
+      },
+      "preference": {
+        "q": "전시를 나서며 가장 먼저 하고 싶은 일은 무엇인가요?",
+        "options": [
+          { "label": "증언집 한 권을 읽는다", "tag": "L" },
+          { "label": "오늘의 감상을 기록한다", "tag": "R" },
+          { "label": "가까운 사람에게 이야기한다", "tag": "T" },
+          { "label": "더 찾아보고 질문한다", "tag": "Q" }
+        ]
+      }
+    }
+  ],
+
+  "result": {
+    "rule": "maxTag",
+    "tieBreak": "lastAnswer",
+    "types": {
+      "L": {
+        "name": "듣는 사람",
+        "desc": "당신은 먼저 귀 기울이는 사람입니다. 증언은 들어 주는 사람이 있을 때 다음 페이지로 넘어갑니다.",
+        "curation": [
+          { "label": "남는 문장", "value": "[전시 텍스트 감수본 중 1문장]", "url": "" },
+          { "label": "서고의 숲에서", "value": "[증언집 계열 도서 1권]", "url": "" },
+          { "label": "더 읽기", "value": "[웹진 「결」 글 1편]", "url": "" },
+          { "label": "온라인 전시", "value": "WebXR 전시 이어 보기", "url": "" }
+        ]
+      },
+      "R": {
+        "name": "기록하는 사람",
+        "desc": "당신은 사라지지 않게 적어 두는 사람입니다. 기록은 기억을 지키는 방법입니다.",
+        "curation": [
+          { "label": "남는 문장", "value": "[전시 텍스트 감수본 중 1문장]", "url": "" },
+          { "label": "서고의 숲에서", "value": "[기록·아카이브 계열 도서 1권]", "url": "" },
+          { "label": "더 읽기", "value": "[웹진 「결」 글 1편]", "url": "" },
+          { "label": "온라인 전시", "value": "WebXR 전시 이어 보기", "url": "" }
+        ]
+      },
+      "T": {
+        "name": "전하는 사람",
+        "desc": "당신은 들은 것을 다음 사람에게 건네는 사람입니다.",
+        "curation": [
+          { "label": "남는 문장", "value": "[전시 텍스트 감수본 중 1문장]", "url": "" },
+          { "label": "서고의 숲에서", "value": "[교육·청소년 계열 도서 1권]", "url": "" },
+          { "label": "더 읽기", "value": "[웹진 「결」 글 1편]", "url": "" },
+          { "label": "온라인 전시", "value": "WebXR 전시 이어 보기", "url": "" }
+        ]
+      },
+      "Q": {
+        "name": "묻는 사람",
+        "desc": "당신은 멈추지 않고 질문하는 사람입니다. 질문이 다음 기록을 만듭니다.",
+        "curation": [
+          { "label": "남는 문장", "value": "[전시 텍스트 감수본 중 1문장]", "url": "" },
+          { "label": "서고의 숲에서", "value": "[연구·쟁점 계열 도서 1권]", "url": "" },
+          { "label": "더 읽기", "value": "[웹진 「결」 글 1편]", "url": "" },
+          { "label": "온라인 전시", "value": "WebXR 전시 이어 보기", "url": "" }
+        ]
+      }
+    }
+  },
+
+  "finish": {
+    "mode": "message",
+    "messages": [
+      "기억하겠습니다.",
+      "잊지 않고 전하겠습니다.",
+      "다음 페이지를 함께 쓰겠습니다."
+    ]
+  },
+
+  "hooks": {
+    "messageApi": false,
+    "aiPoem": false,
+    "i18n": false,
+    "bookingLink": ""
+  },
+
+  "api": {
+    "baseUrl": "",
+    "_안내": "비워 두면 이 기기에만 저장하는 시연 모드로 동작합니다. 서버가 준비되면 주소를 넣으세요."
+  },
+
+  "period": { "open": "", "close": "" }
+}
