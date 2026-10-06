@@ -1,0 +1,311 @@
+{
+  "_주의": "모든 문구는 초안입니다. 재단 학예사 감수 후 확정본으로 교체하세요. 코드 수정 없이 이 파일만 바꾸면 반영됩니다.",
+
+  "prototype": true,
+  "_prototype": "시연용. 현장 배포 전에 false 로 바꾸세요.",
+
+  "project": "inje",
+  "title": "MARIE SEOSA",
+  "mission": "일곱 개의 시어",
+  "languages": ["ko"],
+
+  "theme": {
+    "bg": "#F2E9DA",
+    "surface": "#FBF6EC",
+    "ink": "#2B211C",
+    "inkSub": "#5C4A40",
+    "accent": "#A3211B",
+    "line": "#B9A58A",
+    "fontDisplay": "Gowun Batang",
+    "fontBody": "Gowun Dodum",
+    "fonts": ["Gowun+Batang:wght@400;700", "Gowun+Dodum"],
+    "radius": 2
+  },
+
+  "tone": {
+    "knowledgeLabel": "퀴즈",
+    "preferenceLabel": "취향 질문",
+    "correctLabel": "정답입니다",
+    "wrongLabel": "아쉬워요",
+    "celebrate": true,
+    "collectVerb": "시어"
+  },
+
+  "strings": {
+    "startTitle": "일곱 개의 시어를 모아 주세요.",
+    "startBody": "전시장 일곱 곳의 QR을 찍으면 시어가 하나씩 열립니다. 모두 모으면 당신만의 시가 완성됩니다.",
+    "nickLabel": "시에 담을 이름",
+    "nickPlaceholder": "두 글자 이상",
+    "startCta": "첫 시어 찾기",
+    "privacyNote": "이름 외의 개인정보는 받지 않습니다.",
+
+    "knowledgeCta": "확인",
+    "feedbackCta": "다음",
+    "preferenceCta": "시어 받기",
+
+    "itemArtNote": "시어 일러스트 [디자이너]",
+    "collectTitleFormat": "{ord} 번째 시어를 얻었습니다",
+    "collectNote": "시어가 모이면 한 편의 시가 됩니다.",
+    "collectCta": "시어 모아 보기",
+
+    "boardTitle": "나의 시어",
+    "boardCountFormat": "{total}개 중 {done}개",
+    "boardNextLabel": "다음 시어",
+    "boardFreeOrder": "순서는 자유입니다. 천천히 둘러보세요.",
+    "boardLockedCta": "나만의 시 ({total}개를 모으면 열립니다)",
+    "boardOpenCta": "나만의 시 보기",
+    "recoveryLabel": "이어 하기 번호",
+    "recoveryNote": "브라우저가 바뀌면 이 번호로 이어서 할 수 있습니다.",
+
+    "resultEyebrow": "나만의 시",
+    "resultCurationTitle": "당신에게 어울리는 것",
+    "resultCta": "오미자차 받기",
+    "resultSaveCta": "카드 저장",
+
+    "finishBadge": "완주",
+    "finishTitle": "2층 바테이블에서",
+    "finishBody": "운영요원에게 이 화면을 보여 주세요.",
+    "finishNote": "세션당 1회만 받으실 수 있습니다.",
+    "finishCta": "운영요원 확인",
+    "finishDoneTitle": "수령 완료",
+    "finishDoneBody": "오늘 하루, 당신의 시가 함께하길 바랍니다.",
+    "rewardLabel": "받으실 것",
+    "pinPrompt": "운영요원 확인 번호를 입력해 주세요.",
+    "pinWrong": "번호가 맞지 않습니다.",
+
+    "alreadyTitle": "이미 얻은 시어입니다",
+    "alreadyBody": "같은 시어는 한 번만 받을 수 있습니다. 모아 보기로 돌아갑니다.",
+    "badTokenTitle": "시어를 찾지 못했습니다",
+    "badTokenBody": "전시장의 QR을 다시 찍어 주세요.",
+    "closedTitle": "전시가 종료되었습니다",
+    "closedBody": "그동안 함께해 주셔서 고맙습니다.",
+    "ordinals": ["첫", "두", "세", "네", "다섯", "여섯", "일곱"]
+  },
+
+  "spots": [
+    {
+      "id": "s1", "order": 1, "place": "1F 서문",
+      "placeNote": "서문 시트 옆. 시작 안내 겸용", "hint": "서문 시트 옆",
+      "token": "CHANGE-ME-1",
+      "item": { "name": "별", "label": "1F 서문" },
+      "knowledge": {
+        "q": "박인환 시인이 태어난 곳은 어디일까요?",
+        "options": ["강원 인제", "서울 종로", "부산 영도"],
+        "answer": 0,
+        "explainTitle": "태어난 곳", "explainValue": "강원 인제",
+        "explain": "1926년 인제에서 태어났습니다. 인제에 박인환문학관이 있습니다."
+      },
+      "preference": {
+        "q": "지금 가장 끌리는 계절은 언제인가요?",
+        "options": [
+          { "label": "봄", "tag": "R" },
+          { "label": "여름", "tag": "N" },
+          { "label": "가을", "tag": "S" },
+          { "label": "겨울", "tag": "U" }
+        ]
+      }
+    },
+    {
+      "id": "s2", "order": 2, "place": "1F 행잉북·테이블 맵핑",
+      "placeNote": "테이블 모서리. 맵핑 투사면 밖", "hint": "테이블 모서리",
+      "token": "CHANGE-ME-2",
+      "item": { "name": "바람", "label": "행잉북·테이블" },
+      "knowledge": {
+        "q": "이 테이블 위 영상은 무엇으로 시작하나요?",
+        "options": ["엽서와 원고지", "편지 봉투", "신문"],
+        "answer": 0,
+        "explainTitle": "영상의 시작", "explainValue": "엽서와 원고지",
+        "explain": "영상 최종본 기준으로 확정됩니다."
+      },
+      "preference": {
+        "q": "하루 중 가장 좋아하는 시간은 언제인가요?",
+        "options": [
+          { "label": "새벽", "tag": "S" },
+          { "label": "한낮", "tag": "N" },
+          { "label": "해 질 녘", "tag": "R" },
+          { "label": "한밤", "tag": "U" }
+        ]
+      }
+    },
+    {
+      "id": "s3", "order": 3, "place": "1F 마리서사 재현실",
+      "placeNote": "서가 선반", "hint": "서가 선반",
+      "token": "CHANGE-ME-3",
+      "item": { "name": "세월", "label": "마리서사" },
+      "knowledge": {
+        "q": "'마리서사'는 무엇을 하던 곳일까요?",
+        "options": ["서점", "다방", "극장"],
+        "answer": 0,
+        "explainTitle": "마리서사", "explainValue": "서점",
+        "explain": "광복 직후 종로에 연 서점으로, 예술가들의 사랑방이었습니다."
+      },
+      "preference": {
+        "q": "지금 가장 가고 싶은 곳은 어디인가요?",
+        "options": [
+          { "label": "오래된 서점", "tag": "R", "value": "서점" },
+          { "label": "늦은 밤의 바", "tag": "U", "value": "바" },
+          { "label": "겨울 바다", "tag": "S", "value": "바다" },
+          { "label": "자작나무 숲", "tag": "N", "value": "숲" }
+        ]
+      }
+    },
+    {
+      "id": "s4", "order": 4, "place": "1F 골방 (프로젝션룸)",
+      "placeNote": "입구 바깥 벽. 암실 내부 금지", "hint": "입구 바깥 벽",
+      "token": "CHANGE-ME-4",
+      "item": { "name": "등대", "label": "골방" },
+      "knowledge": {
+        "q": "골방 영상 속 그림은 무엇으로 그려졌나요?",
+        "options": ["모래", "물감", "연필"],
+        "answer": 0,
+        "explainTitle": "그림의 재료", "explainValue": "모래",
+        "explain": "재단이 보유한 샌드아트 영상입니다."
+      },
+      "preference": {
+        "q": "이 방에 흐르면 좋을 음악은 무엇인가요?",
+        "options": [
+          { "label": "샹송", "tag": "R" },
+          { "label": "재즈", "tag": "U" },
+          { "label": "가곡", "tag": "N" },
+          { "label": "아무 소리 없음", "tag": "S" }
+        ]
+      }
+    },
+    {
+      "id": "s5", "order": 5, "place": "2F 시 낭송 방",
+      "placeNote": "방 입구. 녹음 중 스캔 방지", "hint": "방 입구",
+      "token": "CHANGE-ME-5",
+      "item": { "name": "숙녀", "label": "시 낭송 방" },
+      "knowledge": {
+        "q": "다음 중 박인환의 시가 아닌 것은 무엇일까요?",
+        "options": ["목마와 숙녀", "세월이 가면", "진달래꽃"],
+        "answer": 2,
+        "explainTitle": "박인환의 시가 아닌 것", "explainValue": "진달래꽃",
+        "explain": "「진달래꽃」은 김소월의 시입니다."
+      },
+      "preference": {
+        "q": "시를 읽어 주고 싶은 사람은 누구인가요?",
+        "options": [
+          { "label": "오래된 친구", "tag": "R" },
+          { "label": "나 자신", "tag": "S" },
+          { "label": "처음 만난 사람", "tag": "U" },
+          { "label": "멀리 있는 가족", "tag": "N" }
+        ]
+      }
+    },
+    {
+      "id": "s6", "order": 6, "place": "2F 타자기 방",
+      "placeNote": "타자기 책상 위", "hint": "타자기 책상 위",
+      "token": "CHANGE-ME-6",
+      "item": { "name": "가을", "label": "타자기 방" },
+      "knowledge": {
+        "q": "박인환이 함께한 문학의 흐름은 무엇일까요?",
+        "options": ["모더니즘", "낭만주의", "사실주의"],
+        "answer": 0,
+        "explainTitle": "문학의 흐름", "explainValue": "모더니즘",
+        "explain": "동인 활동을 통해 모더니즘 시 운동을 함께했습니다."
+      },
+      "preference": {
+        "q": "타자기로 가장 먼저 치고 싶은 말은 무엇인가요?",
+        "options": [
+          { "label": "사랑", "tag": "R" },
+          { "label": "안녕", "tag": "S" },
+          { "label": "서울", "tag": "U" },
+          { "label": "바람", "tag": "N" }
+        ]
+      }
+    },
+    {
+      "id": "s7", "order": 7, "place": "2F 바테이블 방",
+      "placeNote": "바 상판. 완주 후 리워드 수령 동선과 연결", "hint": "바 상판",
+      "token": "CHANGE-ME-7",
+      "item": { "name": "술병", "label": "바테이블 방" },
+      "knowledge": {
+        "q": "'세월이 가면'은 훗날 무엇으로 널리 불렸을까요?",
+        "options": ["노래", "연극", "영화"],
+        "answer": 0,
+        "explainTitle": "세월이 가면", "explainValue": "노래",
+        "explain": "시에 곡이 붙어 노래로 사랑받았습니다."
+      },
+      "preference": {
+        "_주의": "마지막 문항은 MBTI 입니다. 태그가 없어 유형 산정에는 들어가지 않고, AI 시의 말투 변수로만 쓰입니다.",
+        "q": "당신의 MBTI 네 글자를 골라 주세요.",
+        "options": [
+          { "label": "INTJ" }, { "label": "INTP" }, { "label": "ENTJ" }, { "label": "ENTP" },
+          { "label": "INFJ" }, { "label": "INFP" }, { "label": "ENFJ" }, { "label": "ENFP" },
+          { "label": "ISTJ" }, { "label": "ISFJ" }, { "label": "ESTJ" }, { "label": "ESFJ" },
+          { "label": "ISTP" }, { "label": "ISFP" }, { "label": "ESTP" }, { "label": "ESFP" }
+        ]
+      }
+    }
+  ],
+
+  "result": {
+    "rule": "maxTag",
+    "tieBreak": "lastAnswer",
+    "poem": {
+      "label": "당신의 시",
+      "placeholder": "[AI 시가 이 자리에 들어갑니다]\n\n서버 연결 후 획득한 시어 7개와 취향 응답으로 만들어집니다.\n생성에 실패하면 유형별 사전 제작 시로 대체됩니다."
+    },
+    "types": {
+      "R": {
+        "name": "낭만파 시인",
+        "desc": "지나간 것을 아끼는 사람. 오래된 것에서 새 문장을 찾습니다.",
+        "curation": [
+          { "label": "닮은 박인환의 시", "value": "[재단 확정 후 시 1편]", "url": "" },
+          { "label": "어울리는 굿즈", "value": "[굿즈 12종 중 1종]", "url": "" },
+          { "label": "인제에서", "value": "[박인환문학관 + 재단 추천 코스]", "url": "" }
+        ]
+      },
+      "S": {
+        "name": "고독파 시인",
+        "desc": "혼자 있는 시간에 문장이 깊어지는 사람입니다.",
+        "curation": [
+          { "label": "닮은 박인환의 시", "value": "[재단 확정 후 시 1편]", "url": "" },
+          { "label": "어울리는 굿즈", "value": "[굿즈 12종 중 1종]", "url": "" },
+          { "label": "인제에서", "value": "[조용한 곳 코스]", "url": "" }
+        ]
+      },
+      "U": {
+        "name": "도시파 시인",
+        "desc": "밤의 불빛과 사람들 사이에서 쓰는 사람입니다.",
+        "curation": [
+          { "label": "닮은 박인환의 시", "value": "[재단 확정 후 시 1편]", "url": "" },
+          { "label": "어울리는 굿즈", "value": "[굿즈 12종 중 1종]", "url": "" },
+          { "label": "인제에서", "value": "[인제 시내 코스]", "url": "" }
+        ]
+      },
+      "N": {
+        "name": "자연파 시인",
+        "desc": "바람과 숲에서 단어를 줍는 사람입니다.",
+        "curation": [
+          { "label": "닮은 박인환의 시", "value": "[재단 확정 후 시 1편]", "url": "" },
+          { "label": "어울리는 굿즈", "value": "[굿즈 12종 중 1종]", "url": "" },
+          { "label": "인제에서", "value": "[자연 코스]", "url": "" }
+        ]
+      }
+    }
+  },
+
+  "finish": {
+    "mode": "redeem",
+    "rewardName": "오미자차 1잔",
+    "staffPin": true,
+    "pin": "0000",
+    "_pin": "현장 운영 전에 반드시 바꾸세요."
+  },
+
+  "hooks": {
+    "aiPoem": true,
+    "messageApi": false,
+    "i18n": false,
+    "bookingLink": ""
+  },
+
+  "api": {
+    "baseUrl": "",
+    "_안내": "비워 두면 이 기기에만 저장하는 시연 모드로 동작합니다. AI 시 생성도 서버가 있어야 합니다."
+  },
+
+  "period": { "open": "", "close": "" }
+}

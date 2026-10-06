@@ -9,7 +9,7 @@
 <title>증언: 다음 페이지</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<!-- 글꼴은 설정 파일(theme.fonts)을 보고 engine.js 가 불러옵니다 -->
 <link rel="stylesheet" href="assets/engine.css">
 </head>
 <body>
@@ -123,6 +123,12 @@
     <h1 class="h-big" id="r-name"></h1>
     <p class="sub" id="r-desc" style="color:var(--ink)"></p>
     <div class="placeholder card">결과 카드 영역 [디자이너] · 저장용 1080×1920</div>
+
+    <!-- AI 시 (박인환) — 설정에 poem 이 있을 때만 보입니다 -->
+    <div class="box lg hidden" id="r-poem">
+      <div class="k" id="r-poem-label"></div>
+      <div class="poem" id="r-poem-text"></div>
+    </div>
 
     <div class="v" id="r-curation-title" style="margin-top:4px;font-size:13px"></div>
     <div class="curation" id="r-curation"></div>

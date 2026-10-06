@@ -91,8 +91,21 @@
   function text(id, v) { var e = $(id); if (e) e.textContent = v == null ? '' : v; }
 
   /* ── 설정 적용 ─────────────────────────────────── */
+  /* 설정에 적힌 글꼴을 구글 폰트에서 불러온다.
+     theme.fonts 는 구글 폰트 주소에 쓰는 형식 그대로 적습니다.
+     예) ["Gowun+Batang:wght@400;700", "Gowun+Dodum"] */
+  function loadFonts(t) {
+    var fams = (t && t.fonts) || [];
+    if (!fams.length) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=' + fams.join('&family=') + '&display=swap';
+    document.head.appendChild(link);
+  }
+
   function applyTheme(t) {
     if (!t) return;
+    loadFonts(t);
     var r = document.documentElement.style;
     if (t.bg) r.setProperty('--bg', t.bg);
     if (t.surface) r.setProperty('--surface', t.surface);
@@ -247,10 +260,13 @@
     show('s-knowledge');
   }
 
-  /* ── 03 해설 — 정답·오답 표현 없이 기준 답을 보여 준다 ── */
+  /* ── 03 해설 ──────────────────────────────────────
+     위안부처럼 correctLabel 과 wrongLabel 이 같으면 맞고 틀림이 드러나지 않고,
+     박인환처럼 다르면 정답·오답 표현이 나옵니다. 설정으로만 갈립니다. */
   function feedbackScreen() {
     var k = cur.knowledge;
-    text('f-title', CFG.tone.correctLabel);
+    var right = pick.k === k.answer;
+    text('f-title', right ? CFG.tone.correctLabel : (CFG.tone.wrongLabel || CFG.tone.correctLabel));
     text('f-k', k.explainTitle || '');
     text('f-v', k.explainValue || k.options[k.answer]);
     text('f-text', k.explain || '');
@@ -287,7 +303,9 @@
       k: pick.k,
       kOk: pick.k === k.answer,
       p: pick.p,
-      tag: opt.tag,
+      // 태그가 없는 문항(박인환 MBTI)은 유형 산정에 넣지 않고 값만 남긴다
+      tag: opt.tag || null,
+      value: opt.value || opt.label,
       at: new Date().toISOString(),
     };
     S.order.push(cur.id);
@@ -307,7 +325,7 @@
     // 수집품은 임시 페이지 모양 — 일러스트 확정 전까지 PAGE N 과 구역명만 보여 준다
     text('c-name', cur.item.name);
     text('c-place', cur.item.label || cur.place);
-    text('c-cap', '페이지 일러스트 [디자이너]');
+    text('c-cap', CFG.strings.itemArtNote || '');
 
     text('c-title', (CFG.strings.collectTitleFormat || '{ord} 번째').replace('{ord}', ord));
     $('c-cta').onclick = boardScreen;
@@ -393,7 +411,7 @@
     var score = {};
     S.order.forEach(function (id) {
       var a = S.answers[id];
-      if (!a) return;
+      if (!a || !a.tag) return;          // 태그 없는 문항은 셈에서 뺀다
       score[a.tag] = (score[a.tag] || 0) + 1;
     });
 
@@ -407,7 +425,7 @@
     if (tied.length > 1) {
       for (var i = S.order.length - 1; i >= 0; i--) {
         var t = S.answers[S.order[i]].tag;
-        if (tied.indexOf(t) >= 0) { best = t; break; }
+        if (t && tied.indexOf(t) >= 0) { best = t; break; }
       }
     }
     return best;
@@ -427,6 +445,16 @@
 
     text('r-name', type.name);
     text('r-desc', type.desc);
+
+    // AI 시 — 서버가 붙기 전에는 자리표시만 보여 준다
+    var poemCfg = CFG.result.poem;
+    if (poemCfg) {
+      $('r-poem').classList.remove('hidden');
+      text('r-poem-label', poemCfg.label || '');
+      text('r-poem-text', (S.poem && S.poem.text) || poemCfg.placeholder || '');
+    } else {
+      $('r-poem').classList.add('hidden');
+    }
 
     var host = $('r-curation');
     host.innerHTML = '';
@@ -460,9 +488,13 @@
     show('s-result');
   }
 
-  /* ── 08 마무리 ─────────────────────────────────── */
+  /* ── 08 마무리 ─────────────────────────────────────
+     mode 로 갈립니다.
+       message — 승인 문장 택 1 (위안부)
+       redeem  — 리워드 수령, 운영요원 확인 (박인환·K-컬처) */
   function finishScreen() {
     if (S.finish) { finishDone(); return; }
+    if ((CFG.finish.mode || 'message') === 'redeem') { redeemScreen(); return; }
 
     pick.fin = null;
     buildOptions($('fin-options'), CFG.finish.messages, function (i) {
@@ -482,6 +514,47 @@
     show('s-finish');
   }
 
+  /* 리워드 수령형 — 운영요원이 PIN 을 넣어야 수령 완료로 고정된다 */
+  function redeemScreen() {
+    text('fin-badge', CFG.strings.finishBadge);
+    text('fin-title', CFG.strings.finishTitle);
+    text('fin-body', CFG.strings.finishBody);
+    text('fin-note', CFG.strings.finishNote);
+
+    var host = $('fin-options');
+    host.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'box lg';
+    var k = document.createElement('div');
+    k.className = 'k';
+    k.textContent = CFG.strings.rewardLabel || '받으실 것';
+    var v = document.createElement('div');
+    v.className = 'v-lg';
+    v.textContent = CFG.finish.rewardName || '';
+    box.appendChild(k); box.appendChild(v);
+    host.appendChild(box);
+
+    var cta = $('fin-cta');
+    cta.disabled = false;
+    cta.textContent = CFG.strings.finishCta;
+    cta.onclick = function () {
+      if (CFG.finish.staffPin) {
+        var pin = window.prompt(CFG.strings.pinPrompt || '운영요원 확인 번호를 입력해 주세요.');
+        if (pin === null) return;
+        if (String(pin).trim() !== String(CFG.finish.pin || '')) {
+          alert(CFG.strings.pinWrong || '번호가 맞지 않습니다.');
+          return;
+        }
+      }
+      S.finish = { redeemed: true, reward: CFG.finish.rewardName, at: new Date().toISOString() };
+      save();
+      api('/api/redeem', { sessionId: S.id, project: S.project });
+      finishDone();
+    };
+
+    show('s-finish');
+  }
+
   function finishDone() {
     text('fin-badge', CFG.strings.finishBadge);
     text('fin-title', CFG.strings.finishDoneTitle);
@@ -492,10 +565,10 @@
     box.className = 'box';
     var k = document.createElement('div');
     k.className = 'k';
-    k.textContent = S.nickname;
+    k.textContent = S.finish.redeemed ? (CFG.strings.rewardLabel || '받으실 것') : S.nickname;
     var v = document.createElement('div');
     v.className = 'v';
-    v.textContent = S.finish.message;
+    v.textContent = S.finish.redeemed ? S.finish.reward : S.finish.message;
     box.appendChild(k); box.appendChild(v);
     $('fin-options').appendChild(box);
 

@@ -285,6 +285,13 @@ button.cell.tappable { border-style: solid; }
   letter-spacing: .08em;
   color: var(--ink-sub);
 }
+.poem {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+
 .curation { display: flex; flex-direction: column; gap: 10px; }
 .curation a { color: var(--ink); }
 

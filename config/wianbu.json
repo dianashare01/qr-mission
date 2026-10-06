@@ -18,6 +18,7 @@
     "line": "#46536B",
     "fontDisplay": "Noto Serif KR",
     "fontBody": "Noto Sans KR",
+    "fonts": ["Noto+Serif+KR:wght@400;700", "Noto+Sans+KR:wght@400;700"],
     "radius": 2
   },
 
@@ -42,6 +43,7 @@
     "feedbackCta": "다음",
     "preferenceCta": "페이지 넘기기",
 
+    "itemArtNote": "페이지 일러스트 [디자이너]",
     "collectTitleFormat": "{ord} 번째 페이지가 열렸습니다",
     "collectNote": "기록은 읽는 사람이 있을 때 이어집니다.",
     "collectCta": "페이지 모아 보기",
