@@ -54,13 +54,32 @@ qr-mission/
 node _tools/serve.js
 ```
 
+**링크 하나로 끝까지 볼 수 있습니다.**
+
+```
+http://localhost:8780/?p=wianbu&s=s1&t=CHANGE-ME-1
+```
+
+닉네임 입력 → 1번 문항 → 획득 화면의 **"다음 QR 찍기 (시연용)"** 버튼을 누르면 2번으로 이어집니다.
+6장을 모으면 결과와 마무리까지 그대로 진행됩니다.
+
 | 주소 | 화면 |
 |---|---|
-| `http://localhost:8780/?p=wianbu` | 시작 / 보드 |
-| `http://localhost:8780/?p=wianbu&s=s1&t=CHANGE-ME-1` | 1번 QR을 찍은 상황 |
-| `http://localhost:8780/wianbu/s/s1?t=CHANGE-ME-1` | 명세의 주소 형태도 동작 |
+| `?p=wianbu` | 보드 (세션이 없으면 시작) |
+| `?p=wianbu&s=s1&t=CHANGE-ME-1` | 1번 QR을 찍은 상황 |
+| `/wianbu/s/s1?t=CHANGE-ME-1` | 명세의 주소 형태도 동작 |
 
 처음부터 다시 보려면 브라우저 콘솔에서 `localStorage.clear()` 후 새로고침하세요.
+
+### ⚠️ 시연 모드 — 현장 배포 전에 꺼야 합니다
+
+`config/wianbu.json` 의 **`"prototype": true`** 가 켜져 있으면:
+
+- 획득 화면에 "다음 QR 찍기 (시연용)" 버튼이 나옵니다
+- 보드에서 아직 안 연 페이지를 눌러 그 QR을 찍은 것으로 처리할 수 있습니다
+
+QR 없이도 전 과정을 볼 수 있어 컨펌·검토용으로 편하지만, **현장에서는 QR을 안 찍고도
+수집이 되므로 반드시 `false` 로 바꾸세요.**
 
 ---
 

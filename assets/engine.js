@@ -189,6 +189,15 @@
     return null;
   }
 
+  /* 그 스팟의 QR 이 가리키는 주소 (시연용으로도 씁니다) */
+  function spotUrl(spot) {
+    return location.pathname + '?p=' + encodeURIComponent(S.project)
+         + '&s=' + encodeURIComponent(spot.id)
+         + (spot.token ? '&t=' + encodeURIComponent(spot.token) : '');
+  }
+
+  function isPrototype() { return CFG.prototype === true; }
+
   function barCount() {
     text('bar-count', doneCount() + ' / ' + total());
   }
@@ -303,6 +312,18 @@
     text('c-title', (CFG.strings.collectTitleFormat || '{ord} 번째').replace('{ord}', ord));
     $('c-cta').onclick = boardScreen;
 
+    // 시연용: QR 없이 다음 스팟으로 바로 이어 가기
+    var demo = $('c-demo');
+    var nx = nextSpot();
+    if (isPrototype() && nx) {
+      demo.classList.remove('hidden');
+      demo.textContent = '다음 QR 찍기 — ' + nx.place + ' (시연용)';
+      demo.onclick = function () { location.href = spotUrl(nx); };
+    } else {
+      demo.classList.add('hidden');
+      demo.onclick = null;
+    }
+
     barCount();
     show('s-collect');
   }
@@ -315,12 +336,23 @@
     text('b-count', CFG.strings.boardCountFormat
       .replace('{total}', total()).replace('{done}', done));
 
+    var proto = isPrototype();
+    $('b-demo-note').classList.toggle('hidden', !proto || isDone());
+
     var grid = $('b-grid');
     grid.innerHTML = '';
     CFG.spots.forEach(function (sp) {
       var got = !!S.answers[sp.id];
-      var cell = document.createElement('div');
-      cell.className = 'cell' + (got ? ' got' : '');
+
+      // 시연용일 때만 아직 안 연 칸을 누를 수 있게 한다
+      var tappable = proto && !got;
+      var cell = document.createElement(tappable ? 'button' : 'div');
+      if (tappable) {
+        cell.type = 'button';
+        cell.onclick = function () { location.href = spotUrl(sp); };
+      }
+      cell.className = 'cell' + (got ? ' got' : '') + (tappable ? ' tappable' : '');
+
       var n = document.createElement('div');
       n.className = 'n';
       n.textContent = got ? sp.item.name : String(sp.order);

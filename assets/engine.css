@@ -270,6 +270,14 @@ h1 {
 }
 .cell.got .n { font-family: var(--font-display); }
 
+/* 시연용으로만 눌리는 칸 */
+button.cell {
+  font-family: var(--font-body);
+  background: transparent;
+  cursor: pointer;
+}
+button.cell.tappable { border-style: solid; }
+
 /* ── 결과 ────────────────────────────────────────── */
 .eyebrow-plain {
   font-size: 13px;
