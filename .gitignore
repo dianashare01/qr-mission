@@ -1,2 +1,3 @@
 ﻿node_modules/
 _tools/qr/
+server/.wrangler/
