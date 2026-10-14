@@ -587,8 +587,15 @@
       if (pick.fin === null) return;
       S.finish = { message: CFG.finish.messages[pick.fin], at: new Date().toISOString() };
       save();
-      api('/api/message', { sessionId: S.id, project: S.project, nickname: S.nickname, message: S.finish.message });
-      finishDone();
+
+      // 서버가 "몇 번째 기록인지" 를 돌려줍니다
+      api('/api/message', { sessionId: S.id, project: S.project, nickname: S.nickname, message: S.finish.message })
+        .then(function (r) {
+          if (r && r.ok && r.seq) { S.finish.seq = r.seq; save(); }
+          finishDone();
+        });
+
+      finishDone();   // 서버를 기다리지 않고 먼저 보여 줍니다
     };
 
     show('s-finish');
@@ -654,10 +661,65 @@
     show('s-finish');
   }
 
+  /** 2,745 처럼 자릿수 쉼표를 넣는다 */
+  function comma(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  /** 내 기록이 몇 번째인지. 서버가 알려준 번호에 시작 번호를 더한다. */
+  function myRecordNo() {
+    var base = (CFG.finish && CFG.finish.recordBase) || 0;
+    var seq = S.finish && S.finish.seq;
+    return seq ? base + seq : null;
+  }
+
+  /** 앞서 다녀간 분들의 기록을 가져와 보여 준다 */
+  function loadRecent() {
+    var box = $('fin-recent');
+    var n = (CFG.finish && CFG.finish.showRecent) || 0;
+    if (!n || !hasServer()) { box.classList.add('hidden'); return; }
+
+    apiGet('/api/messages/recent?project=' + encodeURIComponent(S.project) + '&limit=' + n)
+      .then(function (r) {
+        if (!r || !r.ok || !(r.items || []).length) { box.classList.add('hidden'); return; }
+
+        var base = (CFG.finish && CFG.finish.recordBase) || 0;
+        text('fin-recent-label', CFG.strings.recentLabel || '');
+
+        var host = $('fin-recent-list');
+        host.innerHTML = '';
+        r.items.forEach(function (m) {
+          var row = document.createElement('div');
+          row.className = 'recent-item' + (S.finish && m.seq === S.finish.seq ? ' mine' : '');
+
+          var no = document.createElement('div');
+          no.className = 'no';
+          no.textContent = comma(base + m.seq);
+
+          var who = document.createElement('div');
+          who.className = 'who';
+          who.textContent = m.nickname;
+
+          var what = document.createElement('div');
+          what.className = 'what';
+          what.textContent = m.message;
+
+          row.appendChild(no); row.appendChild(who); row.appendChild(what);
+          host.appendChild(row);
+        });
+
+        box.classList.remove('hidden');
+      });
+  }
+
   function finishDone() {
     text('fin-badge', CFG.strings.finishBadge);
     text('fin-title', CFG.strings.finishDoneTitle);
-    text('fin-body', CFG.strings.finishDoneBody);
+
+    // "당신의 문장이 2,745번째 기록으로 남았습니다" 의 숫자를 실제 번호로
+    var no = myRecordNo();
+    var body = CFG.strings.finishDoneBody || '';
+    text('fin-body', no ? body.replace('{n}', comma(no)) : (CFG.strings.finishDoneBodyPlain || body.replace('{n}', '')));
+
+    loadRecent();
     $('fin-options').innerHTML = '';
 
     var box = document.createElement('div');

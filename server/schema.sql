@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS messages (
   project    TEXT NOT NULL,
   nickname   TEXT NOT NULL,
   message    TEXT NOT NULL,
+  seq        INTEGER,                        -- 전시 안에서 몇 번째 기록인지 (1부터)
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_messages_project ON messages(project, created_at);
+CREATE INDEX IF NOT EXISTS idx_messages_seq ON messages(project, seq);

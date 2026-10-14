@@ -72,7 +72,9 @@
     "finishNote": "문장 목록은 발주처 승인본으로 교체 · 자유 입력 없음",
     "finishCta": "기록 남기기",
     "finishDoneTitle": "기록되었습니다",
-    "finishDoneBody": "당신의 문장이 2,745번째 기록으로 남았습니다.",
+    "finishDoneBody": "당신의 문장이 {n}번째 기록으로 남았습니다.",
+    "finishDoneBodyPlain": "당신의 문장이 다음 기록으로 남았습니다.",
+    "recentLabel": "앞서 다녀간 분들의 기록",
 
     "alreadyTitle": "이미 넘긴 페이지입니다",
     "alreadyBody": "같은 페이지는 한 번만 열립니다. 모아 보기로 돌아갑니다.",
@@ -293,6 +295,13 @@
 
   "finish": {
     "mode": "message",
+
+    "recordBase": 2744,
+    "_recordBase": "기록 번호의 시작값. 유네스코 등재 신청 기록물 2,744건 다음부터 세므로 첫 관람객이 2,745번째가 됩니다.",
+
+    "showRecent": 5,
+    "_showRecent": "완성 화면에 보여 줄 '앞서 다녀간 분들의 기록' 개수. 0 이면 보여 주지 않습니다.",
+
     "messages": [
       "기억하겠습니다.",
       "잊지 않고 전하겠습니다.",

@@ -298,6 +298,46 @@ button.cell.tappable { border-style: solid; }
 /* 결과 화면은 내용이 길어 스크롤된다 */
 #s-result { gap: 16px; }
 
+/* ── 앞서 다녀간 분들의 기록 ─────────────────────── */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.recent-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--line);
+}
+.recent-item .no {
+  flex: none;
+  min-width: 54px;
+  font-size: 12px;
+  color: var(--ink-sub);
+  font-variant-numeric: tabular-nums;
+}
+.recent-item .who {
+  flex: none;
+  max-width: 84px;
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recent-item .what {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink-sub);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.recent-item.mine .who,
+.recent-item.mine .what { color: var(--accent); }
+
 /* ── 기타 ────────────────────────────────────────── */
 .hidden { display: none !important; }
 

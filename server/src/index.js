@@ -239,12 +239,37 @@ async function message(req, env) {
     .bind(b.sessionId).first();
   if (!s) return bad('세션을 찾지 못했습니다', env, req, 404);
 
+  // 번호는 한 문장 안에서 매겨 동시에 들어와도 겹치지 않게 합니다
   const r = await env.DB.prepare(
-    'INSERT OR IGNORE INTO messages (session_id, project, nickname, message, created_at) VALUES (?,?,?,?,?)'
-  ).bind(b.sessionId, s.project, s.nickname, String(b.message).slice(0, 200), now()).run();
+    'INSERT OR IGNORE INTO messages (session_id, project, nickname, message, seq, created_at) '
+    + 'SELECT ?, ?, ?, ?, COALESCE((SELECT MAX(seq) FROM messages WHERE project = ?), 0) + 1, ?'
+  ).bind(b.sessionId, s.project, s.nickname, String(b.message).slice(0, 200), s.project, now()).run();
 
   const added = (r.meta && r.meta.changes) > 0;
-  return json({ ok: true, added, already: !added }, env, req);
+
+  // 이미 남긴 경우에도 처음 받은 번호를 그대로 돌려줍니다
+  const mine = await env.DB.prepare('SELECT seq FROM messages WHERE session_id = ?')
+    .bind(b.sessionId).first();
+
+  return json({ ok: true, added, already: !added, seq: mine ? mine.seq : null }, env, req);
+}
+
+/* ── 최근 기록 (관람객이 보는 것, 키 없이 열림) ───────
+   닉네임과 "승인된 문장" 만 돌려줍니다. 시각이나 그 밖의 정보는 주지 않습니다. */
+async function recentMessages(req, env, url) {
+  const project = url.searchParams.get('project');
+  if (!project) return bad('project 가 필요합니다', env, req);
+
+  const limit = Math.min(20, Math.max(1, Number(url.searchParams.get('limit') || 5)));
+
+  const rows = await env.DB.prepare(
+    'SELECT nickname, message, seq FROM messages WHERE project = ? ORDER BY seq DESC LIMIT ?'
+  ).bind(project, limit).all();
+
+  const total = await env.DB.prepare('SELECT COUNT(*) AS n FROM messages WHERE project = ?')
+    .bind(project).first();
+
+  return json({ ok: true, total: total.n, items: rows.results || [] }, env, req);
 }
 
 /* ── 관리자 통계 ─────────────────────────────────── */
@@ -371,6 +396,7 @@ export default {
       if (p === '/api/complete' && req.method === 'POST') return await complete(req, env);
       if (p === '/api/redeem' && req.method === 'POST') return await redeem(req, env);
       if (p === '/api/message' && req.method === 'POST') return await message(req, env);
+      if (p === '/api/messages/recent' && req.method === 'GET') return await recentMessages(req, env, url);
       if (p === '/api/admin/stats' && req.method === 'GET') return await stats(req, env, url);
       if (p === '/api/admin/messages' && req.method === 'GET') return await adminMessages(req, env, url);
       if (p === '/api/health') return json({ ok: true, at: now() }, env, req);
