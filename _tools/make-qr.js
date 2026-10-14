@@ -26,9 +26,14 @@ const OUT = path.join(__dirname, 'qr');
 fs.mkdirSync(OUT, { recursive: true });
 
 const ALL_PROJECTS = [
-  { key: 'wianbu', name: '위안부-증언다음페이지' },
-  { key: 'inje', name: '박인환-마리서사' },
+  { key: 'wianbu', name: '위안부' },
+  { key: 'inje', name: '박인환' },
 ];
+
+/** 파일명에 못 쓰는 글자를 걸러낸다 */
+function safeName(s) {
+  return String(s).replace(/[\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim();
+}
 const PROJECTS = only ? ALL_PROJECTS.filter((p) => p.key === only) : ALL_PROJECTS;
 
 (async () => {
@@ -43,8 +48,8 @@ const PROJECTS = only ? ALL_PROJECTS.filter((p) => p.key === only) : ALL_PROJECT
 
     for (const s of spots) {
       const url = `${BASE}/?p=${p.key}&s=${s.id}&t=${encodeURIComponent(s.token)}`;
-      // 파일명 앞에 순번을 붙여 정렬·대조가 쉽도록 합니다
-      const file = path.join(OUT, `${p.name}-${String(s.order).padStart(2, '0')}-${s.item.name}.png`);
+      // 붙일 위치를 바로 알 수 있게 "전시-순번-위치" 로 짓습니다
+      const file = path.join(OUT, `${p.name}-${String(s.order).padStart(2, '0')}-${safeName(s.place)}.png`);
 
       await QRCode.toFile(file, url, {
         width: 1200,

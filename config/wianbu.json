@@ -4,6 +4,9 @@
   "prototype": true,
   "_prototype": "시연용. true 면 QR 없이 다음 스팟으로 넘어가는 버튼과 보드의 누르기가 열립니다. 현장 배포 전에 false 로 바꾸세요.",
 
+  "allowRetake": true,
+  "_allowRetake": "이미 고른 스팟의 QR 을 다시 찍으면 '다시 고르기' 가 나옵니다. 명세는 '응답 수정 불가' 이므로 현장 배포 전에 false 로 바꾸세요.",
+
   "project": "wianbu",
   "title": "증언: 다음 페이지",
   "mission": "여섯 장의 페이지",

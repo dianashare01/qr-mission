@@ -681,11 +681,41 @@
   }
 
   /* ── 안내 화면 ─────────────────────────────────── */
-  function notice(title, body, onOk) {
+  function notice(title, body, onOk, alt) {
     text('n-title', title);
     text('n-body', body);
     $('n-cta').onclick = onOk || boardScreen;
+
+    // 두 번째 버튼이 필요할 때만 (예: 다시 고르기)
+    var a = $('n-alt');
+    if (alt) {
+      a.classList.remove('hidden');
+      a.textContent = alt.label;
+      a.onclick = alt.onClick;
+    } else {
+      a.classList.add('hidden');
+      a.onclick = null;
+    }
+
     show('s-notice');
+  }
+
+  /* 고른 것을 지우고 그 스팟을 다시 풀게 한다.
+     명세는 "응답 수정 불가" 이므로 설정에서 켠 경우에만 동작합니다. */
+  function retake(spot) {
+    delete S.answers[spot.id];
+    S.order = S.order.filter(function (id) { return id !== spot.id; });
+
+    // 응답이 바뀌면 유형도 달라지므로 결과를 지워 다시 계산되게 합니다
+    S.result = null;
+    S.finish = null;
+    save();
+
+    if (hasServer()) {
+      api('/api/answer/delete', { sessionId: S.id, project: S.project, spotId: spot.id });
+    }
+
+    openSpot(spot);
   }
 
   /* ── 시작 ──────────────────────────────────────── */
@@ -737,7 +767,18 @@
     if (!S.nickname) { startScreen(); return; }
 
     if (cur) {
-      if (S.answers[cur.id]) { notice(CFG.strings.alreadyTitle, CFG.strings.alreadyBody); return; }
+      if (S.answers[cur.id]) {
+        // 설정에서 허용했을 때만 "다시 고르기" 를 띄웁니다
+        var alt = CFG.allowRetake
+          ? { label: CFG.strings.retakeCta || '다시 고르기', onClick: function () { retake(cur); } }
+          : null;
+        notice(
+          CFG.strings.alreadyTitle,
+          CFG.allowRetake ? (CFG.strings.alreadyRetakeBody || CFG.strings.alreadyBody) : CFG.strings.alreadyBody,
+          null, alt
+        );
+        return;
+      }
       openSpot(cur);
       return;
     }
