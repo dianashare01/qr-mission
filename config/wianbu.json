@@ -87,7 +87,7 @@
       "place": "서문 연표",
       "placeNote": "연표 통로 끝 지점. 통로 폭 1,600이므로 벽면 부착, 체류 유도 금지",
       "hint": "연표 통로 끝",
-      "token": "CHANGE-ME-1",
+      "token": "yv9pgu",
       "item": { "name": "PAGE 1", "label": "서문 연표" },
       "knowledge": {
         "q": "김학순 님이 피해 사실을 공개 증언한 해는 언제일까요?",
@@ -113,7 +113,7 @@
       "place": "1부 2744개 기록",
       "placeNote": "기록 벽 측면",
       "hint": "기록 벽 옆",
-      "token": "CHANGE-ME-2",
+      "token": "42swf4",
       "item": { "name": "PAGE 2", "label": "2744개 기록" },
       "knowledge": {
         "q": "유네스코 세계기록유산에 등재를 신청한 일본군'위안부' 관련 기록물은 몇 건일까요?",
@@ -139,7 +139,7 @@
       "place": "2부 증언의 바다",
       "placeNote": "암전 공간 내부 금지. 출구 쪽 벽면",
       "hint": "출구 쪽",
-      "token": "CHANGE-ME-3",
+      "token": "3gxvey",
       "item": { "name": "PAGE 3", "label": "증언의 바다" },
       "knowledge": {
         "q": "방금 들은 목소리는 몇 분의 증언이었을까요?",
@@ -165,7 +165,7 @@
       "place": "2부 삶이 보여준 증언",
       "placeNote": "유물의 복도. 복도 폭 1,500. 복도 끝 지점",
       "hint": "복도 끝",
-      "token": "CHANGE-ME-4",
+      "token": "vb5u67",
       "item": { "name": "PAGE 4", "label": "삶이 보여준 증언" },
       "knowledge": {
         "q": "이 복도의 작품은 누가 만든 것일까요?",
@@ -191,7 +191,7 @@
       "place": "3부 기억이 된 기록",
       "placeNote": "숫자 카드 책상 옆",
       "hint": "숫자 카드 책상 옆",
-      "token": "CHANGE-ME-5",
+      "token": "47ak66",
       "item": { "name": "PAGE 5", "label": "기억이 된 기록" },
       "knowledge": {
         "q": "수요시위가 처음 열린 해는 언제일까요?",
@@ -217,7 +217,7 @@
       "place": "3부 서고의 숲",
       "placeNote": "서가 측면. 결과 확인은 사유의 방에서 하도록 안내",
       "hint": "서가 옆",
-      "token": "CHANGE-ME-6",
+      "token": "pcn3b4",
       "item": { "name": "PAGE 6", "label": "서고의 숲" },
       "knowledge": {
         "q": "2,744 다음, 2,745번째 기록은 누구의 것일까요?",
