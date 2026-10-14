@@ -289,6 +289,54 @@ async function stats(req, env, url) {
   return json(data, env, req);
 }
 
+/* ── 관리자: 남겨진 기록 보기 ────────────────────── */
+async function adminMessages(req, env, url) {
+  const keyGiven = url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '';
+  if (!env.ADMIN_KEY || keyGiven !== env.ADMIN_KEY) {
+    return bad('권한이 없습니다', env, req, 401);
+  }
+
+  const project = url.searchParams.get('project');
+  const limit = Math.min(1000, Math.max(1, Number(url.searchParams.get('limit') || 500)));
+
+  const rows = await env.DB.prepare(
+    'SELECT nickname, message, created_at FROM messages'
+    + (project ? ' WHERE project = ?' : '')
+    + ' ORDER BY created_at DESC LIMIT ?'
+  ).bind(...(project ? [project, limit] : [limit])).all();
+
+  const total = await env.DB.prepare(
+    'SELECT COUNT(*) AS n FROM messages' + (project ? ' WHERE project = ?' : '')
+  ).bind(...(project ? [project] : [])).first();
+
+  // 문장별로 몇 명이 골랐는지
+  const byMessage = await env.DB.prepare(
+    'SELECT message, COUNT(*) AS n FROM messages' + (project ? ' WHERE project = ?' : '')
+    + ' GROUP BY message ORDER BY n DESC'
+  ).bind(...(project ? [project] : [])).all();
+
+  if (url.searchParams.get('format') === 'csv') {
+    const out = [['번호', '이름', '남긴 문장', '시각(UTC)']];
+    (rows.results || []).forEach((r, i) => out.push([total.n - i, r.nickname, r.message, r.created_at]));
+    const csv = '﻿' + out.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    return new Response(csv, {
+      headers: {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="messages-${project || 'all'}.csv"`,
+        ...cors(env, req),
+      },
+    });
+  }
+
+  return json({
+    ok: true,
+    project: project || '전체',
+    total: total.n,
+    byMessage: byMessage.results || [],
+    messages: rows.results || [],
+  }, env, req);
+}
+
 /* ── 들어오는 요청 나누기 ────────────────────────── */
 export default {
   async fetch(req, env) {
@@ -305,6 +353,7 @@ export default {
       if (p === '/api/redeem' && req.method === 'POST') return await redeem(req, env);
       if (p === '/api/message' && req.method === 'POST') return await message(req, env);
       if (p === '/api/admin/stats' && req.method === 'GET') return await stats(req, env, url);
+      if (p === '/api/admin/messages' && req.method === 'GET') return await adminMessages(req, env, url);
       if (p === '/api/health') return json({ ok: true, at: now() }, env, req);
 
       return bad('없는 주소입니다', env, req, 404);

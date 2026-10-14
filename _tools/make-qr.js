@@ -15,16 +15,21 @@ const fs = require('fs');
 const path = require('path');
 const QRCode = require('qrcode');
 
-const BASE = (process.argv[2] || 'https://dianashare01.github.io/qr-mission').replace(/\/+$/, '');
-const ALL = process.argv.includes('--all');   // 전 스팟 QR 을 만들려면 붙이세요
+const args = process.argv.slice(2);
+const BASE = (args.find((a) => a.startsWith('http')) || 'https://dianashare01.github.io/qr-mission').replace(/\/+$/, '');
+const ALL = args.includes('--all');                      // 전 스팟 QR 을 만들려면 붙이세요
+
+// --project=wianbu 처럼 한 전시만 만들 수 있습니다
+const only = (args.find((a) => a.startsWith('--project=')) || '').split('=')[1];
 
 const OUT = path.join(__dirname, 'qr');
 fs.mkdirSync(OUT, { recursive: true });
 
-const PROJECTS = [
+const ALL_PROJECTS = [
   { key: 'wianbu', name: '위안부-증언다음페이지' },
   { key: 'inje', name: '박인환-마리서사' },
 ];
+const PROJECTS = only ? ALL_PROJECTS.filter((p) => p.key === only) : ALL_PROJECTS;
 
 (async () => {
   const made = [];
@@ -38,7 +43,8 @@ const PROJECTS = [
 
     for (const s of spots) {
       const url = `${BASE}/?p=${p.key}&s=${s.id}&t=${encodeURIComponent(s.token)}`;
-      const file = path.join(OUT, `${p.name}-${s.id}.png`);
+      // 파일명 앞에 순번을 붙여 정렬·대조가 쉽도록 합니다
+      const file = path.join(OUT, `${p.name}-${String(s.order).padStart(2, '0')}-${s.item.name}.png`);
 
       await QRCode.toFile(file, url, {
         width: 1200,

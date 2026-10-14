@@ -56,7 +56,7 @@
     "boardLockedCta": "나의 다음 페이지 ({total}장을 모으면 열립니다)",
     "boardOpenCta": "나의 다음 페이지 열기",
     "recoveryLabel": "이어 하기 번호",
-    "recoveryNote": "브라우저가 바뀌면 이 번호로 이어서 할 수 있습니다.",
+    "recoveryNote": "이 휴대폰에서는 QR만 찍으면 자동으로 이어집니다. 휴대폰을 바꿀 때만 이 번호가 필요합니다.",
 
     "resultEyebrow": "나의 다음 페이지",
     "resultCurationTitle": "당신에게 건네는 것",
