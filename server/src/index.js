@@ -70,6 +70,30 @@ function cleanNick(v) {
   return s.length >= 2 && s.length <= 10 ? s : null;
 }
 
+/**
+ * 관리자인지 확인한다.
+ * 두 가지를 받습니다.
+ *   ADMIN_KEY   긴 키. 컴퓨터에서 쓸 때
+ *   ADMIN_CODE  짧은 코드. 현장에서 휴대폰으로 칠 때
+ * 둘 다 서버에만 있고 설정 파일에는 들어가지 않습니다.
+ *
+ * 글자 수가 달라도 비교 시간이 같도록 해, 한 글자씩 맞춰 보는 공격을 막습니다.
+ */
+function sameSecret(a, b) {
+  const x = String(a || '').trim();
+  const y = String(b || '').trim();
+  if (!y) return false;                 // 서버에 값이 없으면 통과시키지 않는다
+  if (x.length !== y.length) return false;
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x.charCodeAt(i) ^ y.charCodeAt(i);
+  return diff === 0;
+}
+
+function isAdmin(req, env, url) {
+  const given = url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '';
+  return sameSecret(given, env.ADMIN_KEY) || sameSecret(given, env.ADMIN_CODE);
+}
+
 /* ── 세션 만들기 ─────────────────────────────────── */
 async function createSession(req, env) {
   const b = await body(req);
@@ -225,11 +249,7 @@ async function message(req, env) {
 
 /* ── 관리자 통계 ─────────────────────────────────── */
 async function stats(req, env, url) {
-  const keyGiven = String(url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '').trim();
-  const adminKey = String(env.ADMIN_KEY || '').trim();
-  if (!adminKey || keyGiven !== adminKey) {
-    return bad('권한이 없습니다', env, req, 401);
-  }
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
 
   const project = url.searchParams.get('project');
   const where = project ? ' WHERE project = ?' : '';
@@ -293,11 +313,7 @@ async function stats(req, env, url) {
 
 /* ── 관리자: 남겨진 기록 보기 ────────────────────── */
 async function adminMessages(req, env, url) {
-  const keyGiven = String(url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '').trim();
-  const adminKey = String(env.ADMIN_KEY || '').trim();
-  if (!adminKey || keyGiven !== adminKey) {
-    return bad('권한이 없습니다', env, req, 401);
-  }
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
 
   const project = url.searchParams.get('project');
   const limit = Math.min(1000, Math.max(1, Number(url.searchParams.get('limit') || 500)));

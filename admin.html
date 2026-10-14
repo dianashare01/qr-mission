@@ -58,8 +58,8 @@
         <input id="base" placeholder="https://qr-mission-api.계정.workers.dev" autocomplete="off">
       </div>
       <div>
-        <label for="key">관리자 키 (ADMIN_KEY)</label>
-        <input id="key" type="password" placeholder="wrangler secret 로 넣은 값" autocomplete="off">
+        <label for="key">관리자 코드</label>
+        <input id="key" type="password" placeholder="8자리 코드 또는 긴 관리자 키" autocomplete="off">
       </div>
       <div>
         <button id="load">불러오기</button>
@@ -111,12 +111,17 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
 
+  // 서버 주소는 미리 채워 둡니다. 코드만 넣으면 됩니다.
+  var DEFAULT_BASE = 'https://qr-mission-api.jhmonounity.workers.dev';
+
   // 주소와 키는 이 브라우저에만 남깁니다
   try {
-    $('base').value = localStorage.getItem('qrm-admin-base') || '';
+    $('base').value = localStorage.getItem('qrm-admin-base') || DEFAULT_BASE;
     $('key').value = localStorage.getItem('qrm-admin-key') || '';
     $('project').value = localStorage.getItem('qrm-admin-project') || 'wianbu';
-  } catch (e) {}
+  } catch (e) {
+    $('base').value = DEFAULT_BASE;
+  }
 
   function base() { return $('base').value.trim().replace(/\/+$/, ''); }
   function key() { return $('key').value.trim(); }
