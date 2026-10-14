@@ -62,8 +62,13 @@
   }
 
   /* ── 서버 (설정에 주소가 있을 때만) ─────────────── */
+  function serverBase() {
+    return String((CFG.api && CFG.api.baseUrl) || '').replace(/\/+$/, '');
+  }
+  function hasServer() { return !!serverBase(); }
+
   function api(path, body) {
-    var base = (CFG.api && CFG.api.baseUrl || '').replace(/\/+$/, '');
+    var base = serverBase();
     if (!base) return Promise.resolve(null);
 
     var stop = new AbortController();
@@ -77,6 +82,49 @@
     }).then(function (r) { return r.ok ? r.json().catch(function () { return null; }) : null; })
       .catch(function () { return null; })
       .finally(function () { clearTimeout(timer); });
+  }
+
+  /* 서버에서 읽어 오기 (GET) */
+  function apiGet(path) {
+    var base = serverBase();
+    if (!base) return Promise.resolve(null);
+
+    var stop = new AbortController();
+    var timer = setTimeout(function () { stop.abort(); }, 8000);
+
+    return fetch(base + path, { signal: stop.signal, cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json().catch(function () { return null; }) : null; })
+      .catch(function () { return null; })
+      .finally(function () { clearTimeout(timer); });
+  }
+
+  /* 이어 하기 번호로 다른 기기의 진행 상황을 가져온다 */
+  function restoreByCode(code, onDone) {
+    apiGet('/api/state?project=' + encodeURIComponent(S.project) + '&code=' + encodeURIComponent(code))
+      .then(function (r) {
+        if (!r || !r.ok) { alert(CFG.strings.restoreFail || '번호를 찾지 못했습니다.'); onDone(false); return; }
+
+        var answers = {}, order = [];
+        (r.answers || []).forEach(function (a) {
+          answers[a.spot_id] = {
+            k: a.k_choice, kOk: !!a.k_correct, p: a.p_choice,
+            tag: a.p_tag || null, value: a.p_value, at: a.answered_at,
+          };
+          order.push(a.spot_id);
+        });
+
+        S.id = r.sessionId;
+        S.nickname = r.nickname || S.nickname;
+        S.code = r.recoveryCode || code;
+        S.answers = answers;
+        S.order = order;
+        S.result = r.result ? { tag: r.result.type_tag, at: r.result.created_at } : null;
+        S.finish = r.redeem
+          ? { redeemed: true, reward: (CFG.finish && CFG.finish.rewardName), at: r.redeem.redeemed_at }
+          : (r.message ? { message: r.message.message, at: r.message.created_at } : null);
+        save();
+        onDone(true);
+      });
   }
 
   /* ── 화면 전환 ─────────────────────────────────── */
@@ -232,9 +280,23 @@
 
       S.nickname = v;
       save();
-      api('/api/session', { project: S.project, nickname: v, lang: 'ko' });
 
-      if (cur) openSpot(cur); else boardScreen();
+      var go = function () { if (cur) openSpot(cur); else boardScreen(); };
+
+      if (!hasServer()) { go(); return; }
+
+      // 서버가 있으면 세션을 먼저 만들어 번호를 받는다
+      var btn = $('start-cta');
+      btn.disabled = true;
+      api('/api/session', { project: S.project, nickname: v, lang: 'ko' }).then(function (r) {
+        btn.disabled = false;
+        if (r && r.ok && r.sessionId) {
+          S.id = r.sessionId;
+          S.code = r.recoveryCode || S.code;
+          save();
+        }
+        go();   // 서버가 안 되더라도 체험은 이어진다
+      });
     };
   }
 
@@ -314,7 +376,8 @@
 
     api('/api/answer', {
       sessionId: S.id, project: S.project, spotId: cur.id, token: cur.token,
-      kChoice: pick.k, kCorrect: pick.k === k.answer, pChoice: pick.p, pTag: opt.tag,
+      kChoice: pick.k, kCorrect: pick.k === k.answer,
+      pChoice: pick.p, pTag: opt.tag || null, pValue: opt.value || opt.label,
     });
   }
 
@@ -392,6 +455,22 @@
     }
 
     text('b-rec-code', S.code);
+
+    // 다른 기기에서 이어 하기 — 서버가 있을 때만
+    var restore = $('b-restore');
+    restore.classList.toggle('hidden', !hasServer());
+    restore.textContent = CFG.strings.restoreCta || '다른 기기에서 이어 하기';
+    restore.onclick = function () {
+      var code = window.prompt(CFG.strings.restorePrompt || '이어 하기 번호 6자리를 입력해 주세요.');
+      if (code === null) return;
+      code = String(code).trim();
+      if (!/^\d{6}$/.test(code)) { alert('6자리 숫자를 입력해 주세요.'); return; }
+      restore.disabled = true;
+      restoreByCode(code, function (ok) {
+        restore.disabled = false;
+        if (ok) boardScreen();
+      });
+    };
 
     var cta = $('b-cta');
     if (isDone()) {
@@ -539,18 +618,37 @@
     cta.disabled = false;
     cta.textContent = CFG.strings.finishCta;
     cta.onclick = function () {
+      var pin = null;
       if (CFG.finish.staffPin) {
-        var pin = window.prompt(CFG.strings.pinPrompt || '운영요원 확인 번호를 입력해 주세요.');
+        pin = window.prompt(CFG.strings.pinPrompt || '운영요원 확인 번호를 입력해 주세요.');
         if (pin === null) return;
-        if (String(pin).trim() !== String(CFG.finish.pin || '')) {
-          alert(CFG.strings.pinWrong || '번호가 맞지 않습니다.');
-          return;
-        }
+        pin = String(pin).trim();
       }
-      S.finish = { redeemed: true, reward: CFG.finish.rewardName, at: new Date().toISOString() };
-      save();
-      api('/api/redeem', { sessionId: S.id, project: S.project });
-      finishDone();
+
+      var done = function () {
+        S.finish = { redeemed: true, reward: CFG.finish.rewardName, at: new Date().toISOString() };
+        save();
+        finishDone();
+      };
+
+      // 서버가 있으면 번호 확인과 중복 수령 방지를 서버가 맡는다
+      if (hasServer()) {
+        cta.disabled = true;
+        api('/api/redeem', { sessionId: S.id, project: S.project, pin: pin }).then(function (r) {
+          cta.disabled = false;
+          if (!r) { alert(CFG.strings.offlineNote || '서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'); return; }
+          if (!r.ok) { alert(r.error || CFG.strings.pinWrong || '번호가 맞지 않습니다.'); return; }
+          done();
+        });
+        return;
+      }
+
+      // 서버가 없을 때만 설정 파일의 번호로 확인합니다 (시연용)
+      if (CFG.finish.staffPin && pin !== String(CFG.finish.pin || '')) {
+        alert(CFG.strings.pinWrong || '번호가 맞지 않습니다.');
+        return;
+      }
+      done();
     };
 
     show('s-finish');

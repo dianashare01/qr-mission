@@ -1,0 +1,20 @@
+# Cloudflare Workers 설정
+#
+# database_id 는 데이터베이스를 만들면 받는 값입니다. 아래 README 1단계 참고.
+
+name = "qr-mission-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "qr-mission"
+database_id = "여기에-받은-ID를-넣으세요"
+
+[vars]
+# 전시 페이지 주소만 허용합니다. 비워 두면 모든 곳에서 호출할 수 있습니다.
+ALLOWED_ORIGINS = "https://dianashare01.github.io"
+
+# ADMIN_KEY 와 STAFF_PIN 은 여기 적지 말고 아래 명령으로 넣으세요.
+#   npx wrangler secret put ADMIN_KEY
+#   npx wrangler secret put STAFF_PIN
