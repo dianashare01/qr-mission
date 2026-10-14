@@ -661,17 +661,7 @@
     show('s-finish');
   }
 
-  /** 2,745 처럼 자릿수 쉼표를 넣는다 */
-  function comma(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-
-  /** 내 기록이 몇 번째인지. 서버가 알려준 번호에 시작 번호를 더한다. */
-  function myRecordNo() {
-    var base = (CFG.finish && CFG.finish.recordBase) || 0;
-    var seq = S.finish && S.finish.seq;
-    return seq ? base + seq : null;
-  }
-
-  /** 앞서 다녀간 분들의 기록을 가져와 보여 준다 */
+  /** 앞서 다녀간 분들의 기록을 가져와 보여 준다 (번호는 보여 주지 않습니다) */
   function loadRecent() {
     var box = $('fin-recent');
     var n = (CFG.finish && CFG.finish.showRecent) || 0;
@@ -681,7 +671,6 @@
       .then(function (r) {
         if (!r || !r.ok || !(r.items || []).length) { box.classList.add('hidden'); return; }
 
-        var base = (CFG.finish && CFG.finish.recordBase) || 0;
         text('fin-recent-label', CFG.strings.recentLabel || '');
 
         var host = $('fin-recent-list');
@@ -689,10 +678,6 @@
         r.items.forEach(function (m) {
           var row = document.createElement('div');
           row.className = 'recent-item' + (S.finish && m.seq === S.finish.seq ? ' mine' : '');
-
-          var no = document.createElement('div');
-          no.className = 'no';
-          no.textContent = comma(base + m.seq);
 
           var who = document.createElement('div');
           who.className = 'who';
@@ -702,7 +687,7 @@
           what.className = 'what';
           what.textContent = m.message;
 
-          row.appendChild(no); row.appendChild(who); row.appendChild(what);
+          row.appendChild(who); row.appendChild(what);
           host.appendChild(row);
         });
 
@@ -713,11 +698,7 @@
   function finishDone() {
     text('fin-badge', CFG.strings.finishBadge);
     text('fin-title', CFG.strings.finishDoneTitle);
-
-    // "당신의 문장이 2,745번째 기록으로 남았습니다" 의 숫자를 실제 번호로
-    var no = myRecordNo();
-    var body = CFG.strings.finishDoneBody || '';
-    text('fin-body', no ? body.replace('{n}', comma(no)) : (CFG.strings.finishDoneBodyPlain || body.replace('{n}', '')));
+    text('fin-body', CFG.strings.finishDoneBody);
 
     loadRecent();
     $('fin-options').innerHTML = '';
