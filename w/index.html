@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>관리자</title>
+<link rel="stylesheet" href="../assets/admin.css">
+</head>
+<body>
+
+<!-- 로그인 — 코드만 넣으면 됩니다 -->
+<div class="login card" id="login">
+  <h1 id="title"></h1>
+  <p class="sub">관리자 코드를 넣어 주세요.</p>
+  <div class="row">
+    <input id="code" type="password" inputmode="text" autocomplete="off"
+           autocapitalize="off" spellcheck="false" placeholder="관리자 코드">
+    <button id="go">열기</button>
+  </div>
+  <p class="err hidden" id="err"></p>
+</div>
+
+<!-- 본문 -->
+<div class="wrap hidden" id="panel">
+
+  <div class="row-between">
+    <div>
+      <h1>관리자</h1>
+      <p class="sub"><span class="tag" id="title2"></span> <span id="updated"></span></p>
+    </div>
+    <div class="row">
+      <button class="ghost" id="refresh">새로 고침</button>
+      <button class="ghost" id="logout">나가기</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>참여 통계</h2>
+    <div class="stats" id="stats"></div>
+    <div style="margin-top:16px"><button class="ghost" id="csv-stats">통계 CSV</button></div>
+  </div>
+
+  <div class="card hidden" id="spot-card">
+    <h2>스팟별 스캔</h2>
+    <div class="scroll"><table id="spot-table"></table></div>
+  </div>
+
+  <div class="card hidden" id="type-card">
+    <h2>유형 분포</h2>
+    <div class="scroll"><table id="type-table"></table></div>
+  </div>
+
+  <div class="card hidden" id="msg-card">
+    <h2>남겨진 기록</h2>
+    <p class="sub" id="msg-sum"></p>
+    <div class="scroll" style="margin-top:12px"><table id="msg-choice"></table></div>
+    <div class="scroll" style="margin-top:20px"><table id="msg-table"></table></div>
+    <div style="margin-top:16px"><button class="ghost" id="csv-msg">기록 CSV</button></div>
+  </div>
+
+</div>
+
+<script>
+  window.ADMIN_PROJECT = 'wianbu';
+  window.ADMIN_TITLE = '증언: 다음 페이지';
+</script>
+<script src="../assets/admin.js"></script>
+</body>
+</html>
