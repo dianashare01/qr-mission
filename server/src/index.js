@@ -185,8 +185,9 @@ async function redeem(req, env) {
   if (!b) return bad('본문을 읽지 못했습니다', env, req);
   if (!b.sessionId) return bad('sessionId 가 필요합니다', env, req);
 
-  const expected = env.STAFF_PIN || '';
-  if (expected && String(b.pin || '') !== expected) {
+  // 비밀값을 넣을 때 줄바꿈이 섞여 들어가는 일이 잦아 앞뒤 공백은 무시한다
+  const expected = String(env.STAFF_PIN || '').trim();
+  if (expected && String(b.pin || '').trim() !== expected) {
     return bad('번호가 맞지 않습니다', env, req, 403);
   }
 
@@ -224,8 +225,9 @@ async function message(req, env) {
 
 /* ── 관리자 통계 ─────────────────────────────────── */
 async function stats(req, env, url) {
-  const keyGiven = url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '';
-  if (!env.ADMIN_KEY || keyGiven !== env.ADMIN_KEY) {
+  const keyGiven = String(url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '').trim();
+  const adminKey = String(env.ADMIN_KEY || '').trim();
+  if (!adminKey || keyGiven !== adminKey) {
     return bad('권한이 없습니다', env, req, 401);
   }
 
@@ -291,8 +293,9 @@ async function stats(req, env, url) {
 
 /* ── 관리자: 남겨진 기록 보기 ────────────────────── */
 async function adminMessages(req, env, url) {
-  const keyGiven = url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '';
-  if (!env.ADMIN_KEY || keyGiven !== env.ADMIN_KEY) {
+  const keyGiven = String(url.searchParams.get('key') || req.headers.get('X-Admin-Key') || '').trim();
+  const adminKey = String(env.ADMIN_KEY || '').trim();
+  if (!adminKey || keyGiven !== adminKey) {
     return bad('권한이 없습니다', env, req, 401);
   }
 

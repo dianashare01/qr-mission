@@ -9,7 +9,7 @@ compatibility_date = "2026-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "qr-mission"
-database_id = "여기에-받은-ID를-넣으세요"
+database_id = "45086f6a-6fb4-4218-9c2d-aba5ac225039"
 
 [vars]
 # 전시 페이지 주소만 허용합니다. 비워 두면 모든 곳에서 호출할 수 있습니다.

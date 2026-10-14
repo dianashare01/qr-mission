@@ -308,7 +308,7 @@
   },
 
   "api": {
-    "baseUrl": "",
+    "baseUrl": "https://qr-mission-api.jhmonounity.workers.dev",
     "_안내": "비워 두면 이 기기에만 저장하는 시연 모드로 동작합니다. 서버가 준비되면 주소를 넣으세요."
   },
 
