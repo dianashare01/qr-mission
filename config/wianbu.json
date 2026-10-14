@@ -76,6 +76,8 @@
 
     "alreadyTitle": "이미 넘긴 페이지입니다",
     "alreadyBody": "같은 페이지는 한 번만 열립니다. 모아 보기로 돌아갑니다.",
+    "alreadyRetakeBody": "이 페이지는 이미 열어 두셨습니다. 다시 고르면 앞서 고른 답을 지우고 새로 시작합니다.",
+    "retakeCta": "다시 고르기",
     "badTokenTitle": "페이지를 찾지 못했습니다",
     "badTokenBody": "전시장의 QR을 다시 찍어 주세요.",
     "closedTitle": "전시가 종료되었습니다",
