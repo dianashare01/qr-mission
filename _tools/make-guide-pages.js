@@ -334,13 +334,28 @@ const LANGS = [
   },
 ];
 
-/* 언어 고르는 단추는 두지 않습니다.
-   언어마다 QR 이 따로 있어서, 찍으면 바로 그 언어 페이지로 들어옵니다. */
+/* 언어 고르는 자리.
+   국문만 도메인(testimony-nextpage.com)에 있고 나머지 셋은 github.io 에 있어서,
+   서로 오가려면 주소를 통째로 적어야 합니다. */
+const SWITCH = [
+  { code: 'KOR', dir: 'ko', url: 'https://www.testimony-nextpage.com/' },
+  { code: 'ENG', dir: 'en', url: 'https://dianashare01.github.io/qr-mission/en/' },
+  { code: 'CHN', dir: 'zh', url: 'https://dianashare01.github.io/qr-mission/zh/' },
+  { code: 'JPN', dir: 'ja', url: 'https://dianashare01.github.io/qr-mission/ja/' },
+];
 
 const COPYRIGHT = '© 2026 Diana Insight Inc.';
 
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function langSwitch(me) {
+  return SWITCH.map(function (l) {
+    const cur = l.dir === me.dir ? ' aria-current="page"' : '';
+    const href = l.dir === me.dir ? './' : l.url;
+    return `      <a href="${href}"${cur}>${l.code}</a>`;
+  }).join('\n');
 }
 
 function accordion(me) {
@@ -408,6 +423,9 @@ function page(me) {
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H3z"/><path d="M21 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H21z"/></svg>
       ${esc(me.brand)}
     </a>
+    <nav class="langs" aria-label="Language">
+${langSwitch(me)}
+    </nav>
   </div>
 </header>
 

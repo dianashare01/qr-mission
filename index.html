@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#141A26">
+<meta name="theme-color" content="#0B0A17">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
 <title>증언: 다음 페이지</title>
@@ -17,7 +17,10 @@
 <div class="app">
 
   <div class="bar">
-    <div class="brand" id="brand"></div>
+    <div class="brand-wrap">
+      <svg class="book" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H3z"/><path d="M21 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H21z"/></svg>
+      <div class="brand" id="brand"></div>
+    </div>
     <div class="count" id="bar-count"></div>
   </div>
 
@@ -39,44 +42,56 @@
   </section>
 
   <!-- ══ 02 기록 확인 (지식) ══════════════════════ -->
-  <section class="screen" id="s-knowledge">
-    <div class="meta" id="k-place"></div>
-    <div class="row">
-      <div class="eyebrow" id="k-label"></div>
-      <div class="meta">1 / 2</div>
+  <section class="screen qscreen" id="s-knowledge">
+    <div class="sheet">
+      <div class="sheet-place" id="k-place"></div>
+      <div class="row">
+        <div class="qno" id="k-label"></div>
+        <div class="qstep">1 / 2</div>
+      </div>
+      <h1 class="h-q" id="k-q"></h1>
+      <div class="options" id="k-options"></div>
+      <div class="spacer"></div>
+      <button class="cta" id="k-cta" disabled></button>
     </div>
-    <h1 class="h-q" id="k-q"></h1>
-    <div class="options" id="k-options"></div>
-    <div class="spacer"></div>
-    <button class="cta" id="k-cta" disabled></button>
+    <div class="pills"></div>
   </section>
 
   <!-- ══ 03 해설 ══════════════════════════════════ -->
-  <section class="screen" id="s-feedback">
-    <div class="meta" id="f-place"></div>
-    <div class="eyebrow" id="f-label"></div>
-    <h1 class="h-mid" id="f-title"></h1>
-    <div class="box lg">
-      <div class="k" id="f-k"></div>
-      <div class="v-lg" id="f-v"></div>
-      <p id="f-text"></p>
+  <section class="screen qscreen" id="s-feedback">
+    <div class="sheet">
+      <div class="sheet-place" id="f-place"></div>
+      <div class="qno" id="f-label"></div>
+      <h1 class="h-q" id="f-q"></h1>
+
+      <!-- 고른 답과 기록에 적힌 답 -->
+      <div class="options" id="f-rows"></div>
+
+      <h2 class="f-title" id="f-title"></h2>
+      <p class="f-text" id="f-text"></p>
+      <div class="f-extra"><span id="f-k"></span> <b id="f-v"></b></div>
+
+      <p class="note" id="f-note">해설 문구는 전시 텍스트 최종본·자문 감수 후 확정</p>
+      <div class="spacer"></div>
+      <button class="cta" id="f-cta"></button>
     </div>
-    <p class="note" id="f-note">해설 문구는 전시 텍스트 최종본·자문 감수 후 확정</p>
-    <div class="spacer"></div>
-    <button class="cta" id="f-cta"></button>
+    <div class="pills"></div>
   </section>
 
   <!-- ══ 04 나의 생각 (취향) ══════════════════════ -->
-  <section class="screen" id="s-preference">
-    <div class="meta" id="p-place"></div>
-    <div class="row">
-      <div class="eyebrow" id="p-label"></div>
-      <div class="meta">2 / 2</div>
+  <section class="screen qscreen" id="s-preference">
+    <div class="sheet">
+      <div class="sheet-place" id="p-place"></div>
+      <div class="row">
+        <div class="qno" id="p-label"></div>
+        <div class="qstep">2 / 2</div>
+      </div>
+      <h1 class="h-q" id="p-q"></h1>
+      <div class="options" id="p-options"></div>
+      <div class="spacer"></div>
+      <button class="cta" id="p-cta" disabled></button>
     </div>
-    <h1 class="h-q" id="p-q"></h1>
-    <div class="options" id="p-options"></div>
-    <div class="spacer"></div>
-    <button class="cta" id="p-cta" disabled></button>
+    <div class="pills"></div>
   </section>
 
   <!-- ══ 05 획득 ══════════════════════════════════ -->
@@ -94,11 +109,17 @@
     <button class="cta-ghost hidden" id="c-demo"></button>
   </section>
 
-  <!-- ══ 06 수집 보드 ═════════════════════════════ -->
+  <!-- ══ 06 퀴즈 목록 ═════════════════════════════ -->
   <section class="screen" id="s-board" style="gap:16px">
     <h1 class="h-mid" id="b-title"></h1>
-    <div class="sub" id="b-count" style="font-size:15px"></div>
+    <div class="sub" id="b-count"></div>
+    <div class="steps" id="b-steps"></div>
     <div class="grid" id="b-grid"></div>
+
+    <div class="legend">
+      <span><i class="done"></i><em id="b-legend-done"></em></span>
+      <span><i class="todo"></i><em id="b-legend-todo"></em></span>
+    </div>
 
     <div class="box" id="b-next">
       <div class="k" id="b-next-label"></div>

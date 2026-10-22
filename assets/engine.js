@@ -161,7 +161,15 @@
     if (t.inkSub) r.setProperty('--ink-sub', t.inkSub);
     if (t.accent) r.setProperty('--accent', t.accent);
     if (t.line) r.setProperty('--line', t.line);
+    if (t.onAccent) r.setProperty('--on-accent', t.onAccent);
+    if (t.paper) r.setProperty('--paper', t.paper);
+    if (t.paperInk) r.setProperty('--paper-ink', t.paperInk);
+    if (t.paperSub) r.setProperty('--paper-sub', t.paperSub);
+    if (t.paperSoft) r.setProperty('--paper-soft', t.paperSoft);
+    if (t.paperLine) r.setProperty('--paper-line', t.paperLine);
+    if (t.note) r.setProperty('--note', t.note);
     if (t.radius != null) r.setProperty('--radius', t.radius + 'px');
+    if (t.radiusLg != null) r.setProperty('--radius-lg', t.radiusLg + 'px');
     if (t.fontDisplay) r.setProperty('--font-display', "'" + t.fontDisplay + "', serif");
     if (t.fontBody) r.setProperty('--font-body', "'" + t.fontBody + "', sans-serif");
 
@@ -197,6 +205,8 @@
     text('b-free', s.boardFreeOrder);
     text('b-rec-label', s.recoveryLabel);
     text('b-rec-note', s.recoveryNote);
+    text('b-legend-done', s.legendDone || '참여 완료');
+    text('b-legend-todo', s.legendTodo || '미참여');
 
     text('r-eyebrow', s.resultEyebrow);
     text('r-curation-title', s.resultCurationTitle);
@@ -210,28 +220,96 @@
     text('fin-cta', s.finishCta);
   }
 
-  /* ── 선택지 만들기 ─────────────────────────────── */
-  var TICK = '<span class="tick"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" '
-           + 'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" '
-           + 'aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>';
+  /* ── 선택지 만들기 ───────────────────────────────
+     보기는 A·B·C·D 동그라미와 글, 그리고 오른쪽 작은 표시로 이루어집니다. */
+  var AB = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+  function optionRow(i, label, tag, asDiv) {
+    var b = document.createElement(asDiv ? 'div' : 'button');
+    if (!asDiv) b.type = 'button';
+    b.className = 'opt';
+
+    var ab = document.createElement('span');
+    ab.className = 'ab';
+    ab.textContent = AB[i] || String(i + 1);
+
+    var lb = document.createElement('span');
+    lb.className = 'lb';
+    lb.textContent = label;
+
+    b.appendChild(ab);
+    b.appendChild(lb);
+
+    if (tag) {
+      var t = document.createElement('span');
+      t.className = 'tag';
+      t.textContent = tag;
+      b.appendChild(t);
+    }
+    return b;
+  }
 
   function buildOptions(host, labels, onPick) {
     host.innerHTML = '';
     labels.forEach(function (label, i) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'opt';
+      var b = optionRow(i, label);
       b.setAttribute('aria-pressed', 'false');
-      var span = document.createElement('span');
-      span.textContent = label;
-      b.appendChild(span);
-      b.insertAdjacentHTML('beforeend', TICK);
       b.addEventListener('click', function () {
         Array.prototype.forEach.call(host.children, function (c) { c.setAttribute('aria-pressed', 'false'); });
         b.setAttribute('aria-pressed', 'true');
         onPick(i);
       });
       host.appendChild(b);
+    });
+  }
+
+  /* 맞고 틀림을 드러내는 프로젝트인지 — 설정에서만 갈립니다.
+     위안부처럼 correctLabel 과 wrongLabel 이 같으면 드러내지 않습니다. */
+  function showsCorrectness() {
+    var t = CFG.tone || {};
+    return !!(t.wrongLabel && t.wrongLabel !== t.correctLabel);
+  }
+
+  /* 화면 아래 여섯 칸 띠 — 지금 어디인지, 어디를 다녀왔는지 */
+  function renderPills() {
+    var hosts = document.querySelectorAll('.pills');
+    var reveal = showsCorrectness();
+
+    Array.prototype.forEach.call(hosts, function (host) {
+      host.innerHTML = '';
+      CFG.spots.forEach(function (sp) {
+        var a = S.answers[sp.id];
+        var d = document.createElement('div');
+        var cls = 'pill';
+        var label = String(sp.order);
+
+        if (cur && sp.id === cur.id) {
+          cls += ' now';
+        } else if (a) {
+          if (reveal) {
+            cls += a.kOk ? ' ok' : ' no';
+            label = a.kOk ? '✓' : '✕';
+          } else {
+            cls += ' ok';
+          }
+        }
+
+        d.className = cls;
+        d.textContent = label;
+        host.appendChild(d);
+      });
+    });
+  }
+
+  /* 퀴즈 목록 위의 진행 막대 */
+  function renderSteps() {
+    var host = $('b-steps');
+    if (!host) return;
+    host.innerHTML = '';
+    CFG.spots.forEach(function (sp) {
+      var i = document.createElement('i');
+      if (S.answers[sp.id]) i.className = 'on';
+      host.appendChild(i);
     });
   }
 
@@ -320,6 +398,7 @@
 
     $('k-cta').onclick = function () { if (pick.k !== null) feedbackScreen(); };
 
+    renderPills();
     show('s-knowledge');
   }
 
@@ -328,11 +407,32 @@
      박인환처럼 다르면 정답·오답 표현이 나옵니다. 설정으로만 갈립니다. */
   function feedbackScreen() {
     var k = cur.knowledge;
+    var s = CFG.strings || {};
     var right = pick.k === k.answer;
+    var reveal = showsCorrectness();
+
+    text('f-q', k.q);
     text('f-title', right ? CFG.tone.correctLabel : (CFG.tone.wrongLabel || CFG.tone.correctLabel));
-    text('f-k', k.explainTitle || '');
-    text('f-v', k.explainValue || k.options[k.answer]);
     text('f-text', k.explain || '');
+
+    // 기록에 적힌 답을 보여 주고, 다르게 고르셨다면 고른 것도 위에 함께 둡니다
+    var rows = $('f-rows');
+    rows.innerHTML = '';
+    if (!right) {
+      var mine = optionRow(pick.k, k.options[pick.k], s.myPickTag || '내 선택', true);
+      mine.className = 'opt ansrow is-mine';
+      rows.appendChild(mine);
+    }
+    var ans = optionRow(k.answer, k.options[k.answer],
+      reveal ? (s.answerTag || '정답') : (s.recordTag || '기록'), true);
+    ans.className = 'opt ansrow is-answer';
+    rows.appendChild(ans);
+
+    // explainTitle / explainValue 는 설정에 있을 때만 아래 줄에 둡니다
+    var extra = document.querySelector('.f-extra');
+    extra.classList.toggle('hidden', !(k.explainTitle || k.explainValue));
+    text('f-k', k.explainTitle || '');
+    text('f-v', k.explainValue || '');
 
     $('f-cta').onclick = preferenceScreen;
     show('s-feedback');
@@ -421,6 +521,11 @@
     var proto = isPrototype();
     $('b-demo-note').classList.toggle('hidden', !proto || isDone());
 
+    renderSteps();
+
+    var doneLabel = CFG.strings.legendDone || '참여 완료';
+    var todoLabel = CFG.strings.legendTodo || '미참여';
+
     var grid = $('b-grid');
     grid.innerHTML = '';
     CFG.spots.forEach(function (sp) {
@@ -436,12 +541,16 @@
       cell.className = 'cell' + (got ? ' got' : '') + (tappable ? ' tappable' : '');
 
       var n = document.createElement('div');
-      n.className = 'n';
-      n.textContent = got ? sp.item.name : String(sp.order);
+      n.className = 'cn';
+      n.textContent = String(sp.order);
       var l = document.createElement('div');
-      l.className = 'l';
+      l.className = 'cl';
       l.textContent = sp.item.label;
-      cell.appendChild(n); cell.appendChild(l);
+      var st = document.createElement('div');
+      st.className = 'cs';
+      st.textContent = got ? doneLabel : todoLabel;
+
+      cell.appendChild(n); cell.appendChild(l); cell.appendChild(st);
       grid.appendChild(cell);
     });
 
