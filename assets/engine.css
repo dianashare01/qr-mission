@@ -314,8 +314,16 @@ h1 {
 }
 .cta:disabled { background: #221F2B; color: var(--ink-sub); cursor: not-allowed; }
 
-/* 흰 카드 안의 버튼은 짙은 색입니다 */
-.sheet .cta { margin-top: 22px; background: var(--paper-ink); color: #fff; }
+/* 흰 카드 안의 버튼은 짙은 색입니다.
+   해설이 길어 카드가 화면보다 커져도 단추가 보이도록 아래에 붙여 둡니다. */
+.sheet .cta {
+  position: sticky;
+  bottom: 0;
+  margin-top: 22px;
+  background: var(--paper-ink);
+  color: #fff;
+  box-shadow: 0 0 0 10px var(--paper);
+}
 .sheet .cta:disabled { background: #E7E4EA; color: #9C97A3; }
 
 .cta-ghost {
