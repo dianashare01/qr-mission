@@ -20,6 +20,88 @@ const ROOT = path.resolve(__dirname, '..');
 const ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const LANGS = [
+  /* 국문 — 이 한 쪽만 다른 저장소(testimony-nextpage) 맨 위에 놓입니다.
+     그래서 pre 가 '' 이고, 그림은 그 저장소의 assets/guide/ko 에서 읽습니다.
+     주소: https://www.testimony-nextpage.com */
+  {
+    dir: 'ko',
+    code: 'KOR',
+    htmlLang: 'ko',
+    pre: '',
+    outFile: 'C:/Users/Kasiu/Documents/testimony-nextpage/index.html',
+    fonts: 'family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+Mono:wght@400;700&family=Noto+Serif+KR:wght@400;700',
+    serif: "'Noto Serif KR', 'Nanum Myeongjo', serif",
+    sans: "'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+    mono: "'Noto Sans Mono', ui-monospace, Consolas, monospace",
+
+    brand: '증언 : 다음 페이지',
+    docTitle: '증언 : 다음 페이지 — 전시 안내',
+    docDesc: "한국여성인권진흥원 일본군 '위안부' 문제 연구소 주최 특별전 「증언 — 다음 페이지」 관람 안내.",
+    tabGuide: '전시 안내',
+    tabHall: '온라인 전시관 3D',
+
+    host: "한국여성인권진흥원 일본군 '위안부' 문제 연구소 주최 특별전",
+    title1: '증언',
+    title2: '— 다음 페이지',
+    rec: '2,745번째 기록',
+    lead: '건네받은 말들을 우리는 어떻게 대해야 할까? 2,744개의 기록 다음 페이지가 될, 2,745번째 기록을 쓰기 위한 여정이 시작된다.',
+    venues: [
+      { name: '서울 아라아트센터', when: '2026.10.23(금) ~ 11.11(수)' },
+      { name: '대구 아트스페이스 루모스', when: '2026.11.15(일) ~ 12.04(금)' },
+    ],
+
+    noticeTitle: '관람 전 안내',
+    noticeBody: '본 전시 공간에는 전쟁범죄 피해자의 발언이 일부 포함되어 있습니다. 임신 중이신 분, 고령이신 분, 건강이 좋지 않으신 분, 자극에 민감하신 분께서는 관람에 유의해 주시기 바랍니다.',
+
+    quote: '" 나의 마음은 지지 않았다 "',
+    quoteBy: '— 송신도(1922~2017)',
+    quoteBody: "이 전시에서는 일본군 '위안부' 문제에 대한 증언을 중심으로 재조명하고 현재진행형인 문제를 하나의 '책'으로 빗대어 바라보고 있다. 그럼에도 이 책은 아직 완결되지 못 했다. 그리고 완결되지 않은 이야기에는 다음 페이지가 필요하다. 그 다음 페이지의 여백을 채우는 것은, 우리의 몫이다.",
+
+    sectionsTitle: '전시 구성',
+    expand: '모두 펼치기',
+    collapse: '모두 닫기',
+
+    items: [
+      { t: '안내데스크', d: '입구의 서문과 크레딧, 관람 안내.' },
+      { t: '서문 · 연표의 길', d: '1975년부터 2026년까지, 증언자와 연구자들이 펼친 운동사의 흐름.' },
+      { t: '1부 · 현재사: 2,744개의 기록', d: '유네스코 세계기록유산 공동등재를 신청한 기록물 2,744건.' },
+      { t: '2부 · 증언의 목소리', d: '김복동, 강일출, 이옥선, 송신도, 길원옥. 다섯 증언자를 마주한다.' },
+      { t: '기억의 경로', d: '아시아 지도를 따라 피해자들이 이동했던 장소를 살펴본다.' },
+      { t: '삶이 보여준 증언', d: '증언자와 후대 작가들이 남긴 작품과 기록물 아카이브.' },
+      { t: '전환 통로', d: '세계 각국 증언자들의 목소리가 서로 맞닿는 공간.' },
+      { t: '3부 · 숫자가 남긴 말', d: '숫자라는 매개체로 다시 바라보는 역사, 관객이 남기는 기록.' },
+      { t: '서고의 숲', d: '관련 도서와 연구서를 자유롭게 열람할 수 있는 공간.' },
+    ],
+
+    surveyTitle: '만족도 설문에 참여하기',
+    surveySub: '추첨을 통해 상품권을 드립니다',
+
+    hallHost: "한국여성인권진흥원 일본군 '위안부' 문제 연구소",
+    hallTitle: '전시장을 그대로 온라인으로',
+    hallLead: '9개의 전시 공간을 360도로 둘러볼 수 있는 3D 가상 전시관입니다. 아래에서 전시실을 고르시거나, 입장 단추로 전체 동선을 따라가 보세요.',
+    enter: '3D 전시관 입장하기',
+    roomsTitle: '전시실 고르기',
+    rooms: [
+      '안내데스크',
+      '서문 · 연표의 길',
+      '1부 · 2,744개의 기록',
+      '2부 · 증언의 목소리',
+      '기억의 경로',
+      '삶이 보여준 증언',
+      '전환 통로',
+      '3부 · 숫자가 남긴 말',
+      '서고의 숲',
+    ],
+
+    soonTitle: '오픈 준비 중입니다',
+    soonBody: '28일 공개 예정',
+    soonOk: '확인',
+    close: '닫기',
+
+    footOrg: "주최 · 한국여성인권진흥원 일본군 '위안부' 문제 연구소",
+    footDesign: '연출 및 디자인 · ㈜디아나인사이트',
+  },
+
   {
     dir: 'en',
     code: 'ENG',
@@ -264,7 +346,7 @@ function esc(s) {
 function accordion(me) {
   return ORDER.map(function (n, i) {
     const it = me.items[i];
-    const base = `../assets/guide/${me.dir}`;
+    const base = `${me.pre}assets/guide/${me.dir}`;
     return `        <details class="item">
           <summary class="head">
             <span class="no">${String(n).padStart(2, '0')}</span>
@@ -309,7 +391,7 @@ function page(me) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?${me.fonts}&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/guide.css">
+<link rel="stylesheet" href="${me.pre}assets/guide.css">
 <style>
   :root {
     --serif: ${me.serif};
@@ -444,17 +526,20 @@ ${rooms(me)}
   </div>
 </div>
 
-<script src="../assets/guide.js"></script>
+<script src="${me.pre}assets/guide.js"></script>
 </body>
 </html>
 `;
 }
 
 LANGS.forEach(function (me) {
-  const dir = path.join(ROOT, me.dir);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'index.html'), page(me), 'utf8');
-  console.log('  /' + me.dir + '/  ' + me.docTitle);
+  // pre = 쪽에서 assets 폴더까지 거슬러 올라가는 길. 저장소 맨 위에 두는 국문만 '' 입니다.
+  me.pre = me.pre == null ? '../' : me.pre;
+
+  const out = me.outFile ? path.resolve(me.outFile) : path.join(ROOT, me.dir, 'index.html');
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, page(me), 'utf8');
+  console.log('  ' + out.replace(/\\/g, '/') + '   ' + me.docTitle);
 });
 
 console.log('\n✅ 안내 페이지 ' + LANGS.length + '개를 다시 만들었습니다.');
