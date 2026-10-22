@@ -31,7 +31,12 @@
     var m = location.pathname.match(/\/([A-Za-z0-9_-]+)\/s\/([A-Za-z0-9_-]+)/);
     if (m) { project = project || m[1]; spot = spot || m[2]; }
 
-    return { project: project || 'wianbu', spot: spot, token: token };
+    return {
+      project: project || 'wianbu',
+      spot: spot,
+      token: token,
+      reset: q.get('reset') === '1',   // 시연·점검용으로 기록을 지우고 처음부터
+    };
   }
 
   /* ── 저장 ──────────────────────────────────────── */
@@ -190,12 +195,16 @@
     text('start-cta', s.startCta);
     text('privacy-note', s.privacyNote);
 
-    text('k-label', CFG.tone.knowledgeLabel);
-    text('k-cta', s.knowledgeCta);
-    text('f-label', CFG.tone.knowledgeLabel);
+    // 흰 카드 위에 놓이는 쪽 제목 — 문제·해설·나의 생각 화면에 같은 글이 들어갑니다
+    var headline = s.quizHeadline || '';
+    Array.prototype.forEach.call(document.querySelectorAll('.quiz-head'), function (e) {
+      e.textContent = headline;
+    });
+
+    text('k-hint', s.pickHint || '');
+    text('p-hint', s.pickHint || '');
     text('f-cta', s.feedbackCta);
-    text('p-label', CFG.tone.preferenceLabel);
-    text('p-cta', s.preferenceCta);
+    text('b-foot', s.footerLine || '');
 
     text('c-note', s.collectNote);
     text('c-cta', s.collectCta);
@@ -211,7 +220,6 @@
     text('r-eyebrow', s.resultEyebrow);
     text('r-curation-title', s.resultCurationTitle);
     text('r-cta', s.resultCta);
-    text('r-save', s.resultSaveCta);
 
     text('fin-badge', s.finishBadge);
     text('fin-title', s.finishTitle);
@@ -302,8 +310,8 @@
   }
 
   /* 퀴즈 목록 위의 진행 막대 */
-  function renderSteps() {
-    var host = $('b-steps');
+  function renderSteps(id) {
+    var host = $(id || 'b-steps');
     if (!host) return;
     host.innerHTML = '';
     CFG.spots.forEach(function (sp) {
@@ -311,6 +319,13 @@
       if (S.answers[sp.id]) i.className = 'on';
       host.appendChild(i);
     });
+  }
+
+  /* 「QUIZ · 2 / 6」 같은 머리말 */
+  function countLine() {
+    return String(CFG.strings.boardEyebrowFormat || CFG.strings.boardCountFormat || '')
+      .replace('{total}', total())
+      .replace('{done}', doneCount());
   }
 
   /* ── 스팟 찾기 ─────────────────────────────────── */
@@ -344,8 +359,11 @@
 
   /* ── 01 시작 ───────────────────────────────────── */
   function startScreen() {
+    // 퀴즈 목록 화면의 윗부분을 그대로 쓰고, 목록 자리에 이름을 적습니다
+    text('st-eyebrow', countLine());
+    text('st-foot', CFG.strings.footerLine || '');
+    renderSteps('st-steps');
     show('s-start');
-    text('bar-count', '');
 
     $('start-cta').onclick = function () {
       var v = $('nick').value.trim();
@@ -384,19 +402,24 @@
     pick.k = null; pick.p = null;
 
     barCount();
-    var head = spot.order + ' / ' + total() + ' · ' + spot.place;
+
+    // 시안대로 「4. 삶이 보여준 증언」 처럼 적습니다
+    var head = spot.order + '. ' + (spot.item.label || spot.place);
     text('k-place', head);
     text('f-place', head);
     text('p-place', head);
 
+    var qno = 'Q' + spot.order;
+    text('k-label', qno);
+    text('f-label', qno);
+    text('p-label', CFG.tone.preferenceLabel);
+
     text('k-q', spot.knowledge.q);
+    // 보기를 누르면 바로 해설로 넘어갑니다 (확인 단추 없음)
     buildOptions($('k-options'), spot.knowledge.options, function (i) {
       pick.k = i;
-      $('k-cta').disabled = false;
+      feedbackScreen();
     });
-    $('k-cta').disabled = true;
-
-    $('k-cta').onclick = function () { if (pick.k !== null) feedbackScreen(); };
 
     renderPills();
     show('s-knowledge');
@@ -428,12 +451,6 @@
     ans.className = 'opt ansrow is-answer';
     rows.appendChild(ans);
 
-    // explainTitle / explainValue 는 설정에 있을 때만 아래 줄에 둡니다
-    var extra = document.querySelector('.f-extra');
-    extra.classList.toggle('hidden', !(k.explainTitle || k.explainValue));
-    text('f-k', k.explainTitle || '');
-    text('f-v', k.explainValue || '');
-
     $('f-cta').onclick = preferenceScreen;
     show('s-feedback');
   }
@@ -442,17 +459,12 @@
   function preferenceScreen() {
     var p = cur.preference;
     text('p-q', p.q);
+    // 여기도 보기를 누르면 바로 다음으로 넘어갑니다
     buildOptions($('p-options'), p.options.map(function (o) { return o.label; }), function (i) {
       pick.p = i;
-      $('p-cta').disabled = false;
-    });
-    $('p-cta').disabled = true;
-
-    $('p-cta').onclick = function () {
-      if (pick.p === null) return;
       recordSpot();
       collectScreen();
-    };
+    });
 
     show('s-preference');
   }
@@ -514,9 +526,8 @@
   function boardScreen() {
     barCount();
 
-    var done = doneCount();
-    text('b-count', CFG.strings.boardCountFormat
-      .replace('{total}', total()).replace('{done}', done));
+    text('b-eyebrow', countLine());
+    text('b-count', CFG.strings.boardBody || '');
 
     var proto = isPrototype();
     $('b-demo-note').classList.toggle('hidden', !proto || isDone());
@@ -670,9 +681,6 @@
     });
 
     $('r-cta').onclick = finishScreen;
-    $('r-save').onclick = function () {
-      alert('결과 카드 이미지는 디자인 확정 후 연결됩니다.');
-    };
 
     show('s-result');
   }
@@ -826,7 +834,7 @@
     text('fin-note', '');
     var cta = $('fin-cta');
     cta.disabled = false;
-    cta.textContent = CFG.strings.boardTitle;
+    cta.textContent = CFG.strings.boardCta || CFG.strings.boardTitle;
     cta.onclick = boardScreen;
 
     show('s-finish');
@@ -883,6 +891,12 @@
   function boot(url) {
     applyTheme(CFG.theme);
     fillStrings();
+
+    /* 주소 뒤에 &reset=1 을 붙이면 이 기기에 쌓인 기록을 지우고 처음부터 시작합니다.
+       개막 뒤에는 쓰지 못하도록, 시연용(prototype: true) 일 때만 동작합니다. */
+    if (url.reset && isPrototype()) {
+      try { localStorage.removeItem(key(url.project)); } catch (e) { /* 저장소를 못 쓰는 경우 */ }
+    }
 
     S = load(url.project);
     if (!S) {

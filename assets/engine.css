@@ -128,73 +128,118 @@ h1 {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .14em;
+  letter-spacing: .04em;
   color: var(--ink-sub);
   text-transform: uppercase;
 }
+/* 「QUIZ · 4 / 6」 처럼 영문·숫자만 들어가는 자리는 넓게 띄웁니다 */
+#b-eyebrow { letter-spacing: .14em; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .center { text-align: center; }
+
+/* 설정 파일에 줄바꿈(\n)으로 적은 문구를 그대로 살립니다 */
+.lines { white-space: pre-line; }
+
+/* 흰 카드 위에 놓이는 쪽 제목 — 「전시를 읽고, / 기억을 확인합니다」 */
+.quiz-head {
+  flex: none;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: pre-line;
+  padding: 6px 2px 0;
+}
+
+/* 퀴즈 목록 맨 아래 주최 표기 */
+.foot {
+  flex: none;
+  margin-top: 18px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--ink-sub);
+  text-align: center;
+  white-space: pre-line;
+}
 
 /* ── 흰 카드 ──────────────────────────────────────
    문제·해설 화면의 본체입니다. 뒤에 종이가 겹쳐 보이도록
    왼쪽에 색 띠, 오른쪽에 회색 띠를 깔았습니다. */
-.qscreen { gap: 14px; }
+.qscreen { gap: 13px; }
 
 .sheet {
+  /* z-index 를 주면 뒤에 깐 종이가 흰 바탕 위로 올라와 버리므로 주지 않습니다 */
   position: relative;
-  z-index: 0;
   flex: 1;
   min-height: 0;
+  margin: 0 22px;          /* 시안의 카드는 양옆이 더 들어가 있습니다 */
   display: flex;
   flex-direction: column;
-  padding: 24px 20px 22px;
+  padding: 30px 20px 22px;
   border-radius: var(--radius-lg);
   background: var(--paper);
   color: var(--paper-ink);
 }
-.sheet::before,
+
+/* 뒤에 겹쳐 놓인 종이.
+   왼쪽 것은 살짝 기울어져 위쪽만 삐죽 나오고,
+   오른쪽에는 두 장이 나란히 보입니다. */
+.sheet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 62%;
+  border-radius: var(--radius-lg) var(--radius-lg) 6px 6px;
+  background: linear-gradient(180deg, #6F5F9A 0%, #A97A8E 55%, #F2B29A 100%);
+  transform-origin: 100% 100%;
+  transform: rotate(-2.6deg);
+  z-index: -2;
+}
 .sheet::after {
   content: '';
   position: absolute;
-  top: 18px;
-  bottom: 18px;
+  top: 16px;
+  bottom: 16px;
+  right: -18px;
   width: 20px;
-  border-radius: 12px;
+  border-radius: 0 12px 12px 0;
+  background: linear-gradient(90deg, #D3CCE0 0 50%, #8F8999 50% 100%);
   z-index: -1;
 }
-.sheet::before { left: -8px; background: linear-gradient(180deg, #6f5f9a, #c98a63); }
-.sheet::after { right: -6px; background: #39344a; }
 
 .sheet-place {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  color: var(--paper-sub);
-  margin-bottom: 20px;
+  color: var(--paper-ink);
 }
 .qno {
+  margin-top: 26px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .06em;
   color: var(--paper-sub);
   text-transform: uppercase;
 }
-.qstep { font-family: var(--font-mono); font-size: 11px; color: var(--paper-sub); }
+/* 한글 낱말이 들어가는 자리는 자간을 벌리지 않습니다 */
+.qno-plain { font-family: var(--font-body); letter-spacing: 0; font-size: 12px; }
 
-.sheet .h-q { margin: 8px 0 20px; color: var(--paper-ink); }
+.sheet .h-q { margin: 10px 0 22px; font-size: 17px; line-height: 1.5; color: var(--paper-ink); }
 
 /* ── 보기 ────────────────────────────────────────── */
 .options { display: flex; flex-direction: column; gap: 9px; }
 
 .opt {
   width: 100%;
-  padding: 13px 16px;
+  min-height: 48px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 12px;
   text-align: left;
   border: 1.5px solid transparent;
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: var(--paper-soft);
   color: var(--paper-ink);
   font-family: var(--font-body);
@@ -206,8 +251,8 @@ h1 {
 }
 .opt .ab {
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   border: 1px solid var(--paper-line);
@@ -242,15 +287,16 @@ h1 {
 
 .f-title { font-size: 15px; font-weight: 700; color: var(--note); margin-top: 22px; }
 .f-text { font-size: 14px; line-height: 1.8; color: #3A3A40; margin-top: 4px; }
-.f-extra {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--paper-line);
-  font-size: 12.5px;
-  color: var(--paper-sub);
-}
-.f-extra b { color: var(--paper-ink); }
 .sheet .note { color: var(--paper-sub); }
+
+/* 「보기를 눌러 답을 고르세요」 */
+.pick-hint {
+  flex: none;
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #8E8894;
+}
 
 /* ── 버튼 ────────────────────────────────────────── */
 .cta {
@@ -287,23 +333,23 @@ h1 {
 }
 
 /* ── 아래 여섯 칸 띠 ─────────────────────────────── */
-.pills { display: flex; gap: 8px; flex: none; }
+.pills { display: flex; gap: 11px; flex: none; margin-top: 12px; }
 .pill {
   flex: 1;
-  height: 54px;
+  height: 48px;
   display: grid;
   place-items: center;
-  border: 1.5px solid transparent;
+  border: 2px solid transparent;
   border-radius: 14px;
-  background: #221F2B;
-  color: #686172;
+  background: #2E2940;
+  color: #C8C2D2;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
-.pill.now { background: transparent; border-color: var(--ink); color: var(--ink); }
+.pill.now { background: #1D1A2B; border-color: #FFFFFF; color: #FFFFFF; }
 .pill.ok { background: var(--accent); color: var(--on-accent); }
-.pill.no { background: #2A2630; color: var(--ink); }
+.pill.no { background: #2E2940; color: #FFFFFF; }
 
 /* ── 진행 막대 (여섯 칸) ─────────────────────────── */
 .steps { display: flex; gap: 6px; flex: none; }
@@ -431,8 +477,23 @@ button.cell.tappable { border-style: solid; }
 .curation { display: flex; flex-direction: column; gap: 10px; }
 .curation a { color: var(--ink); }
 
-/* 결과 화면은 내용이 길어 스크롤됩니다 */
 #s-result { gap: 14px; }
+/* 결과 화면은 단추를 맨 아래로 밀지 않고 내용 바로 뒤에 둡니다 */
+#s-result .spacer { flex: none; height: 16px; }
+
+/* 내용이 길어 화면을 넘칠 때도 다음으로 가는 단추가 늘 보이도록
+   화면 아래에 붙여 둡니다. (결과 화면에서 단추가 잘려 보이던 문제) */
+.sticky-cta {
+  position: sticky;
+  bottom: 0;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 14px 0 calc(4px + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, rgba(11, 10, 23, 0) 0, var(--bg) 16px);
+}
 
 /* ── 앞서 다녀간 분들의 기록 ─────────────────────── */
 .recent-list {

@@ -42,8 +42,8 @@
   },
   "strings": {
     "heroNote": "키비주얼 영역 [디자이너] · 나비·꽃 이미지 사용 금지",
-    "startTitle": "여섯 장의 페이지를 넘겨 주세요.",
-    "startBody": "전시장 여섯 곳의 QR을 찍으면 페이지가 한 장씩 열립니다. 마지막 장은 당신이 씁니다.",
+    "startTitle": "전시를 읽고,\n기억을 확인합니다",
+    "startBody": "퀴즈는 전시장 곳곳의 QR을 찍을 때마다 한 문제씩 열립니다.\n아직 참여하지 않은 전시장의 QR을 찾아보세요!",
     "nickLabel": "기록에 남길 이름",
     "nickPlaceholder": "두 글자 이상",
     "startCta": "첫 페이지 열기",
@@ -55,7 +55,7 @@
     "collectTitleFormat": "{ord} 번째 페이지가 열렸습니다",
     "collectNote": "기록은 읽는 사람이 있을 때 이어집니다.",
     "collectCta": "페이지 모아 보기",
-    "boardTitle": "나의 페이지",
+    "boardTitle": "전시를 읽고,\n기억을 확인합니다",
     "boardCountFormat": "{total}장 중 {done}장",
     "boardNextLabel": "다음 페이지",
     "boardFreeOrder": "순서는 자유입니다. 천천히 둘러보세요.",
@@ -95,7 +95,13 @@
     "legendDone": "참여 완료",
     "legendTodo": "미참여",
     "myPickTag": "내 선택",
-    "recordTag": "기록"
+    "recordTag": "기록",
+    "quizHeadline": "전시를 읽고,\n기억을 확인합니다",
+    "pickHint": "보기를 눌러 답을 고르세요",
+    "boardEyebrowFormat": "QUIZ · {done} / {total}",
+    "boardBody": "퀴즈는 전시장 곳곳의 QR을 찍을 때마다 한 문제씩 열립니다.\n아직 참여하지 않은 전시장의 QR을 찾아보세요!",
+    "boardCta": "퀴즈 목록으로",
+    "footerLine": "한국여성인권진흥원 일본군 '위안부' 문제연구소 주관\n증언 : 다음페이지 - 2,745번째 기록"
   },
   "spots": [
     {
@@ -107,7 +113,7 @@
       "token": "yv9pgu",
       "item": {
         "name": "PAGE 1",
-        "label": "서문 연표"
+        "label": "서문 연표의 길"
       },
       "knowledge": {
         "q": "김학순 님이 피해 사실을 공개 증언한 해는 언제일까요?",
@@ -152,7 +158,7 @@
       "token": "42swf4",
       "item": {
         "name": "PAGE 2",
-        "label": "2744개 기록"
+        "label": "2,744개의 기록"
       },
       "knowledge": {
         "q": "유네스코 세계기록유산에 등재를 신청한 일본군'위안부' 관련 기록물은 몇 건일까요?",
@@ -197,7 +203,7 @@
       "token": "3gxvey",
       "item": {
         "name": "PAGE 3",
-        "label": "증언의 바다"
+        "label": "증언의 목소리"
       },
       "knowledge": {
         "q": "방금 들은 목소리는 몇 분의 증언이었을까요?",
