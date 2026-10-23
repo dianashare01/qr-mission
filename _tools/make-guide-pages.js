@@ -346,6 +346,9 @@ const SWITCH = [
 
 const COPYRIGHT = '© 2026 Diana Insight Inc.';
 
+/* 만족도 설문 — 네 언어 페이지가 같은 구글 설문지로 갑니다 */
+const SURVEY_URL = 'https://forms.gle/nEc7DDsexUAXtfrN9';
+
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -486,7 +489,7 @@ ${venues(me)}
 
 ${accordion(me)}
 
-        <a class="survey" href="#" data-soon>
+        <a class="survey" href="${SURVEY_URL}" target="_blank" rel="noopener">
           <span>
             <b>${esc(me.surveyTitle)}</b>
             <span class="s">${esc(me.surveySub)}</span>
