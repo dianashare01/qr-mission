@@ -28,6 +28,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const ALL_PROJECTS = [
   { key: 'wianbu', name: '위안부' },
   { key: 'inje', name: '박인환' },
+  { key: 'kcheckin', name: 'K-체크인' },
 ];
 
 /** 파일명에 못 쓰는 글자를 걸러낸다 */

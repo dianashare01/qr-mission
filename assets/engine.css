@@ -24,6 +24,14 @@
   --paper-line: #D6D1DD;
   --note: #C25B3E;        /* 해설 머리말 */
 
+  /* 뒤에 겹쳐 놓인 종이와 아래 여섯 칸 — 전시마다 색이 다릅니다 */
+  --paper-back: linear-gradient(180deg, #6F5F9A 0%, #A97A8E 55%, #F2B29A 100%);
+  --paper-side: linear-gradient(90deg, #D3CCE0 0 50%, #8F8999 50% 100%);
+  --pill: #2E2940;
+  --pill-ink: #C8C2D2;
+  --pill-now: #1D1A2B;
+  --pill-now-line: #FFFFFF;
+
   --radius: 12px;
   --radius-lg: 20px;
   --font-display: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
@@ -191,7 +199,7 @@ h1 {
   top: 0;
   height: 62%;
   border-radius: var(--radius-lg) var(--radius-lg) 6px 6px;
-  background: linear-gradient(180deg, #6F5F9A 0%, #A97A8E 55%, #F2B29A 100%);
+  background: var(--paper-back);
   transform-origin: 100% 100%;
   transform: rotate(-2.6deg);
   z-index: -2;
@@ -204,7 +212,7 @@ h1 {
   right: -18px;
   width: 20px;
   border-radius: 0 12px 12px 0;
-  background: linear-gradient(90deg, #D3CCE0 0 50%, #8F8999 50% 100%);
+  background: var(--paper-side);
   z-index: -1;
 }
 
@@ -286,7 +294,7 @@ h1 {
 .ansrow.is-mine { background: transparent; border: 1.5px dashed var(--paper-line); }
 
 .f-title { font-size: 15px; font-weight: 700; color: var(--note); margin-top: 22px; }
-.f-text { font-size: 14px; line-height: 1.8; color: #3A3A40; margin-top: 4px; }
+.f-text { font-size: 14px; line-height: 1.8; color: var(--paper-ink); margin-top: 4px; }
 .sheet .note { color: var(--paper-sub); }
 
 /* 「보기를 눌러 답을 고르세요」 */
@@ -295,7 +303,7 @@ h1 {
   margin-bottom: 12px;
   text-align: center;
   font-size: 13px;
-  color: #8E8894;
+  color: var(--paper-sub);
 }
 
 /* ── 버튼 ────────────────────────────────────────── */
@@ -349,15 +357,15 @@ h1 {
   place-items: center;
   border: 2px solid transparent;
   border-radius: 14px;
-  background: #2E2940;
-  color: #C8C2D2;
+  background: var(--pill);
+  color: var(--pill-ink);
   font-family: var(--font-mono);
   font-size: 15px;
   font-weight: 700;
 }
-.pill.now { background: #1D1A2B; border-color: #FFFFFF; color: #FFFFFF; }
+.pill.now { background: var(--pill-now); border-color: var(--pill-now-line); color: var(--ink); }
 .pill.ok { background: var(--accent); color: var(--on-accent); }
-.pill.no { background: #2E2940; color: #FFFFFF; }
+.pill.no { background: var(--pill); color: var(--ink); }
 
 /* ── 진행 막대 (여섯 칸) ─────────────────────────── */
 .steps { display: flex; gap: 6px; flex: none; }
@@ -500,7 +508,7 @@ button.cell.tappable { border-style: solid; }
   gap: 8px;
   margin-top: 8px;
   padding: 14px 0 calc(4px + env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, rgba(11, 10, 23, 0) 0, var(--bg) 16px);
+  background: linear-gradient(to bottom, transparent 0, var(--bg) 16px);
 }
 
 /* ── 앞서 다녀간 분들의 기록 ─────────────────────── */

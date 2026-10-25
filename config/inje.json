@@ -21,8 +21,21 @@
       "Gowun+Batang:wght@400;700",
       "Gowun+Dodum"
     ],
-    "radius": 2,
-    "onAccent": "#F2E9DA"
+    "radius": 12,
+    "onAccent": "#F2E9DA",
+    "paper": "#FFFFFF",
+    "paperInk": "#2B211C",
+    "paperSub": "#8A7B6C",
+    "paperSoft": "#F3EDE2",
+    "paperLine": "#D9CBB4",
+    "note": "#A3211B",
+    "radiusLg": 20,
+    "paperBack": "linear-gradient(180deg, #A3211B 0%, #C9774A 55%, #E6C79A 100%)",
+    "paperSide": "linear-gradient(90deg, #EADFC9 0 50%, #C7B291 50% 100%)",
+    "pill": "#EFE4D1",
+    "pillInk": "#8A7B6C",
+    "pillNow": "#FBF6EC",
+    "pillNowLine": "#2B211C"
   },
   "tone": {
     "knowledgeLabel": "퀴즈",
@@ -85,7 +98,13 @@
       "다섯",
       "여섯",
       "일곱"
-    ]
+    ],
+    "quizHeadline": "일곱 개의 시어를\n모아 주세요.",
+    "pickHint": "보기를 눌러 답을 고르세요",
+    "boardEyebrowFormat": "QUIZ · {done} / {total}",
+    "boardBody": "전시장 일곱 곳의 QR을 찍으면 시어가 하나씩 열립니다.\n모두 모으면 당신만의 시가 완성됩니다.",
+    "boardCta": "시어 모아 보기",
+    "footerLine": ""
   },
   "spots": [
     {
@@ -94,7 +113,7 @@
       "place": "1F 서문",
       "placeNote": "서문 시트 옆. 시작 안내 겸용",
       "hint": "서문 시트 옆",
-      "token": "CHANGE-ME-1",
+      "token": "tb5686",
       "item": {
         "name": "별",
         "label": "1F 서문"
@@ -139,7 +158,7 @@
       "place": "1F 행잉북·테이블 맵핑",
       "placeNote": "테이블 모서리. 맵핑 투사면 밖",
       "hint": "테이블 모서리",
-      "token": "CHANGE-ME-2",
+      "token": "hkm9by",
       "item": {
         "name": "바람",
         "label": "행잉북·테이블"
@@ -184,7 +203,7 @@
       "place": "1F 마리서사 재현실",
       "placeNote": "서가 선반",
       "hint": "서가 선반",
-      "token": "CHANGE-ME-3",
+      "token": "mepacb",
       "item": {
         "name": "세월",
         "label": "마리서사"
@@ -233,7 +252,7 @@
       "place": "1F 골방 (프로젝션룸)",
       "placeNote": "입구 바깥 벽. 암실 내부 금지",
       "hint": "입구 바깥 벽",
-      "token": "CHANGE-ME-4",
+      "token": "a4teqs",
       "item": {
         "name": "등대",
         "label": "골방"
@@ -278,7 +297,7 @@
       "place": "2F 시 낭송 방",
       "placeNote": "방 입구. 녹음 중 스캔 방지",
       "hint": "방 입구",
-      "token": "CHANGE-ME-5",
+      "token": "rq5dxn",
       "item": {
         "name": "숙녀",
         "label": "시 낭송 방"
@@ -323,7 +342,7 @@
       "place": "2F 타자기 방",
       "placeNote": "타자기 책상 위",
       "hint": "타자기 책상 위",
-      "token": "CHANGE-ME-6",
+      "token": "62fadg",
       "item": {
         "name": "가을",
         "label": "타자기 방"
@@ -368,7 +387,7 @@
       "place": "2F 바테이블 방",
       "placeNote": "바 상판. 완주 후 리워드 수령 동선과 연결",
       "hint": "바 상판",
-      "token": "CHANGE-ME-7",
+      "token": "den42x",
       "item": {
         "name": "술병",
         "label": "바테이블 방"

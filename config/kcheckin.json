@@ -1,0 +1,283 @@
+{
+  "title": "KOREA, CHECK-IN",
+  "prototype": true,
+  "allowRetake": true,
+  "api": { "baseUrl": "https://qr-mission-api.jhmonounity.workers.dev" },
+
+  "theme": {
+    "bg": "#0C1426",
+    "surface": "#14213D",
+    "ink": "#F4F6F9",
+    "inkSub": "#9AA8BF",
+    "accent": "#E3C277",
+    "onAccent": "#14213D",
+    "line": "#2C3B57",
+
+    "paper": "#FFFFFF",
+    "paperInk": "#14213D",
+    "paperSub": "#5B6A82",
+    "paperSoft": "#F1F4F8",
+    "paperLine": "#CBD3DF",
+    "note": "#C43D17",
+
+    "paperBack": "linear-gradient(180deg, #2E4F8F 0%, #5E6E94 50%, #E3C277 100%)",
+    "paperSide": "linear-gradient(90deg, #D7DEE9 0 50%, #8F9BAE 50% 100%)",
+    "pill": "#1E2C47",
+    "pillInk": "#9AA8BF",
+    "pillNow": "#14213D",
+    "pillNowLine": "#E3C277",
+
+    "fontDisplay": "Noto Sans KR",
+    "fontBody": "Noto Sans KR",
+    "fonts": ["Noto+Sans+KR:wght@400;500;700"],
+    "radius": 12,
+    "radiusLg": 20
+  },
+
+  "tone": {
+    "knowledgeLabel": "퀴즈",
+    "preferenceLabel": "나의 취향",
+    "correctLabel": "정답입니다!",
+    "wrongLabel": "아쉬워요.",
+    "celebrate": true,
+    "collectVerb": "아이템"
+  },
+
+  "strings": {
+    "heroNote": "키비주얼 영역 [디자이너]",
+    "startTitle": "한국에\n체크인하세요.",
+    "startBody": "하이커그라운드 곳곳의 QR 6개를 찍어 보세요.\n스톱마다 질문 두 개에 답하면 나만의 한국 여행 ZIP을 받습니다.",
+    "nickLabel": "게스트 이름",
+    "nickPlaceholder": "2~10자",
+    "startCta": "체크인하기",
+    "privacyNote": "회원가입 없음. 게스트 이름만 저장합니다.",
+
+    "quizHeadline": "한국에\n체크인하세요.",
+    "pickHint": "보기를 눌러 답을 고르세요",
+    "feedbackCta": "다음",
+
+    "itemArtNote": "아이템 일러스트 [디자이너]",
+    "collectTitleFormat": "{ord} 번째 아이템을 받았습니다",
+    "collectNote": "룸키에 담았습니다.",
+    "collectCta": "룸키 보기",
+
+    "boardTitle": "나의 룸키",
+    "boardEyebrowFormat": "CHECK-IN · {done} / {total}",
+    "boardBody": "하이커그라운드 곳곳의 QR 6개를 찍어 보세요.\n아직 들르지 않은 스톱의 QR을 찾아보세요!",
+    "boardCountFormat": "{total}개 중 {done}개 수집",
+    "boardNextLabel": "다음 스톱",
+    "boardFreeOrder": "순서는 자유입니다.",
+    "boardLockedCta": "나의 ZIP ({total}개를 모으면 열립니다)",
+    "boardOpenCta": "나의 ZIP 보기",
+    "boardCta": "룸키로 돌아가기",
+    "legendDone": "수집 완료",
+    "legendTodo": "미수집",
+    "myPickTag": "내 선택",
+
+    "recoveryLabel": "이어 하기 번호",
+    "recoveryNote": "이 휴대폰에서는 QR만 찍으면 자동으로 이어집니다. 휴대폰을 바꿀 때만 이 번호가 필요합니다.",
+    "restoreCta": "다른 기기에서 이어 하기",
+    "restorePrompt": "이어 하기 번호 6자리를 입력해 주세요.",
+    "restoreFail": "번호를 찾지 못했습니다.",
+
+    "resultEyebrow": "나의 한국 여행 ZIP",
+    "resultCurationTitle": "당신을 위한 추천",
+    "resultCta": "체크아웃하고 선물 받기",
+
+    "finishBadge": "체크아웃",
+    "finishTitle": "CHECK-OUT 데스크에서\n이 화면을 보여 주세요",
+    "finishBody": "",
+    "finishNote": "1인 1회. 운영요원이 확인합니다.",
+    "finishCta": "운영요원 확인",
+    "finishDoneTitle": "체크아웃 완료",
+    "finishDoneBody": "즐거운 한국 여행 되세요!",
+    "rewardLabel": "받으실 것",
+    "pinPrompt": "운영요원 확인 번호를 입력해 주세요.",
+    "pinWrong": "번호가 맞지 않습니다.",
+    "offlineNote": "서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+
+    "alreadyTitle": "이미 들른 스톱입니다",
+    "alreadyBody": "룸키로 돌아갑니다.",
+    "alreadyRetakeBody": "이 스톱은 이미 들르셨습니다. 다시 고르면 앞서 고른 답을 지우고 새로 시작합니다.",
+    "retakeCta": "다시 고르기",
+    "badTokenTitle": "스톱을 찾지 못했습니다",
+    "badTokenBody": "전시장의 QR을 다시 찍어 주세요.",
+    "closedTitle": "운영이 종료되었습니다",
+    "closedBody": "함께해 주셔서 고맙습니다.",
+
+    "footerLine": "HiKR Ground, Seoul\nKOREA, CHECK-IN",
+    "ordinals": ["첫", "두", "세", "네", "다섯", "여섯"]
+  },
+
+  "finish": {
+    "mode": "redeem",
+    "rewardName": "[리워드 품목 — 발주처 확정]",
+    "staffPin": true,
+    "pin": "0000",
+    "_pin": "현장 운영 전에 반드시 바꾸세요. 서버를 쓰면 Cloudflare 비밀값이 우선합니다."
+  },
+
+  "spots": [
+    {
+      "id": "k1", "order": 1, "token": "kxg9g4",
+      "place": "1F 프론트 데스크", "hint": "야외 체크인 카운터",
+      "item": { "name": "ITEM 1", "label": "프론트 데스크" },
+      "knowledge": {
+        "q": "‘안녕하세요’는 하루 중 언제 쓰는 인사일까요?",
+        "options": ["아침에만", "저녁에만", "언제나"],
+        "answer": 2,
+        "explain": "시간과 상관없이 쓰는 기본 인사입니다."
+      },
+      "preference": {
+        "q": "한국에 온 가장 큰 이유는 무엇인가요?",
+        "options": [
+          { "label": "맛집", "tag": "F" },
+          { "label": "뷰티 쇼핑", "tag": "B" },
+          { "label": "K-POP·드라마", "tag": "P" },
+          { "label": "쉬러 왔어요", "tag": "L" }
+        ]
+      }
+    },
+    {
+      "id": "k2", "order": 2, "token": "8bbqq2",
+      "place": "1F 포토 스폿", "hint": "야외, 입구 옆",
+      "item": { "name": "ITEM 2", "label": "포토 스폿" },
+      "knowledge": {
+        "q": "한국에서 사진을 찍을 때 흔히 외치는 말은 무엇일까요?",
+        "options": ["김치", "치즈", "스마일"],
+        "answer": 0,
+        "explain": "‘김치’라고 말하면 웃는 입 모양이 됩니다."
+      },
+      "preference": {
+        "q": "사진에 꼭 담고 싶은 것은 무엇인가요?",
+        "options": [
+          { "label": "음식", "tag": "F" },
+          { "label": "오늘의 내 스타일", "tag": "B" },
+          { "label": "촬영지·공연장", "tag": "P" },
+          { "label": "풍경", "tag": "L" }
+        ]
+      }
+    },
+    {
+      "id": "k3", "order": 3, "token": "4ds8zn",
+      "place": "5F 미니바", "hint": "미니바 오브제 옆",
+      "item": { "name": "ITEM 3", "label": "미니바" },
+      "knowledge": {
+        "q": "떡볶이의 주재료는 무엇일까요?",
+        "options": ["쌀떡", "밀국수", "고구마"],
+        "answer": 0,
+        "explain": "쌀떡을 고추장 양념에 끓인 대표 길거리 음식입니다."
+      },
+      "preference": {
+        "q": "미니바에서 가장 먼저 집을 것은 무엇인가요?",
+        "options": [
+          { "label": "매운 라면", "tag": "F" },
+          { "label": "시트 마스크", "tag": "B" },
+          { "label": "포토카드", "tag": "P" },
+          { "label": "전통차", "tag": "L" }
+        ]
+      }
+    },
+    {
+      "id": "k4", "order": 4, "token": "p3w9ws",
+      "place": "5F K-LOCAL 룸서비스", "hint": "시식 대기 줄 옆",
+      "item": { "name": "ITEM 4", "label": "K-LOCAL 룸서비스" },
+      "knowledge": {
+        "q": "한국에서 가장 큰 섬은 어디일까요?",
+        "options": ["제주도", "울릉도", "강화도"],
+        "answer": 0,
+        "explain": "제주도는 남쪽 바다에 있는 한국에서 가장 큰 섬입니다."
+      },
+      "preference": {
+        "q": "서울 밖으로 하루 떠난다면 어디로 가고 싶나요?",
+        "options": [
+          { "label": "시장 투어", "tag": "F" },
+          { "label": "스파·온천", "tag": "B" },
+          { "label": "촬영지 순례", "tag": "P" },
+          { "label": "숲과 바다", "tag": "L" }
+        ]
+      }
+    },
+    {
+      "id": "k5", "order": 5, "token": "v7dpdr",
+      "place": "5F 클래스 테이블", "hint": "클래스 테이블 바깥쪽",
+      "item": { "name": "ITEM 5", "label": "클래스 테이블" },
+      "knowledge": {
+        "q": "퍼스널 컬러에서 ‘웜톤·쿨톤’은 무엇을 뜻할까요?",
+        "options": ["나에게 어울리는 색 계열", "화장품 브랜드", "조명 종류"],
+        "answer": 0,
+        "explain": "피부·머리·눈동자 색에 어울리는 색 계열을 나눈 것입니다."
+      },
+      "preference": {
+        "q": "가장 듣고 싶은 클래스는 무엇인가요?",
+        "options": [
+          { "label": "K-푸드", "tag": "F" },
+          { "label": "퍼스널 컬러·메이크업", "tag": "B" },
+          { "label": "아이돌 문화", "tag": "P" },
+          { "label": "웰니스·전통", "tag": "L" }
+        ]
+      }
+    },
+    {
+      "id": "k6", "order": 6, "token": "xqy2pv",
+      "place": "5F 체크아웃", "hint": "CHECK-OUT 데스크",
+      "item": { "name": "ITEM 6", "label": "체크아웃" },
+      "knowledge": {
+        "q": "찜질방에서 수건으로 만들어 쓰는 머리 모양의 별명은 무엇일까요?",
+        "options": ["양머리", "토끼 귀", "왕관"],
+        "answer": 0,
+        "explain": "수건 양 끝을 말아 쓰는 ‘양머리’입니다."
+      },
+      "preference": {
+        "q": "집에 가져갈 한 가지는 무엇인가요?",
+        "options": [
+          { "label": "소스·간식", "tag": "F" },
+          { "label": "화장품", "tag": "B" },
+          { "label": "굿즈", "tag": "P" },
+          { "label": "공예품", "tag": "L" }
+        ]
+      }
+    }
+  ],
+
+  "result": {
+    "types": {
+      "F": {
+        "name": "미식 여행자",
+        "desc": "맛으로 여행하는 사람. 시장과 소스, 야식이 당신의 지도입니다.",
+        "curation": [
+          { "label": "추천 클래스", "value": "K-푸드 · K-여행 기념품" },
+          { "label": "이번 주 5F에서", "value": "K-LOCAL 룸서비스 시식" },
+          { "label": "다음 거점", "value": "성수 11.10~15, 신촌 11.17~22" }
+        ]
+      },
+      "B": {
+        "name": "뷰티 여행자",
+        "desc": "나에게 어울리는 것을 찾는 사람. 한국에는 해 볼 것이 많습니다.",
+        "curation": [
+          { "label": "추천 클래스", "value": "K-퍼스널 컬러 · K-메이크업" },
+          { "label": "이번 주 5F에서", "value": "K-LOCAL 룸서비스 시식" },
+          { "label": "다음 거점", "value": "성수 11.10~15, 신촌 11.17~22" }
+        ]
+      },
+      "P": {
+        "name": "팬 여행자",
+        "desc": "좋아하는 것을 따라 움직이는 사람. 촬영지에서 공연장까지.",
+        "curation": [
+          { "label": "추천 클래스", "value": "K-POP 아이돌 문화 · K-전통" },
+          { "label": "이번 주 5F에서", "value": "K-LOCAL 룸서비스 시식" },
+          { "label": "다음 거점", "value": "성수 11.10~15, 신촌 11.17~22" }
+        ]
+      },
+      "L": {
+        "name": "쉼 여행자",
+        "desc": "천천히 머무는 사람. 지역의 속도로 여행합니다.",
+        "curation": [
+          { "label": "추천 클래스", "value": "K-웰니스 · K-여행 스타일링" },
+          { "label": "이번 주 5F에서", "value": "K-LOCAL 룸서비스 시식" },
+          { "label": "다음 거점", "value": "성수 11.10~15, 신촌 11.17~22" }
+        ]
+      }
+    }
+  }
+}

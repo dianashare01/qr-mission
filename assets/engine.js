@@ -173,6 +173,12 @@
     if (t.paperSoft) r.setProperty('--paper-soft', t.paperSoft);
     if (t.paperLine) r.setProperty('--paper-line', t.paperLine);
     if (t.note) r.setProperty('--note', t.note);
+    if (t.paperBack) r.setProperty('--paper-back', t.paperBack);
+    if (t.paperSide) r.setProperty('--paper-side', t.paperSide);
+    if (t.pill) r.setProperty('--pill', t.pill);
+    if (t.pillInk) r.setProperty('--pill-ink', t.pillInk);
+    if (t.pillNow) r.setProperty('--pill-now', t.pillNow);
+    if (t.pillNowLine) r.setProperty('--pill-now-line', t.pillNowLine);
     if (t.radius != null) r.setProperty('--radius', t.radius + 'px');
     if (t.radiusLg != null) r.setProperty('--radius-lg', t.radiusLg + 'px');
     if (t.fontDisplay) r.setProperty('--font-display', "'" + t.fontDisplay + "', serif");
