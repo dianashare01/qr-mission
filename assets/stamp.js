@@ -20,19 +20,18 @@
   var view = { name: 'intro' };
   var pending = null;     // 체크인 전에 찍은 QR
   var toastTimer = null;
-  var hist = [];            // 뒤로가기용 — 거쳐 온 화면들
 
   var KEY = 'qrm:kcheckin';
   var A = '../assets/stamp/';
 
   /* ── 저장 ──────────────────────────────────────── */
   function fresh() {
-    return { v: 1, lang: null, nick: '', got: {}, order: [], code: null, checkedOut: null };
+    return { v: 1, lang: null, nick: '', got: {}, order: [], code: null, checkedOut: null, hist: [] };
   }
   function load() {
     try {
       var raw = JSON.parse(localStorage.getItem(KEY));
-      if (raw && raw.got && raw.order) return raw;
+      if (raw && raw.got && raw.order) { if (!raw.hist) raw.hist = []; return raw; }
     } catch (e) { /* 저장소를 못 쓰는 경우 */ }
     return fresh();
   }
@@ -191,7 +190,7 @@
       + '<div class="langs">' + btns + '</div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-go="checkin">' + esc(U('continueCta')) + '</button>'
-      + '</div>' + navBar('intro', null);
+      + '</div>' + navBar('back', null);
   };
 
   /* 체크인 — 이름 적기 */
@@ -206,7 +205,7 @@
       + '<div class="grow"></div>'
       + '<button class="btn" data-act="checkin">' + esc(U('checkinCta')) + '</button>'
       + '<div class="sub center" style="font-size:12px">' + esc(U('noSignup')) + '</div>'
-      + '</div>' + navBar('lang', null);
+      + '</div>' + navBar('back', null);
   };
 
   /* 스탬프 적립 화면 */
@@ -219,7 +218,7 @@
       + stampRow(view.pop)
       + '<div class="sub center" style="font-size:12.5px">' + esc(U('scanHow')) + '</div>'
       + '<div class="grow"></div>'
-      + '</div>' + navBar(hist.length ? 'back' : null, null);
+      + '</div>' + navBar(S.hist.length ? 'back' : null, null);
   };
 
   /* 7/7 체크아웃 준비 — 뒤로가기 없음 */
@@ -285,11 +284,12 @@
     window.scrollTo(0, 0);
     view.pop = null;
   }
-  /* 되돌아갈 만한 화면만 기억합니다. 이름 적기·언어 고르기는 빼 둡니다. */
-  var KEEP = { intro: 1, board: 1, done: 1, poster: 1, ready: 1 };
-
   function go(name, extra, back) {
-    if (!back && view.name && view.name !== name && KEEP[view.name]) hist.push(view.name);
+    if (!back && view.name && view.name !== name) {
+      S.hist.push(view.name);
+      if (S.hist.length > 20) S.hist.shift();
+      save();
+    }
     view = { name: name };
     if (extra) Object.keys(extra).forEach(function (k) { view[k] = extra[k]; });
     render();
@@ -362,7 +362,8 @@
     if (b.dataset.go) {
       var to = b.dataset.go;
       if (to === 'back') {
-        var prev = hist.pop();
+        var prev = S.hist.pop();
+        save();
         go(prev && prev !== view.name ? prev : 'intro', null, true);
         return;
       }
