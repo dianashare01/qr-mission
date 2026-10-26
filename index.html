@@ -10,6 +10,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- 글꼴은 설정 파일(theme.fonts)을 보고 engine.js 가 불러옵니다 -->
+<script>
+/* 인쇄한 QR 은 모두 이 쪽으로 들어옵니다.
+   스탬프 투어로 만든 전시는 전용 화면으로 넘겨 줍니다.
+   (주소에 담긴 s·t 는 그대로 넘깁니다) */
+(function () {
+  var STAMP = { kcheckin: 1 };
+  var p = new URLSearchParams(location.search).get("p");
+  if (p && STAMP[p]) location.replace("stamp/" + location.search);
+})();
+</script>
 <link rel="stylesheet" href="assets/engine.css">
 </head>
 <body>
