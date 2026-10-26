@@ -62,6 +62,10 @@
     return null;
   }
   function total() { return CFG.spots.length; }
+  function slotOf(sp) {
+    for (var i = 0; i < CFG.spots.length; i++) if (CFG.spots[i].id === sp.id) return i;
+    return 0;
+  }
   function count() { return S.order.length; }
   function isDone() { return count() >= total(); }
 
@@ -117,7 +121,9 @@
 
   function stepBar() {
     var n = count(), dots = '';
-    for (var i = 0; i < total(); i++) dots += '<i class="' + (i < n ? 'on' : '') + '"></i>';
+    CFG.spots.forEach(function (sp) {
+      dots += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
+    });
     return '<div class="steps"><div class="n"><b>' + n + '</b> / ' + total() + '</div>'
       + '<div class="dots">' + dots + '</div></div>';
   }
@@ -136,11 +142,11 @@
 
   function stampRow(popIndex) {
     var out = '';
-    for (var i = 0; i < total(); i++) {
-      var on = i < count();
+    CFG.spots.forEach(function (sp, i) {
+      var on = !!S.got[sp.id];
       var pop = (popIndex != null && i === popIndex) ? ' pop' : '';
-      out += '<div class="s ' + (on ? 'on' : '') + pop + '">' + (on ? 'K' : '') + '</div>';
-    }
+      out += '<div class="s ' + (on ? 'on' : '') + pop + '">' + (on ? 'K' : (i + 1)) + '</div>';
+    });
     return '<div class="stamps">' + out + '</div>';
   }
 
@@ -328,7 +334,7 @@
 
     if (S.got[sp.id]) { go('board'); toast(U('already')); return; }
 
-    var at = count();
+    var at = slotOf(sp);
     pressThen(function () {
       award(sp, true);
       if (isDone()) { go('ready'); return; }
@@ -351,7 +357,7 @@
 
     if (b.dataset.go) {
       var to = b.dataset.go;
-      if (to === 'checkin' && !S.lang) { S.lang = CFG.langs[0]; save(); }
+      if (to === 'checkin' && !S.lang) { S.lang = CFG.defaultLang || CFG.langs[0]; save(); }
       if (to === 'board' && S.checkedOut) { go('done'); return; }
       go(to);
       return;
@@ -371,7 +377,7 @@
         pressThen(function () {
           award(first, true);
           if (isDone()) { go('ready'); return; }
-          go('board', { pop: 0 });
+          go('board', { pop: slotOf(first) });
         });
       } else {
         go('board');
@@ -413,7 +419,7 @@
 
   function boot() {
     S = load();
-    if (!S.lang) S.lang = CFG.langs[0];
+    if (!S.lang) S.lang = CFG.defaultLang || CFG.langs[0];
 
     var q = new URLSearchParams(location.search);
 
@@ -421,7 +427,7 @@
     if (q.get('reset') === '1' && CFG.prototype === true) {
       try { localStorage.removeItem(KEY); } catch (e) { /* 저장소를 못 쓰는 경우 */ }
       S = fresh();
-      S.lang = CFG.langs[0];
+      S.lang = CFG.defaultLang || CFG.langs[0];
     }
 
     if (periodClosed()) { go('closed'); return; }

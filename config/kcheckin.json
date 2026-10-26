@@ -4,13 +4,13 @@
   "event": "KOREA CHECK-IN",
   "room": "1108",
   "prototype": true,
-
   "_note": "한국관광공사 하이커그라운드 QR 스탬프 투어 가이드 v0.2 를 따릅니다. 스팟의 id 와 token 은 인쇄한 QR 에 들어 있으므로 절대 바꾸지 마세요.",
-
-  "period": { "close": "2026-11-30" },
-
-  "checkout": { "desk": "5F FRONT DESK" },
-
+  "period": {
+    "close": "2026-11-30"
+  },
+  "checkout": {
+    "desk": "5F FRONT DESK"
+  },
   "theme": {
     "bg": "#12271B",
     "card": "#1C3A28",
@@ -21,8 +21,13 @@
     "wood": "#6A4D3B",
     "line": "#2C4A36"
   },
-
-  "langs": ["en", "ko", "ja", "zhCN", "zhTW"],
+  "langs": [
+    "en",
+    "ko",
+    "ja",
+    "zhCN",
+    "zhTW"
+  ],
   "langNames": {
     "en": "ENGLISH",
     "ko": "한국어",
@@ -30,17 +35,58 @@
     "zhCN": "简体中文",
     "zhTW": "繁體中文"
   },
-
   "spots": [
-    { "order": 1, "id": "k1", "token": "kxg9g4", "floor": "1F", "name": "THE RECEPTION", "auto": true },
-    { "order": 2, "id": "k3", "token": "4ds8zn", "floor": "1F", "name": "THE MINIBAR" },
-    { "order": 3, "id": "k2", "token": "8bbqq2", "floor": "1F", "name": "THE LOCAL CONCIERGE" },
-    { "order": 4, "id": "k4", "token": "p3w9ws", "floor": "1F", "name": "THE FOOD TRAILER" },
-    { "order": 5, "id": "k7", "token": "ht6qsw", "floor": "3F", "name": "BONUS STAMP" },
-    { "order": 6, "id": "k5", "token": "v7dpdr", "floor": "5F", "name": "THE FRONT DESK" },
-    { "order": 7, "id": "k6", "token": "xqy2pv", "floor": "5F", "name": "THE K-CLASS" }
+    {
+      "order": 1,
+      "id": "k1",
+      "token": "kxg9g4",
+      "floor": "1F",
+      "name": "THE RECEPTION",
+      "auto": true
+    },
+    {
+      "order": 2,
+      "id": "k3",
+      "token": "4ds8zn",
+      "floor": "1F",
+      "name": "THE MINIBAR"
+    },
+    {
+      "order": 3,
+      "id": "k2",
+      "token": "8bbqq2",
+      "floor": "1F",
+      "name": "THE LOCAL CONCIERGE"
+    },
+    {
+      "order": 4,
+      "id": "k4",
+      "token": "p3w9ws",
+      "floor": "1F",
+      "name": "THE FOOD TRAILER"
+    },
+    {
+      "order": 5,
+      "id": "k7",
+      "token": "ht6qsw",
+      "floor": "3F",
+      "name": "BONUS STAMP"
+    },
+    {
+      "order": 6,
+      "id": "k5",
+      "token": "v7dpdr",
+      "floor": "5F",
+      "name": "THE FRONT DESK"
+    },
+    {
+      "order": 7,
+      "id": "k6",
+      "token": "xqy2pv",
+      "floor": "5F",
+      "name": "THE K-CLASS"
+    }
   ],
-
   "annex": [
     {
       "id": "seongsu",
@@ -57,9 +103,14 @@
       "image": "assets/stamp/sinchon.jpg"
     }
   ],
-
   "ui": {
-    "stampTour": { "en": "STAMP TOUR", "ko": "스탬프 투어", "ja": "スタンプツアー", "zhCN": "集章之旅", "zhTW": "集章之旅" },
+    "stampTour": {
+      "en": "STAMP TOUR",
+      "ko": "스탬프 투어",
+      "ja": "スタンプツアー",
+      "zhCN": "集章之旅",
+      "zhTW": "集章之旅"
+    },
     "tagline": {
       "en": "Collect 7 Stamps, Get a Gift",
       "ko": "스탬프 7개를 모으면 선물을 드립니다",
@@ -67,12 +118,48 @@
       "zhCN": "集满7个印章，即可获赠礼物",
       "zhTW": "集滿7個印章，即可獲贈禮物"
     },
-    "continueCta": { "en": "CONTINUE TO CHECK-IN", "ko": "체크인하러 가기", "ja": "チェックインへ進む", "zhCN": "前往入住登记", "zhTW": "前往入住登記" },
-    "langTitle": { "en": "SELECT LANGUAGE", "ko": "언어를 골라 주세요", "ja": "言語を選んでください", "zhCN": "请选择语言", "zhTW": "請選擇語言" },
-    "guestLabel": { "en": "Guest name", "ko": "게스트 이름", "ja": "ゲスト名", "zhCN": "住客昵称", "zhTW": "住客暱稱" },
-    "guestPh": { "en": "2-10 characters", "ko": "2~10자", "ja": "2〜10文字", "zhCN": "2-10个字", "zhTW": "2-10個字" },
-    "checkinCta": { "en": "ISSUING KEY · COMPLETE CHECK-IN", "ko": "룸키 받고 체크인 완료", "ja": "ルームキーを受け取る", "zhCN": "领取房卡并完成入住", "zhTW": "領取房卡並完成入住" },
-    "errShort": { "en": "Enter at least 2 characters.", "ko": "두 글자 이상 적어 주세요.", "ja": "2文字以上入力してください。", "zhCN": "请输入至少2个字。", "zhTW": "請輸入至少2個字。" },
+    "continueCta": {
+      "en": "CONTINUE TO CHECK-IN",
+      "ko": "체크인하러 가기",
+      "ja": "チェックインへ進む",
+      "zhCN": "前往入住登记",
+      "zhTW": "前往入住登記"
+    },
+    "langTitle": {
+      "en": "SELECT LANGUAGE",
+      "ko": "언어를 골라 주세요",
+      "ja": "言語を選んでください",
+      "zhCN": "请选择语言",
+      "zhTW": "請選擇語言"
+    },
+    "guestLabel": {
+      "en": "Guest name",
+      "ko": "게스트 이름",
+      "ja": "ゲスト名",
+      "zhCN": "住客昵称",
+      "zhTW": "住客暱稱"
+    },
+    "guestPh": {
+      "en": "2-10 characters",
+      "ko": "2~10자",
+      "ja": "2〜10文字",
+      "zhCN": "2-10个字",
+      "zhTW": "2-10個字"
+    },
+    "checkinCta": {
+      "en": "ISSUING KEY · COMPLETE CHECK-IN",
+      "ko": "룸키 받고 체크인 완료",
+      "ja": "ルームキーを受け取る",
+      "zhCN": "领取房卡并完成入住",
+      "zhTW": "領取房卡並完成入住"
+    },
+    "errShort": {
+      "en": "Enter at least 2 characters.",
+      "ko": "두 글자 이상 적어 주세요.",
+      "ja": "2文字以上入力してください。",
+      "zhCN": "请输入至少2个字。",
+      "zhTW": "請輸入至少2個字。"
+    },
     "noSignup": {
       "en": "No sign-up. Saved on this phone and browser only.",
       "ko": "회원가입 없음. 이 휴대폰·이 브라우저에만 저장됩니다.",
@@ -80,7 +167,13 @@
       "zhCN": "无需注册。仅保存在本机浏览器中。",
       "zhTW": "無需註冊。僅保存在本機瀏覽器中。"
     },
-    "scanTitle": { "en": "SCAN CHECK-IN QR CODE", "ko": "QR 코드를 찍어 주세요", "ja": "QRコードをスキャン", "zhCN": "请扫描二维码", "zhTW": "請掃描QR碼" },
+    "scanTitle": {
+      "en": "SCAN CHECK-IN QR CODE",
+      "ko": "QR 코드를 찍어 주세요",
+      "ja": "QRコードをスキャン",
+      "zhCN": "请扫描二维码",
+      "zhTW": "請掃描QR碼"
+    },
     "scanHow": {
       "en": "Open your phone camera and point it at the QR code at the next stop.",
       "ko": "휴대폰 카메라를 켜고 다음 거점의 QR 코드를 비춰 주세요.",
@@ -88,12 +181,48 @@
       "zhCN": "请打开手机相机，对准下一站的二维码。",
       "zhTW": "請打開手機相機，對準下一站的QR碼。"
     },
-    "next": { "en": "NEXT", "ko": "NEXT", "ja": "NEXT", "zhCN": "NEXT", "zhTW": "NEXT" },
-    "back": { "en": "BACK", "ko": "뒤로", "ja": "戻る", "zhCN": "返回", "zhTW": "返回" },
-    "stampGot": { "en": "Stamp collected", "ko": "스탬프를 받았습니다", "ja": "スタンプを獲得しました", "zhCN": "已获得印章", "zhTW": "已獲得印章" },
-    "already": { "en": "You already have this stamp.", "ko": "이미 받은 스탬프입니다.", "ja": "すでに獲得したスタンプです。", "zhCN": "这个印章已经收集过了。", "zhTW": "這個印章已經收集過了。" },
-    "badQr": { "en": "This QR code is not part of the tour.", "ko": "이 투어의 QR 코드가 아닙니다.", "ja": "このツアーのQRコードではありません。", "zhCN": "这不是本次活动的二维码。", "zhTW": "這不是本次活動的QR碼。" },
-    "readyTitle": { "en": "CHECK-OUT READY", "ko": "체크아웃 준비 완료", "ja": "チェックアウト準備完了", "zhCN": "可以退房了", "zhTW": "可以退房了" },
+    "next": {
+      "en": "NEXT",
+      "ko": "NEXT",
+      "ja": "NEXT",
+      "zhCN": "NEXT",
+      "zhTW": "NEXT"
+    },
+    "back": {
+      "en": "BACK",
+      "ko": "뒤로",
+      "ja": "戻る",
+      "zhCN": "返回",
+      "zhTW": "返回"
+    },
+    "stampGot": {
+      "en": "Stamp collected",
+      "ko": "스탬프를 받았습니다",
+      "ja": "スタンプを獲得しました",
+      "zhCN": "已获得印章",
+      "zhTW": "已獲得印章"
+    },
+    "already": {
+      "en": "You already have this stamp.",
+      "ko": "이미 받은 스탬프입니다.",
+      "ja": "すでに獲得したスタンプです。",
+      "zhCN": "这个印章已经收集过了。",
+      "zhTW": "這個印章已經收集過了。"
+    },
+    "badQr": {
+      "en": "This QR code is not part of the tour.",
+      "ko": "이 투어의 QR 코드가 아닙니다.",
+      "ja": "このツアーのQRコードではありません。",
+      "zhCN": "这不是本次活动的二维码。",
+      "zhTW": "這不是本次活動的QR碼。"
+    },
+    "readyTitle": {
+      "en": "CHECK-OUT READY",
+      "ko": "체크아웃 준비 완료",
+      "ja": "チェックアウト準備完了",
+      "zhCN": "可以退房了",
+      "zhTW": "可以退房了"
+    },
     "readyBody": {
       "en": "Please check out at the {desk}.",
       "ko": "{desk} 에서 체크아웃해 주세요.",
@@ -101,11 +230,48 @@
       "zhCN": "请到 {desk} 办理退房。",
       "zhTW": "請到 {desk} 辦理退房。"
     },
-    "readyCta": { "en": "Show this screen to our staff", "ko": "이 화면을 직원에게 보여 주세요", "ja": "この画面をスタッフにお見せください", "zhCN": "请向工作人员出示此页面", "zhTW": "請向工作人員出示此頁面" },
-    "doneTitle": { "en": "CHECK-OUT COMPLETE", "ko": "체크아웃 완료", "ja": "チェックアウト完了", "zhCN": "退房完成", "zhTW": "退房完成" },
-    "doneBody": { "en": "Thank you for staying with us!", "ko": "함께해 주셔서 고맙습니다!", "ja": "ご利用ありがとうございました！", "zhCN": "感谢你的入住！", "zhTW": "感謝你的入住！" },
-    "nextStay": { "en": "YOUR NEXT STAY AWAITS", "ko": "다음 숙박이 기다립니다", "ja": "次のご滞在が待っています", "zhCN": "下一次入住正在等你", "zhTW": "下一次入住正在等你" },
-    "closedTitle": { "en": "The stamp tour has ended.", "ko": "스탬프 투어가 종료되었습니다.", "ja": "スタンプツアーは終了しました。", "zhCN": "集章活动已结束。", "zhTW": "集章活動已結束。" },
-    "closedBody": { "en": "Thank you for your interest.", "ko": "관심 가져 주셔서 고맙습니다.", "ja": "ご関心をお寄せいただきありがとうございました。", "zhCN": "感谢你的关注。", "zhTW": "感謝你的關注。" }
-  }
+    "readyCta": {
+      "en": "Show this screen to our staff",
+      "ko": "이 화면을 직원에게 보여 주세요",
+      "ja": "この画面をスタッフにお見せください",
+      "zhCN": "请向工作人员出示此页面",
+      "zhTW": "請向工作人員出示此頁面"
+    },
+    "doneTitle": {
+      "en": "CHECK-OUT COMPLETE",
+      "ko": "체크아웃 완료",
+      "ja": "チェックアウト完了",
+      "zhCN": "退房完成",
+      "zhTW": "退房完成"
+    },
+    "doneBody": {
+      "en": "Thank you for staying with us!",
+      "ko": "함께해 주셔서 고맙습니다!",
+      "ja": "ご利用ありがとうございました！",
+      "zhCN": "感谢你的入住！",
+      "zhTW": "感謝你的入住！"
+    },
+    "nextStay": {
+      "en": "YOUR NEXT STAY AWAITS",
+      "ko": "다음 숙박이 기다립니다",
+      "ja": "次のご滞在が待っています",
+      "zhCN": "下一次入住正在等你",
+      "zhTW": "下一次入住正在等你"
+    },
+    "closedTitle": {
+      "en": "The stamp tour has ended.",
+      "ko": "스탬프 투어가 종료되었습니다.",
+      "ja": "スタンプツアーは終了しました。",
+      "zhCN": "集章活动已结束。",
+      "zhTW": "集章活動已結束。"
+    },
+    "closedBody": {
+      "en": "Thank you for your interest.",
+      "ko": "관심 가져 주셔서 고맙습니다.",
+      "ja": "ご関心をお寄せいただきありがとうございました。",
+      "zhCN": "感谢你的关注。",
+      "zhTW": "感謝你的關注。"
+    }
+  },
+  "defaultLang": "ko"
 }
