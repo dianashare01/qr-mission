@@ -314,26 +314,17 @@
     return true;
   }
 
-  /* 도장 찍히는 연출 — 디자이너가 준 0.8초 영상 */
+  /* 도장 찍히는 연출 — 0.8초 */
   function pressThen(fn) {
     var p = document.createElement('div');
     p.className = 'press';
-    p.innerHTML = '<video src="' + A + 'press.webm" autoplay muted playsinline></video>';
+    p.innerHTML = '<div class="anim" aria-hidden="true"></div>';
     app.appendChild(p);
 
-    var done = false;
-    var finish = function () {
-      if (done) return;
-      done = true;
+    setTimeout(function () {
       if (p.parentNode) p.parentNode.removeChild(p);
       fn();
-    };
-    var v = p.querySelector('video');
-    if (v) {
-      v.addEventListener('ended', finish);
-      v.play().catch(function () { /* 자동 재생을 막는 기기 */ });
-    }
-    setTimeout(finish, 1000);   // 영상이 안 돌아도 넘어갑니다
+    }, 820);
   }
 
   function arrive(sp) {

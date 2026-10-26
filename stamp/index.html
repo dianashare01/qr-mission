@@ -248,7 +248,9 @@ img { display: block; max-width: 100%; }
 .poster { width: 100%; }
 .poster img { width: 100%; border-radius: 12px; }
 
-/* ── 도장 찍히는 연출 ───────────────────────────── */
+/* ── 도장 찍히는 연출 ─────────────────────────────
+   디자이너가 준 0.8초 영상을 그림 스무 장으로 펼쳐 한 칸씩 넘깁니다.
+   투명 webm 은 아이폰 사파리에서 뒤가 까맣게 나와 쓰지 못합니다. */
 .press {
   position: absolute;
   inset: 0;
@@ -257,12 +259,37 @@ img { display: block; max-width: 100%; }
   place-items: center;
   background: rgba(7, 26, 18, .65);   /* 뒤 화면이 비쳐 보이게 */
 }
-/* 도장이 화면 가로의 약 63% 로 보이도록 영상을 키우고,
-   도장 중심이 화면 위쪽 45% 에 오도록 올려 둡니다. (시안 기준) */
-.press video {
+/* 도장이 화면 가로의 약 63%, 중심이 위쪽 45% 에 오도록 (시안 기준) */
+.press .anim {
   width: 157%;
-  max-width: none;
+  aspect-ratio: 1;
   transform: translateY(-18.6%);
+  background-image: url('../assets/stamp/press.webp');
+  background-repeat: no-repeat;
+  background-size: 500% 400%;
+  animation: stamping .8s step-end forwards;
+}
+@keyframes stamping {
+  0% { background-position: 0% 0%; }
+  5% { background-position: 25% 0%; }
+  10% { background-position: 50% 0%; }
+  15% { background-position: 75% 0%; }
+  20% { background-position: 100% 0%; }
+  25% { background-position: 0% 33.3333%; }
+  30% { background-position: 25% 33.3333%; }
+  35% { background-position: 50% 33.3333%; }
+  40% { background-position: 75% 33.3333%; }
+  45% { background-position: 100% 33.3333%; }
+  50% { background-position: 0% 66.6667%; }
+  55% { background-position: 25% 66.6667%; }
+  60% { background-position: 50% 66.6667%; }
+  65% { background-position: 75% 66.6667%; }
+  70% { background-position: 100% 66.6667%; }
+  75% { background-position: 0% 100%; }
+  80% { background-position: 25% 100%; }
+  85% { background-position: 50% 100%; }
+  90% { background-position: 75% 100%; }
+  95% { background-position: 100% 100%; }
 }
 
 /* ── 알림 ──────────────────────────────────────── */
