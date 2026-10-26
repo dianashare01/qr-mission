@@ -1,15 +1,14 @@
 /* KOREA, CHECK-IN — QR 스탬프 투어
  * ─────────────────────────────────────────────────────────────
- * 한국관광공사 하이커그라운드 가이드 v0.2 의 화면 순서를 그대로 따릅니다.
+ * 디자인 시안(01 첫 화면 · 02 단계별 화면 · 03 카메라 스캔 · 07 성수·신촌)을 따릅니다.
  *
- *   첫 화면 → 언어 → 체크인(이름) → [스탬프 적립] ⇄ [QR 찍기]
- *            → 7/7 체크아웃 준비 → 체크아웃 완료 → 성수·신촌 안내
+ *   첫 화면 → 언어 → 체크인(이름) → 스탬프 적립 … → 7/7 체크아웃 → 완료 → 성수·신촌
  *
- * QR 주소는 저장소 맨 위 index.html 로 들어온 뒤 이 쪽으로 넘어옵니다.
+ * 인쇄한 QR 은 저장소 맨 위 index.html 로 들어온 뒤 이 쪽으로 넘어옵니다.
  *   ?p=kcheckin&s=<스팟>&t=<토큰>
  *
  * 기록은 이 휴대폰·이 브라우저에만 남습니다(회원가입 없음).
- * 문구·거점·색은 config/kcheckin.json 에만 있습니다.
+ * 문구·거점·기간은 config/kcheckin.json 에만 있습니다.
  */
 
 (function () {
@@ -21,8 +20,10 @@
   var view = { name: 'intro' };
   var pending = null;     // 체크인 전에 찍은 QR
   var toastTimer = null;
+  var hist = [];            // 뒤로가기용 — 거쳐 온 화면들
 
   var KEY = 'qrm:kcheckin';
+  var A = '../assets/stamp/';
 
   /* ── 저장 ──────────────────────────────────────── */
   function fresh() {
@@ -61,15 +62,14 @@
     for (var i = 0; i < CFG.spots.length; i++) if (CFG.spots[i].id === id) return CFG.spots[i];
     return null;
   }
-  function total() { return CFG.spots.length; }
   function slotOf(sp) {
     for (var i = 0; i < CFG.spots.length; i++) if (CFG.spots[i].id === sp.id) return i;
     return 0;
   }
+  function total() { return CFG.spots.length; }
   function count() { return S.order.length; }
   function isDone() { return count() >= total(); }
 
-  /* 다음으로 가야 할 거점 — 번호 순으로 아직 안 찍은 첫 곳 */
   function nextSpot() {
     for (var i = 0; i < CFG.spots.length; i++) {
       if (!S.got[CFG.spots[i].id]) return CFG.spots[i];
@@ -78,7 +78,7 @@
   }
   function spotLine(sp) { return sp ? sp.name + ' · ' + sp.floor : ''; }
 
-  /* 체크아웃 코드 — 가이드의 A1B2 C3D4-E5F6 모양 */
+  /* 체크아웃 코드 — 시안의 A1B2 C3D4-E5F6 모양 */
   function makeCode() {
     var CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     var out = '';
@@ -86,80 +86,79 @@
     return out.slice(0, 4) + ' ' + out.slice(4, 8) + '-' + out.slice(8, 12);
   }
 
-  /* ── 그림 조각 ─────────────────────────────────── */
-  var KEYART =
-    '<svg viewBox="0 0 86 132" fill="none" aria-hidden="true">'
-    + '<g stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">'
-    + '<path d="M26 8 V122"/>'
-    + '<path d="M26 54 L64 8"/>'
-    + '<path d="M26 54 L52 86"/>'
-    + '<path d="M26 100 H50"/>'
-    + '<path d="M26 114 H44"/>'
-    + '</g>'
-    + '</svg>';
-
-  var STAMPART =
-    '<svg viewBox="0 0 120 120" fill="none" aria-hidden="true">'
-    + '<rect x="40" y="10" width="40" height="44" rx="8" fill="#C9A24B"/>'
-    + '<rect x="24" y="54" width="72" height="22" rx="7" fill="#E0BE72"/>'
-    + '<rect x="18" y="76" width="84" height="16" rx="6" fill="#B8923F"/>'
-    + '</svg>';
-
+  /* ── 작은 그림 ─────────────────────────────────── */
   function icon(name) {
     var p = {
       back: '<path d="M15 5 L8 12 L15 19"/>',
       next: '<path d="M9 5 L16 12 L9 19"/>',
       home: '<path d="M4 11 L12 4 L20 11 V20 H4 Z"/>',
-      chev: '<path d="M6 9 L12 15 L18 9"/>',
+      out: '<path d="M8 16 L16 8 M9 8 H16 V15"/>',
     }[name] || '';
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
       + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   }
 
   /* ── 공통 조각 ─────────────────────────────────── */
-  function ciBar() { return '<div class="ci"><i></i><i></i></div>'; }
-
-  function stepBar() {
-    var n = count(), dots = '';
-    CFG.spots.forEach(function (sp) {
-      dots += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
-    });
-    return '<div class="steps"><div class="n"><b>' + n + '</b> / ' + total() + '</div>'
-      + '<div class="dots">' + dots + '</div></div>';
+  function ciBar() {
+    return '<div class="ci">'
+      + '<img src="' + A + 'ci-mcst.png" alt="문화체육관광부">'
+      + '<img src="' + A + 'ci-kto.png" alt="한국관광공사">'
+      + '</div>';
   }
 
-  function nextLine() {
+  function journey() {
+    var n = Math.max(1, count());
+    var bars = '';
+    CFG.spots.forEach(function (sp) {
+      bars += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
+    });
+    return '<div class="journey">'
+      + '<span class="lb">' + esc(U('journey')) + '</span>'
+      + '<span class="ct"><b>' + n + '</b> / ' + total() + '</span>'
+      + '</div><div class="bars">' + bars + '</div>';
+  }
+
+  function card(gold, small) {
+    return '<img class="card' + (small ? ' sm' : '') + '" src="' + A
+      + (gold ? 'card-gold.png' : 'card-green.png') + '" alt="KOREA CHECK-IN">';
+  }
+
+  function nextPill() {
     var sp = nextSpot();
     if (!sp) return '';
-    return '<div class="nextline"><div class="k">NEXT</div>'
-      + '<div class="v">&rarr; ' + esc(spotLine(sp)) + '</div></div>';
-  }
-
-  function keyCard(gold) {
-    return '<div class="key ' + (gold ? 'gold' : '') + '"><div class="top"></div>'
-      + '<div class="body" style="color:' + (gold ? '#6B531C' : 'var(--gold)') + '">' + KEYART + '</div></div>';
+    return '<div class="nextpill"><b>NEXT &rarr;</b> ' + esc(spotLine(sp)) + '</div>';
   }
 
   function stampRow(popIndex) {
     var out = '';
     CFG.spots.forEach(function (sp, i) {
       var on = !!S.got[sp.id];
-      var pop = (popIndex != null && i === popIndex) ? ' pop' : '';
-      out += '<div class="s ' + (on ? 'on' : '') + pop + '">' + (on ? 'K' : (i + 1)) + '</div>';
+      var isNew = (popIndex != null && i === popIndex);
+      var img = on
+        ? '<img src="' + A + (isNew ? 'stamp-new.png' : 'stamp-on.png') + '" alt="">'
+        : '';
+      out += '<div class="s ' + (on ? 'on' : '') + (isNew ? ' pop' : '') + '">' + img + '</div>';
     });
     return '<div class="stamps">' + out + '</div>';
   }
 
-  function wordmark() {
-    return '<div class="wm"><b>KOREA</b>CHECK-IN</div>';
+  function navBar(left, right) {
+    var side = function (which, go) {
+      if (!go) return '<span class="ico off"></span>';
+      return '<button class="ico" data-go="' + go + '" aria-label="' + esc(U(which)) + '">'
+        + icon(which === 'back' ? 'back' : 'next') + '</button>';
+    };
+    return '<div class="nav">'
+      + side('back', left)
+      + '<img class="mark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
+      + side('next', right)
+      + '</div>';
   }
 
-  function bottomBar(left, right) {
-    return '<div class="bottom">'
-      + (left ? '<button class="ico" data-go="' + left + '" aria-label="' + esc(U('back')) + '">' + icon('back') + '</button>' : '<span class="ico"></span>')
-      + wordmark()
-      + (right ? '<button class="ico on" data-go="' + right + '" aria-label="' + esc(U('next')) + '">' + icon('next') + '</button>' : '<span class="ico"></span>')
-      + '</div>';
+  function markOnly() {
+    return '<div class="nav"><span class="ico off"></span>'
+      + '<img class="mark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
+      + '<span class="ico off"></span></div>';
   }
 
   /* ── 화면 ──────────────────────────────────────── */
@@ -167,12 +166,12 @@
 
   /* 첫 화면 */
   R.intro = function () {
-    return ciBar() + stepBar()
+    return journey() + ciBar()
       + '<div class="main">'
-      + '<div style="letter-spacing:.2em;font-family:var(--serif);font-size:22px" class="center">KOREA<br><span style="font-size:26px">CHECK-IN</span></div>'
-      + keyCard(false)
-      + '<div class="center"><div class="title-sm">' + esc(U('stampTour')) + '</div>'
-      + '<div class="sub" style="margin-top:6px">' + esc(U('tagline')) + '</div></div>'
+      + '<img class="bigmark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
+      + card(false)
+      + '<div class="center"><div class="h-title">' + esc(U('stampTour')) + '</div>'
+      + '<div class="sub" style="margin-top:4px">' + esc(U('tagline')) + '</div></div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-go="lang">' + esc(U('continueCta')) + '</button>'
       + '</div>';
@@ -184,22 +183,22 @@
       return '<button class="lang" data-lang="' + l + '" aria-pressed="' + (S.lang === l) + '">'
         + esc(CFG.langNames[l]) + '</button>';
     }).join('');
-    return ciBar() + stepBar()
+    return journey() + ciBar()
       + '<div class="main">'
       + '<div class="grow"></div>'
-      + '<div class="title-sm center">' + esc(U('langTitle')) + '</div>'
+      + '<img class="bigmark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
+      + '<div class="sub center">' + esc(U('langTitle')) + '</div>'
       + '<div class="langs">' + btns + '</div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-go="checkin">' + esc(U('continueCta')) + '</button>'
-      + '</div>' + bottomBar('intro', null);
+      + '</div>' + navBar('intro', null);
   };
 
   /* 체크인 — 이름 적기 */
   R.checkin = function () {
-    return ciBar() + stepBar()
+    return journey() + ciBar()
       + '<div class="main">'
-      + '<div class="sub center" style="font-family:var(--mono);letter-spacing:.14em">ROOM ' + esc(CFG.room) + '</div>'
-      + keyCard(false)
+      + card(false, true)
       + '<div class="field"><label for="nick">' + esc(U('guestLabel')) + '</label>'
       + '<input id="nick" type="text" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" '
       + 'placeholder="' + esc(U('guestPh')) + '" value="' + esc(S.nick) + '">'
@@ -207,52 +206,53 @@
       + '<div class="grow"></div>'
       + '<button class="btn" data-act="checkin">' + esc(U('checkinCta')) + '</button>'
       + '<div class="sub center" style="font-size:12px">' + esc(U('noSignup')) + '</div>'
-      + '</div>' + bottomBar('lang', null);
+      + '</div>' + navBar('lang', null);
   };
 
   /* 스탬프 적립 화면 */
   R.board = function () {
-    return ciBar() + stepBar() + nextLine()
+    return journey() + ciBar()
       + '<div class="main">'
-      + keyCard(false)
+      + card(false)
+      + nextPill()
       + '<div class="grow"></div>'
       + stampRow(view.pop)
       + '<div class="sub center" style="font-size:12.5px">' + esc(U('scanHow')) + '</div>'
       + '<div class="grow"></div>'
-      + '</div>' + bottomBar(null, null);
+      + '</div>' + navBar(hist.length ? 'back' : null, null);
   };
 
   /* 7/7 체크아웃 준비 — 뒤로가기 없음 */
   R.ready = function () {
-    return ciBar() + stepBar()
+    // 어떤 경로로 들어와도 코드가 비어 있지 않게 합니다
+    if (!S.code) { S.code = makeCode(); save(); }
+    return journey() + ciBar()
       + '<div class="main">'
-      + keyCard(true)
-      + '<div class="center"><div class="title-sm gold">' + esc(U('readyTitle')) + '</div>'
-      + '<div class="sub" style="margin-top:6px">' + esc(U('readyBody', { desk: CFG.checkout.desk })) + '</div></div>'
+      + card(true)
+      + '<div class="center"><div class="h-title">' + esc(U('readyTitle')) + '</div>'
+      + '<div class="sub" style="margin-top:4px">' + esc(U('readyBody', { desk: CFG.checkout.desk })) + '</div></div>'
       + '<div class="code">' + esc(S.code) + '</div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-act="checkout">' + esc(U('readyCta')) + '</button>'
-      + '</div>';
+      + '</div>' + markOnly();
   };
 
   /* 체크아웃 완료 */
   R.done = function () {
     var rows = CFG.annex.map(function (a) {
       return '<button class="row" data-poster="' + a.id + '">'
-        + '<span class="lb"><b>' + esc(a.label) + '</b><span>' + esc(a.title) + '</span></span>'
-        + '<span class="chev">' + icon('chev') + '</span></button>';
+        + '<span class="lb"><b>' + esc(a.label) + '</b><span>' + esc(a.title) + ' · ' + esc(a.when || a.sub) + '</span></span>'
+        + '<span class="arr">' + icon('out') + '</span></button>';
     }).join('');
     return ciBar()
       + '<div class="main">'
       + '<div class="grow"></div>'
-      + keyCard(true)
-      + '<div class="center"><div class="title-sm gold">' + esc(U('doneTitle')) + '</div>'
-      + '<div class="sub" style="margin-top:6px">' + esc(U('doneBody')) + '</div></div>'
-      + '<div class="title-sm center" style="margin-top:10px;font-size:11px;color:var(--ink-sub)">' + esc(U('nextStay')) + '</div>'
+      + card(true, true)
+      + '<div class="thanks">' + esc(U('doneBody')) + '</div>'
+      + '<div class="sectitle" style="margin-top:12px">' + esc(U('nextStay')) + '</div>'
       + '<div class="annex">' + rows + '</div>'
       + '<div class="grow"></div>'
-      + '</div>'
-      + '<div class="bottom"><span class="ico"></span>' + wordmark() + '<span class="ico"></span></div>';
+      + '</div>' + markOnly();
   };
 
   /* 성수 · 신촌 안내 */
@@ -262,32 +262,34 @@
     if (!a) return R.done();
     return ciBar()
       + '<div class="main">'
-      + '<div class="center"><div class="title-sm">' + esc(a.label) + '</div>'
-      + '<div class="sub">' + esc(a.sub) + '</div></div>'
       + '<div class="poster"><img src="../' + esc(a.image) + '" alt="' + esc(a.title) + '"></div>'
       + '<div class="grow"></div>'
-      + '</div>' + bottomBar('done', null);
+      + '</div>' + navBar('back', null);
   };
 
   /* 기간이 끝났을 때 */
   R.closed = function () {
     return ciBar()
       + '<div class="main"><div class="grow"></div>'
-      + keyCard(false)
-      + '<div class="center"><div class="title-sm">' + esc(U('closedTitle')) + '</div>'
+      + card(false, true)
+      + '<div class="center"><div class="h-title" style="font-size:20px">' + esc(U('closedTitle')) + '</div>'
       + '<div class="sub" style="margin-top:6px">' + esc(U('closedBody')) + '</div></div>'
-      + '<div class="grow"></div></div>';
+      + '<div class="grow"></div></div>' + markOnly();
   };
 
   /* ── 그리기 ────────────────────────────────────── */
   function render() {
     app.innerHTML = (R[view.name] || R.intro)();
     document.documentElement.lang =
-      S.lang === 'zhCN' ? 'zh-CN' : S.lang === 'zhTW' ? 'zh-TW' : (S.lang || 'en');
+      S.lang === 'zhCN' ? 'zh-CN' : S.lang === 'zhTW' ? 'zh-TW' : (S.lang || 'ko');
     window.scrollTo(0, 0);
     view.pop = null;
   }
-  function go(name, extra) {
+  /* 되돌아갈 만한 화면만 기억합니다. 이름 적기·언어 고르기는 빼 둡니다. */
+  var KEEP = { intro: 1, board: 1, done: 1, poster: 1, ready: 1 };
+
+  function go(name, extra, back) {
+    if (!back && view.name && view.name !== name && KEEP[view.name]) hist.push(view.name);
     view = { name: name };
     if (extra) Object.keys(extra).forEach(function (k) { view[k] = extra[k]; });
     render();
@@ -303,9 +305,8 @@
   }
 
   /* ── 스탬프 주기 ───────────────────────────────── */
-  function award(sp, silent) {
-    if (S.got[sp.id]) { if (!silent) toast(U('already')); return false; }
-
+  function award(sp) {
+    if (S.got[sp.id]) return false;
     S.got[sp.id] = { at: new Date().toISOString() };
     S.order.push(sp.id);
     if (isDone() && !S.code) S.code = makeCode();
@@ -313,30 +314,38 @@
     return true;
   }
 
-  /* 도장 찍히는 연출 0.8초 → 골드 스탬프 0.5초 */
+  /* 도장 찍히는 연출 — 디자이너가 준 0.8초 영상 */
   function pressThen(fn) {
     var p = document.createElement('div');
     p.className = 'press';
-    p.innerHTML = STAMPART;
+    p.innerHTML = '<video src="' + A + 'press.webm" autoplay muted playsinline></video>';
     app.appendChild(p);
-    setTimeout(function () {
+
+    var done = false;
+    var finish = function () {
+      if (done) return;
+      done = true;
       if (p.parentNode) p.parentNode.removeChild(p);
       fn();
-    }, 800);
+    };
+    var v = p.querySelector('video');
+    if (v) {
+      v.addEventListener('ended', finish);
+      v.play().catch(function () { /* 자동 재생을 막는 기기 */ });
+    }
+    setTimeout(finish, 1000);   // 영상이 안 돌아도 넘어갑니다
   }
 
   function arrive(sp) {
-    // 체크인 전이면 이름부터 받고, 끝난 뒤 이 거점을 준다
     if (!S.nick) { pending = sp.id; go('checkin'); return; }
-
-    // 이미 완주했으면 체크아웃 완료 화면만 보여 준다
     if (S.checkedOut) { go('done'); return; }
-
     if (S.got[sp.id]) { go('board'); toast(U('already')); return; }
 
     var at = slotOf(sp);
+    // 도장이 찍히는 동안 뒤에 지금 화면이 비쳐 보이도록 먼저 그려 둡니다
+    go('board', null, true);
     pressThen(function () {
-      award(sp, true);
+      award(sp);
       if (isDone()) { go('ready'); return; }
       go('board', { pop: at });
     });
@@ -347,16 +356,16 @@
     var b = e.target.closest('[data-go],[data-act],[data-lang],[data-poster]');
     if (!b) return;
 
-    if (b.dataset.lang) {
-      S.lang = b.dataset.lang;
-      save();
-      render();
-      return;
-    }
+    if (b.dataset.lang) { S.lang = b.dataset.lang; save(); render(); return; }
     if (b.dataset.poster) { go('poster', { poster: b.dataset.poster }); return; }
 
     if (b.dataset.go) {
       var to = b.dataset.go;
+      if (to === 'back') {
+        var prev = hist.pop();
+        go(prev && prev !== view.name ? prev : 'intro', null, true);
+        return;
+      }
       if (to === 'checkin' && !S.lang) { S.lang = CFG.defaultLang || CFG.langs[0]; save(); }
       if (to === 'board' && S.checkedOut) { go('done'); return; }
       go(to);
@@ -370,12 +379,12 @@
       S.nick = v;
       save();
 
-      // 리셉션으로 들어왔으면 스탬프 1개를 자동으로 준다
+      // 리셉션으로 들어왔으면 스탬프 1개를 자동으로 줍니다
       var first = pending ? spotById(pending) : CFG.spots[0];
       pending = null;
       if (first && !S.got[first.id]) {
         pressThen(function () {
-          award(first, true);
+          award(first);
           if (isDone()) { go('ready'); return; }
           go('board', { pop: slotOf(first) });
         });
@@ -409,7 +418,6 @@
     return false;
   }
 
-  /* 지금 진행 상태에 맞는 화면 */
   function resume() {
     if (S.checkedOut) return 'done';
     if (isDone()) return 'ready';
@@ -436,10 +444,8 @@
     var tok = q.get('t');
     var sp = sid ? spotById(sid) : null;
 
-    // 주소를 정리해 새로고침 때 두 번 처리되지 않게 한다
-    if (sid && history.replaceState) {
-      history.replaceState(null, '', location.pathname);
-    }
+    // 주소를 정리해 새로고침 때 두 번 처리되지 않게 합니다
+    if (sid && history.replaceState) history.replaceState(null, '', location.pathname);
 
     if (sid && (!sp || (sp.token && tok !== sp.token))) {
       go(resume());
@@ -448,7 +454,6 @@
     }
 
     if (sp) { arrive(sp); return; }
-
     go(resume());
   }
 
@@ -459,8 +464,6 @@
     })
     .then(function (cfg) {
       CFG = cfg;
-
-      // 설정의 색을 화면에 반영
       var t = CFG.theme || {};
       var root = document.documentElement.style;
       Object.keys(t).forEach(function (k) {
@@ -468,12 +471,11 @@
         root.setProperty(name, t[k]);
       });
       document.title = CFG.title;
-
       boot();
     })
     .catch(function (e) {
-      app.innerHTML = '<div style="padding:40px;color:#F2EDE1">'
+      app.innerHTML = '<div style="padding:40px;color:#F2F0E9">'
         + '<p>설정 파일을 불러오지 못했습니다.</p>'
-        + '<p style="color:#9DB2A3;font-size:14px">' + String(e.message) + '</p></div>';
+        + '<p style="color:#9FB3A6;font-size:14px">' + String(e.message) + '</p></div>';
     });
 })();

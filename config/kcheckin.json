@@ -12,14 +12,16 @@
     "desk": "5F FRONT DESK"
   },
   "theme": {
-    "bg": "#12271B",
-    "card": "#1C3A28",
-    "ink": "#F2EDE1",
-    "inkSub": "#9DB2A3",
-    "gold": "#D6B35F",
-    "goldLight": "#EBD79B",
-    "wood": "#6A4D3B",
-    "line": "#2C4A36"
+    "bg": "#0D2B20",
+    "gold": "#C9A961",
+    "goldLight": "#F0DE9E",
+    "goldDeep": "#A8873F",
+    "ink": "#F2F0E9",
+    "inkSub": "#9FB3A6",
+    "barOff": "#2A4B38",
+    "ring": "#3E5C48",
+    "paper": "#F2F0E9",
+    "paperInk": "#163123"
   },
   "langs": [
     "en",
@@ -93,14 +95,16 @@
       "label": "SEONGSU",
       "title": "MUSINSA MEGASTORE",
       "sub": "Seongsu Front Yard | NOV 10 – 15",
-      "image": "assets/stamp/seongsu.jpg"
+      "image": "assets/stamp/seongsu.jpg",
+      "when": "NOV 10–15"
     },
     {
       "id": "sinchon",
       "label": "SINCHON",
       "title": "HyundaiU-PLEX",
       "sub": "Sinchon B1 | NOV 17 – 22",
-      "image": "assets/stamp/sinchon.jpg"
+      "image": "assets/stamp/sinchon.jpg",
+      "when": "NOV 17–22"
     }
   ],
   "ui": {
@@ -271,6 +275,13 @@
       "ja": "ご関心をお寄せいただきありがとうございました。",
       "zhCN": "感谢你的关注。",
       "zhTW": "感謝你的關注。"
+    },
+    "journey": {
+      "en": "YOUR STAMP JOURNEY",
+      "ko": "YOUR STAMP JOURNEY",
+      "ja": "YOUR STAMP JOURNEY",
+      "zhCN": "YOUR STAMP JOURNEY",
+      "zhTW": "YOUR STAMP JOURNEY"
     }
   },
   "defaultLang": "ko"
