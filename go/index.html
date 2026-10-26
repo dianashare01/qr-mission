@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141A26">
+<meta name="robots" content="noindex">
+<title>연결 중…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 가는 곳이 바뀌어도 QR 은 그대로 쓰기 위한 중간 쪽.
+   주소: go/?k=<이름>  ·  가는 곳은 config/links.json 에 있습니다. */
+:root { --bg: #141A26; --ink: #F1EEE6; --sub: #B5BDCB; --line: #46536B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+main { max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+h1 { font-size: 23px; font-weight: 700; line-height: 1.4; word-break: keep-all; }
+p { font-size: 14.5px; color: var(--sub); word-break: keep-all; }
+.rule { width: 36px; height: 1px; background: var(--line); }
+.spin {
+  width: 26px; height: 26px;
+  border: 2.5px solid var(--line);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg) } }
+a.go {
+  margin-top: 6px;
+  padding: 13px 22px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 14.5px;
+}
+@media (prefers-reduced-motion: reduce) { .spin { animation: none } }
+</style>
+</head>
+<body>
+
+<main id="box">
+  <div class="spin" aria-hidden="true"></div>
+  <p id="msg">연결하는 중입니다…</p>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var box = document.getElementById('box');
+
+  function show(title, body, href, label) {
+    box.innerHTML = '';
+    var h = document.createElement('h1');
+    h.textContent = title;
+    box.appendChild(h);
+
+    var r = document.createElement('div');
+    r.className = 'rule';
+    box.appendChild(r);
+
+    if (body) {
+      var p = document.createElement('p');
+      p.textContent = body;
+      box.appendChild(p);
+    }
+    if (href) {
+      var a = document.createElement('a');
+      a.className = 'go';
+      a.href = href;
+      a.textContent = label || '열기';
+      a.rel = 'noopener';
+      box.appendChild(a);
+    }
+    document.title = title;
+  }
+
+  var key = new URLSearchParams(location.search).get('k') || '';
+
+  fetch('../config/links.json', { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('주소록을 불러오지 못했습니다 (' + r.status + ')');
+      return r.json();
+    })
+    .then(function (cfg) {
+      var item = (cfg.links || {})[key];
+
+      if (!item) {
+        show('주소를 찾지 못했습니다', '인쇄된 QR 을 다시 찍어 주세요.');
+        return;
+      }
+
+      var url = String(item.url || '').trim();
+
+      // 아직 가는 곳이 정해지지 않았을 때
+      if (!url) {
+        show(item.pendingTitle || '준비 중입니다', item.pendingBody || '');
+        return;
+      }
+
+      // http(s) 가 아닌 주소로는 보내지 않습니다
+      if (!/^https?:\/\//i.test(url)) {
+        show('주소가 올바르지 않습니다', '운영 담당자에게 알려 주세요.');
+        return;
+      }
+
+      // 뒤로가기로 이 쪽이 다시 나오지 않도록 replace 를 씁니다
+      location.replace(url);
+
+      // 자동으로 안 넘어가는 기기를 위해 직접 누를 수 있는 길도 남깁니다
+      setTimeout(function () {
+        show(item.title || '이동', '자동으로 넘어가지 않으면 아래를 눌러 주세요.', url, '열기');
+      }, 1800);
+    })
+    .catch(function (e) {
+      show('잠시 뒤 다시 시도해 주세요', String(e.message));
+    });
+})();
+</script>
+</body>
+</html>
