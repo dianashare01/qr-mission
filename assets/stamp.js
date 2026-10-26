@@ -211,22 +211,9 @@
       + keyCard(false)
       + '<div class="grow"></div>'
       + stampRow(view.pop)
+      + '<div class="sub center" style="font-size:12.5px">' + esc(U('scanHow')) + '</div>'
       + '<div class="grow"></div>'
-      + '</div>' + bottomBar(null, 'scan');
-  };
-
-  /* QR 찍기 안내 */
-  R.scan = function () {
-    var sp = nextSpot();
-    return ciBar() + stepBar()
-      + '<div class="main">'
-      + '<div class="title-sm center">' + esc(U('scanTitle')) + '</div>'
-      + '<div class="finder"><i></i><i></i><i></i><i></i><div class="beam"></div></div>'
-      + (sp ? '<div class="center"><div class="sub" style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold)">NEXT</div>'
-        + '<div style="font-size:15px;color:var(--gold-light)">' + esc(spotLine(sp)) + '</div></div>' : '')
-      + '<div class="sub center">' + esc(U('scanHow')) + '</div>'
-      + '<div class="grow"></div>'
-      + '</div>' + bottomBar('board', null);
+      + '</div>' + bottomBar(null, null);
   };
 
   /* 7/7 체크아웃 준비 — 뒤로가기 없음 */
@@ -334,7 +321,7 @@
 
   function arrive(sp) {
     // 체크인 전이면 이름부터 받고, 끝난 뒤 이 거점을 준다
-    if (!S.nick) { pending = sp.id; go('intro'); return; }
+    if (!S.nick) { pending = sp.id; go('checkin'); return; }
 
     // 이미 완주했으면 체크아웃 완료 화면만 보여 준다
     if (S.checkedOut) { go('done'); return; }
