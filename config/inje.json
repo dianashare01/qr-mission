@@ -1,6 +1,6 @@
 {
   "_주의": "모든 문구는 초안입니다. 재단 학예사 감수 후 확정본으로 교체하세요. 코드 수정 없이 이 파일만 바꾸면 반영됩니다.",
-  "prototype": true,
+  "prototype": false,
   "_prototype": "시연용. 현장 배포 전에 false 로 바꾸세요.",
   "project": "inje",
   "title": "MARIE SEOSA",
