@@ -602,7 +602,10 @@
     if (isDone()) {
       cta.disabled = false;
       cta.textContent = CFG.strings.boardOpenCta;
-      cta.onclick = resultScreen;
+      // skipResult 를 켜면 결과 화면 없이 바로 마무리(수령) 화면으로 갑니다
+      cta.onclick = CFG.skipResult
+        ? function () { ensureResult(); finishScreen(); }
+        : resultScreen;
     } else {
       cta.disabled = true;
       cta.textContent = CFG.strings.boardLockedCta.replace('{total}', total());
@@ -637,14 +640,17 @@
     return best;
   }
 
+  /* 유형을 셈해 두고 서버에 완주를 알립니다. 결과 화면을 건너뛰어도 이건 해야 합니다. */
+  function ensureResult() {
+    if (S.result) return;
+    S.result = { tag: computeResult(), at: new Date().toISOString() };
+    save();
+    api('/api/complete', { sessionId: S.id, project: S.project, typeTag: S.result.tag });
+  }
+
   function resultScreen() {
     if (!isDone()) { boardScreen(); return; }
-
-    if (!S.result) {
-      S.result = { tag: computeResult(), at: new Date().toISOString() };
-      save();
-      api('/api/complete', { sessionId: S.id, project: S.project, typeTag: S.result.tag });
-    }
+    ensureResult();
 
     var type = CFG.result.types[S.result.tag];
     if (!type) { boardScreen(); return; }

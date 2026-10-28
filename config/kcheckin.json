@@ -3,7 +3,7 @@
   "title": "KOREA, CHECK-IN",
   "event": "KOREA CHECK-IN",
   "room": "1108",
-  "prototype": true,
+  "prototype": false,
   "_note": "한국관광공사 하이커그라운드 QR 스탬프 투어 가이드 v0.2 를 따릅니다. 스팟의 id 와 token 은 인쇄한 QR 에 들어 있으므로 절대 바꾸지 마세요.",
   "period": {
     "close": "2026-11-30"

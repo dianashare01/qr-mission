@@ -64,8 +64,8 @@
     "boardCountFormat": "{total}개 중 {done}개",
     "boardNextLabel": "다음 시어",
     "boardFreeOrder": "순서는 자유입니다. 천천히 둘러보세요.",
-    "boardLockedCta": "나만의 시 ({total}개를 모으면 열립니다)",
-    "boardOpenCta": "나만의 시 보기",
+    "boardLockedCta": "오미자차 받기 ({total}개를 모으면 열립니다)",
+    "boardOpenCta": "오미자차 받기",
     "recoveryLabel": "이어 하기 번호",
     "recoveryNote": "이 휴대폰에서는 QR만 찍으면 자동으로 이어집니다. 휴대폰을 바꿀 때만 이 번호가 필요합니다.",
     "resultEyebrow": "나만의 시",
@@ -559,7 +559,7 @@
     "rewardName": "오미자차 1잔",
     "staffPin": true,
     "pin": "0000",
-    "_pin": "현장 운영 전에 반드시 바꾸세요."
+    "_pin": "실제 운영 번호는 서버(Cloudflare STAFF_PIN)에 있습니다. 이 칸은 서버 주소(api.baseUrl)가 비어 있을 때만 쓰는 예비값이라 진짜 번호를 여기 적지 마세요."
   },
   "hooks": {
     "aiPoem": true,
@@ -574,5 +574,6 @@
   "period": {
     "open": "",
     "close": ""
-  }
+  },
+  "skipResult": true
 }
