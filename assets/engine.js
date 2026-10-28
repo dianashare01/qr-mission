@@ -36,8 +36,14 @@
       spot: spot,
       token: token,
       reset: q.get('reset') === '1',   // 시연·점검용으로 기록을 지우고 처음부터
+      preview: (q.get('preview') || '').trim(),   // 결과 화면만 미리 보기 (아래 previewResult)
+      ptype: (q.get('type') || '').trim(),
     };
   }
+
+  /* 결과 화면만 보여 주는 중일 때 켜집니다.
+     이 기기에 아무것도 저장하지 않고 서버에도 보내지 않습니다. */
+  var PREVIEW = null;
 
   /* ── 저장 ──────────────────────────────────────── */
   function key(p) { return 'qrm:' + p; }
@@ -51,6 +57,7 @@
   }
 
   function save() {
+    if (PREVIEW) return;
     try { localStorage.setItem(key(S.project), JSON.stringify(S)); }
     catch (e) { /* 사생활 보호 모드 등 */ }
   }
@@ -73,6 +80,7 @@
   function hasServer() { return !!serverBase(); }
 
   function api(path, body) {
+    if (PREVIEW) return Promise.resolve(null);
     var base = serverBase();
     if (!base) return Promise.resolve(null);
 
@@ -91,6 +99,7 @@
 
   /* 서버에서 읽어 오기 (GET) */
   function apiGet(path) {
+    if (PREVIEW) return Promise.resolve(null);
     var base = serverBase();
     if (!base) return Promise.resolve(null);
 
@@ -648,6 +657,63 @@
     api('/api/complete', { sessionId: S.id, project: S.project, typeTag: S.result.tag });
   }
 
+  /* ── 나만의 시 ─────────────────────────────────────
+     마지막 문항에서 고른 MBTI 네 글자로 시 한 편을 고릅니다.
+     유형마다 세 편이 있고, 첫 완주에는 1편(카드 기본)을,
+     다시 풀면 2·3편을 차례로 보여 줍니다. */
+  function poemLabel(cfg, mbti, set) {
+    var fmt = cfg.labelFormat || cfg.label || '';
+    return fmt.replace('{mbti}', mbti).replace('{keyword}', set.keyword || '');
+  }
+
+  /* 이 휴대폰에서 그 유형의 시를 몇 번째까지 봤는지 따로 적어 둡니다.
+     기록을 지우고 다시 풀어도 같은 시가 되풀이되지 않게 하려는 것입니다. */
+  function nextPoemIndex(mbti, n) {
+    var k = 'qrm:poem:' + S.project;
+    var seen = {};
+    try { seen = JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { seen = {}; }
+    var i = (typeof seen[mbti] === 'number') ? (seen[mbti] + 1) % n : 0;
+    seen[mbti] = i;
+    try { localStorage.setItem(k, JSON.stringify(seen)); } catch (e) { /* 저장소를 못 쓰는 경우 */ }
+    return i;
+  }
+
+  function pickPoem(cfg) {
+    var plain = { label: cfg.label || '', text: cfg.placeholder || '' };
+    if (!cfg.byType || !cfg.fromSpot) return plain;
+
+    var a = S.answers[cfg.fromSpot];
+    var mbti = a ? String(a.value || '').trim().toUpperCase() : '';
+    var set = mbti && cfg.byType[mbti];
+    if (!set || !(set.lines || []).length) return plain;
+
+    // 한 번 고른 시는 같은 회차 안에서 바뀌지 않습니다
+    if (!S.poem || S.poem.mbti !== mbti || !S.poem.text) {
+      var i = PREVIEW
+        ? Math.min(PREVIEW.idx, set.lines.length - 1)
+        : nextPoemIndex(mbti, set.lines.length);
+      S.poem = { mbti: mbti, idx: i, text: set.lines[i] };
+      save();
+    }
+    return { label: poemLabel(cfg, mbti, set), text: S.poem.text };
+  }
+
+  /* 「당신에게 어울리는 것」 한 줄의 내용.
+     pool 이나 values 가 있으면 그중 하나를 아무거나 고르고,
+     한 번 고른 것은 그 회차 안에서 바뀌지 않습니다. */
+  function curationValue(tag, i, c) {
+    var list = c.values || ((CFG.result.pools || {})[c.pool]);
+    if (!list || !list.length) return c.value || '';
+
+    var k = tag + ':' + i;
+    S.cur = S.cur || {};
+    if (typeof S.cur[k] !== 'number' || !list[S.cur[k]]) {
+      S.cur[k] = Math.floor(Math.random() * list.length);
+      save();
+    }
+    return list[S.cur[k]];
+  }
+
   function resultScreen() {
     if (!isDone()) { boardScreen(); return; }
     ensureResult();
@@ -658,19 +724,20 @@
     text('r-name', type.name);
     text('r-desc', type.desc);
 
-    // AI 시 — 서버가 붙기 전에는 자리표시만 보여 준다
+    // 마지막 문항에서 고른 MBTI 로 시 한 편을 보여 준다
     var poemCfg = CFG.result.poem;
     if (poemCfg) {
+      var poem = pickPoem(poemCfg);
       $('r-poem').classList.remove('hidden');
-      text('r-poem-label', poemCfg.label || '');
-      text('r-poem-text', (S.poem && S.poem.text) || poemCfg.placeholder || '');
+      text('r-poem-label', poem.label);
+      text('r-poem-text', poem.text);
     } else {
       $('r-poem').classList.add('hidden');
     }
 
     var host = $('r-curation');
     host.innerHTML = '';
-    (type.curation || []).forEach(function (c) {
+    (type.curation || []).forEach(function (c, i) {
       var box = document.createElement('div');
       box.className = 'box';
       var k = document.createElement('div');
@@ -687,7 +754,7 @@
         v = document.createElement('div');
         v.className = 'v';
       }
-      v.textContent = c.value;
+      v.textContent = curationValue(S.result.tag, i, c);
       box.appendChild(k); box.appendChild(v);
       host.appendChild(box);
     });
@@ -900,6 +967,39 @@
     return false;
   }
 
+  /* ── 결과 화면 미리 보기 ────────────────────────────
+     주소 뒤에 &preview=INFP 를 붙이면 일곱 곳을 다 돈 것처럼 꾸며
+     결과 화면만 보여 줍니다. 편을 고르려면 &preview=INFP-2,
+     유형을 바꾸려면 &type=S 를 함께 붙입니다.
+     이 기기에 남지 않고 서버에도 가지 않으니 수령도 되지 않습니다. */
+  function previewResult(url) {
+    var m = String(url.preview).toUpperCase().match(/^([A-Z]{4})(?:-([1-9]))?$/);
+    PREVIEW = { mbti: m ? m[1] : '', idx: m && m[2] ? (+m[2] - 1) : 0 };
+
+    var types = (CFG.result && CFG.result.types) || {};
+    var tag = types[url.ptype] ? url.ptype : Object.keys(types)[0];
+    var from = (CFG.result && CFG.result.poem && CFG.result.poem.fromSpot) || '';
+
+    S = {
+      v: 1, project: url.project, id: 'preview', nickname: '미리보기',
+      code: '000000', answers: {}, order: [], result: null, finish: null,
+    };
+    CFG.spots.forEach(function (sp) {
+      var holdsMbti = !!PREVIEW.mbti && sp.id === from;
+      S.answers[sp.id] = {
+        k: sp.knowledge ? sp.knowledge.answer : 0,
+        kOk: true,
+        p: 0,
+        tag: holdsMbti ? null : tag,
+        value: holdsMbti ? PREVIEW.mbti : '',
+        at: new Date().toISOString(),
+      };
+      S.order.push(sp.id);
+    });
+
+    resultScreen();
+  }
+
   function boot(url) {
     applyTheme(CFG.theme);
     fillStrings();
@@ -909,6 +1009,8 @@
     if (url.reset && isPrototype()) {
       try { localStorage.removeItem(key(url.project)); } catch (e) { /* 저장소를 못 쓰는 경우 */ }
     }
+
+    if (url.preview) { previewResult(url); return; }
 
     S = load(url.project);
     if (!S) {
