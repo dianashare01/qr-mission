@@ -10,7 +10,11 @@
  *   POST /api/complete   결과 저장 (1회)
  *   POST /api/redeem     리워드 수령 (1회, PIN 확인)
  *   POST /api/message    메시지 남기기 (1회)
+ *   POST /api/hit        다녀감 세기 (누구인지는 안 받음)
+ *   GET  /api/content    홈페이지 문구 불러오기
  *   GET  /api/admin/stats 통계 (관리자 키 필요)  &format=csv 가능
+ *   GET  /api/admin/visits  접속자 수 (관리자 키 필요)
+ *   POST /api/admin/content 홈페이지 문구 저장 (관리자 키 필요)
  *
  * 설정 (wrangler secret put)
  *   ADMIN_KEY   관리자 통계 열람 키
@@ -27,7 +31,7 @@ function cors(env, req) {
   return {
     'Access-Control-Allow-Origin': ok ? (origin || '*') : 'null',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key',
     'Access-Control-Max-Age': '86400',
   };
 }
@@ -381,6 +385,124 @@ async function adminMessages(req, env, url) {
   }, env, req);
 }
 
+
+/* ── 홈페이지 접속자 수 ──────────────────────────── */
+
+/* 셀 수 있는 사이트. 아무 이름이나 들어와 표가 지저분해지는 것을 막습니다. */
+const SITES = new Set(['testimony']);
+
+/** 한국 시간 기준 날짜 (2026-10-29) */
+function kstDay(back = 0) {
+  const t = Date.now() + 9 * 3600 * 1000 - back * 86400 * 1000;
+  return new Date(t).toISOString().slice(0, 10);
+}
+
+function cleanKey(v, max = 40) {
+  const s = String(v == null ? '' : v).trim();
+  return /^[A-Za-z0-9._:-]{1,40}$/.test(s) && s.length <= max ? s : null;
+}
+
+/** 다녀갔다고 알리기. 누구인지는 받지 않습니다. */
+async function hit(req, env) {
+  const b = await body(req);
+  if (!b) return bad('본문을 읽지 못했습니다', env, req);
+
+  const site = String(b.site || '').trim();
+  if (!SITES.has(site)) return bad('모르는 사이트입니다', env, req);
+
+  const page = cleanKey(b.page, 32);
+  if (!page) return bad('모르는 화면입니다', env, req);
+
+  const first = b.first ? 1 : 0;
+  await env.DB.prepare(
+    'INSERT INTO visits (day, site, page, views, uniq) VALUES (?, ?, ?, 1, ?)'
+    + ' ON CONFLICT(day, site, page) DO UPDATE SET views = views + 1, uniq = uniq + ?'
+  ).bind(kstDay(), site, page, first, first).run();
+
+  return json({ ok: true }, env, req);
+}
+
+/** 관리자 화면에 보여 줄 숫자 */
+async function visits(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+
+  const site = String(url.searchParams.get('site') || 'testimony').trim();
+  if (!SITES.has(site)) return bad('모르는 사이트입니다', env, req);
+
+  const days = Math.min(365, Math.max(1, Number(url.searchParams.get('days')) || 30));
+  const from = kstDay(days - 1);
+
+  const rows = await env.DB.prepare(
+    'SELECT day, page, views, uniq FROM visits WHERE site = ? AND day >= ? ORDER BY day, page'
+  ).bind(site, from).all();
+
+  const byPage = await env.DB.prepare(
+    'SELECT page, SUM(views) AS views, SUM(uniq) AS uniq FROM visits WHERE site = ?'
+    + ' GROUP BY page ORDER BY views DESC'
+  ).bind(site).all();
+
+  const first = await env.DB.prepare(
+    'SELECT MIN(day) AS day FROM visits WHERE site = ?'
+  ).bind(site).first();
+
+  return json({
+    ok: true,
+    site,
+    days,
+    today: kstDay(),
+    since: (first && first.day) || null,
+    rows: rows.results || [],
+    byPage: byPage.results || [],
+  }, env, req);
+}
+
+/* ── 홈페이지 문구 ───────────────────────────────── */
+
+/** 화면이 띄울 때 불러갑니다. 아무나 읽을 수 있습니다. */
+async function getContent(req, env, url) {
+  const site = String(url.searchParams.get('site') || 'testimony').trim();
+  if (!SITES.has(site)) return bad('모르는 사이트입니다', env, req);
+
+  const rows = await env.DB.prepare('SELECT k, v FROM content WHERE site = ?').bind(site).all();
+  const items = {};
+  (rows.results || []).forEach((r) => { items[r.k] = r.v; });
+
+  return json({ ok: true, items }, env, req);
+}
+
+/** 관리자가 고친 문구를 저장합니다. 빈 값은 지워, 원래 문구로 되돌립니다. */
+async function putContent(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+
+  const b = await body(req);
+  if (!b || !b.items || typeof b.items !== 'object') return bad('고칠 내용이 없습니다', env, req);
+
+  const site = String(b.site || 'testimony').trim();
+  if (!SITES.has(site)) return bad('모르는 사이트입니다', env, req);
+
+  const keys = Object.keys(b.items);
+  if (keys.length > 200) return bad('한 번에 200개까지만 저장합니다', env, req);
+
+  const at = now();
+  const jobs = [];
+  for (const raw of keys) {
+    const k = cleanKey(raw);
+    if (!k) return bad('이름이 이상한 칸이 있습니다: ' + String(raw).slice(0, 20), env, req);
+    const v = String(b.items[raw] == null ? '' : b.items[raw]).slice(0, 4000);
+    if (v.trim() === '') {
+      jobs.push(env.DB.prepare('DELETE FROM content WHERE site = ? AND k = ?').bind(site, k));
+    } else {
+      jobs.push(env.DB.prepare(
+        'INSERT INTO content (site, k, v, updated_at) VALUES (?, ?, ?, ?)'
+        + ' ON CONFLICT(site, k) DO UPDATE SET v = excluded.v, updated_at = excluded.updated_at'
+      ).bind(site, k, v, at));
+    }
+  }
+  if (jobs.length) await env.DB.batch(jobs);
+
+  return json({ ok: true, saved: jobs.length, at }, env, req);
+}
+
 /* ── 들어오는 요청 나누기 ────────────────────────── */
 export default {
   async fetch(req, env) {
@@ -399,6 +521,10 @@ export default {
       if (p === '/api/messages/recent' && req.method === 'GET') return await recentMessages(req, env, url);
       if (p === '/api/admin/stats' && req.method === 'GET') return await stats(req, env, url);
       if (p === '/api/admin/messages' && req.method === 'GET') return await adminMessages(req, env, url);
+      if (p === '/api/hit' && req.method === 'POST') return await hit(req, env);
+      if (p === '/api/content' && req.method === 'GET') return await getContent(req, env, url);
+      if (p === '/api/admin/visits' && req.method === 'GET') return await visits(req, env, url);
+      if (p === '/api/admin/content' && req.method === 'POST') return await putContent(req, env, url);
       if (p === '/api/health') return json({ ok: true, at: now() }, env, req);
 
       return bad('없는 주소입니다', env, req, 404);

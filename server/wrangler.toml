@@ -15,7 +15,7 @@ database_id = "45086f6a-6fb4-4218-9c2d-aba5ac225039"
 # 전시 페이지 주소만 허용합니다. 비워 두면 모든 곳에서 호출할 수 있습니다.
 # localhost 는 만들 때 확인하는 용도입니다. 브라우저에서 다른 사이트가 부르는 것만 막는 설정이라,
 # 이것 때문에 보안이 약해지지는 않습니다 (관리자 기능은 코드로 따로 막습니다).
-ALLOWED_ORIGINS = "https://dianashare01.github.io,http://localhost:8780,http://127.0.0.1:8780"
+ALLOWED_ORIGINS = "https://dianashare01.github.io,https://testimony-nextpage.com,https://www.testimony-nextpage.com,http://localhost:8780,http://127.0.0.1:8780,http://localhost:8790,http://127.0.0.1:8790"
 
 # ADMIN_KEY 와 STAFF_PIN 은 여기 적지 말고 아래 명령으로 넣으세요.
 #   npx wrangler secret put ADMIN_KEY

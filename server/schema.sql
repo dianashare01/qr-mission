@@ -56,3 +56,27 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 CREATE INDEX IF NOT EXISTS idx_messages_project ON messages(project, created_at);
 CREATE INDEX IF NOT EXISTS idx_messages_seq ON messages(project, seq);
+
+-- ── 홈페이지 접속자 수 ────────────────────────────
+-- 누가 왔는지는 적지 않습니다. 날짜·화면별 숫자만 셉니다.
+-- uniq 는 그 브라우저가 그날 처음 들어온 경우에만 1 올라갑니다.
+-- (브라우저가 스스로 '오늘 처음인지'만 알려 주며, IP·쿠키는 쓰지 않습니다.)
+CREATE TABLE IF NOT EXISTS visits (
+  day   TEXT NOT NULL,                       -- 2026-10-29 (한국 시간)
+  site  TEXT NOT NULL,                       -- testimony
+  page  TEXT NOT NULL,                       -- home / hall / tour / room:02 …
+  views INTEGER NOT NULL DEFAULT 0,
+  uniq  INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, site, page)
+);
+CREATE INDEX IF NOT EXISTS idx_visits_site ON visits(site, day);
+
+-- ── 홈페이지에서 고칠 수 있는 문구 ────────────────
+-- 화면의 data-cms="키" 자리에 들어갑니다. 비어 있으면 원래 문구가 그대로 나옵니다.
+CREATE TABLE IF NOT EXISTS content (
+  site       TEXT NOT NULL,
+  k          TEXT NOT NULL,
+  v          TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (site, k)
+);
