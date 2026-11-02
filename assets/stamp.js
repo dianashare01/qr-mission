@@ -68,6 +68,8 @@
   function total() { return CFG.spots.length; }
   function count() { return S.order.length; }
   function isDone() { return count() >= total(); }
+  /* 선물·퇴실은 5개째에 — 남은 2개는 이어서 모읍니다 */
+  function atCheckout() { return count() >= (CFG.checkout.at || total()); }
 
   function nextSpot() {
     for (var i = 0; i < CFG.spots.length; i++) {
@@ -75,7 +77,17 @@
     }
     return null;
   }
-  function spotLine(sp) { return sp ? sp.name + ' · ' + sp.floor : ''; }
+  /* 정류장 이름과 층 — 둘 다 언어별로 적혀 있습니다 */
+  function one(v) {
+    return (v && typeof v === 'object') ? (v[S.lang] || v[CFG.langs[0]] || '') : (v || '');
+  }
+  function spotLine(sp) {
+    if (!sp) return '';
+    var nm = one(sp.name), fl = one(sp.floor);
+    if (!fl) return nm;
+    // 중국어는 전각 괄호를 씁니다 — 디자인대로
+    return S.lang === 'en' ? (nm + ' (' + fl + ')') : (nm + '（' + fl + '）');
+  }
 
   /* 체크아웃 코드 — 시안의 A1B2 C3D4-E5F6 모양 */
   function makeCode() {
@@ -92,17 +104,21 @@
       next: '<path d="M9 5 L16 12 L9 19"/>',
       home: '<path d="M4 11 L12 4 L20 11 V20 H4 Z"/>',
       out: '<path d="M8 16 L16 8 M9 8 H16 V15"/>',
+      close: '<path d="M6 6 L18 18 M18 6 L6 18"/>',
     }[name] || '';
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
       + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   }
 
   /* ── 공통 조각 ─────────────────────────────────── */
+  /* 위쪽 표기 — KOREA CHECK-IN 과 Imagine your Korea 가 한 장에 들어 있습니다 */
   function ciBar() {
-    return '<div class="ci">'
-      + '<img src="' + A + 'ci-mcst.png" alt="문화체육관광부">'
-      + '<img src="' + A + 'ci-kto.png" alt="한국관광공사">'
-      + '</div>';
+    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="KOREA CHECK-IN"></div>';
+  }
+
+  /* 디자인에 두 줄로 적힌 글귀는 그대로 두 줄로 보여 줍니다 */
+  function lines(key, vars) {
+    return esc(U(key, vars)).split('\n').join('<br>');
   }
 
   function journey() {
@@ -117,15 +133,22 @@
       + '</div><div class="bars">' + bars + '</div>';
   }
 
-  function card(gold, small) {
-    return '<img class="card' + (small ? ' sm' : '') + '" src="' + A
+  /* 카드. cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
+  function card(gold, small, cap) {
+    var img = '<img class="card' + (small ? ' sm' : '') + '" src="' + A
       + (gold ? 'card-gold.png' : 'card-green.png') + '" alt="KOREA CHECK-IN">';
+    if (!cap) return img;
+    return '<div class="cardwrap' + (small ? ' sm' : '') + (gold ? ' gold' : '') + '">'
+      + '<span class="cap">' + esc(U(cap)) + '</span>' + img + '</div>';
   }
 
   function nextPill() {
     var sp = nextSpot();
     if (!sp) return '';
-    return '<div class="nextpill"><b>NEXT &rarr;</b> ' + esc(spotLine(sp)) + '</div>';
+    var lb = U('nextLabel');
+    // 영문은 NEXT → 이름, 중국어는 下一站：이름
+    return '<div class="nextpill"><b>' + esc(lb) + (S.lang === 'en' ? ' &rarr;' : '') + '</b>'
+      + (S.lang === 'en' ? ' ' : '') + esc(spotLine(sp)) + '</div>';
   }
 
   function stampRow(popIndex) {
@@ -165,9 +188,9 @@
 
   /* 첫 화면 */
   R.intro = function () {
-    return journey() + ciBar()
+    return ciBar() + journey()
       + '<div class="main">'
-      + '<img class="bigmark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
+      + '<div class="grow"></div>'
       + card(false)
       + '<div class="center"><div class="h-title">' + esc(U('stampTour')) + '</div>'
       + '<div class="sub" style="margin-top:4px">' + esc(U('tagline')) + '</div></div>'
@@ -182,12 +205,12 @@
       return '<button class="lang" data-lang="' + l + '" aria-pressed="' + (S.lang === l) + '">'
         + esc(CFG.langNames[l]) + '</button>';
     }).join('');
-    return journey() + ciBar()
+    return ciBar() + journey()
       + '<div class="main">'
       + '<div class="grow"></div>'
-      + '<img class="bigmark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
-      + '<div class="sub center">' + esc(U('langTitle')) + '</div>'
-      + '<div class="langs">' + btns + '</div>'
+      + '<div class="center"><div class="h-title">' + esc(U('langTitle')) + '</div>'
+      + '<div class="sub" style="margin-top:4px">' + esc(U('langSub')) + '</div></div>'
+      + '<div class="langs col">' + btns + '</div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-go="checkin">' + esc(U('continueCta')) + '</button>'
       + '</div>' + navBar('back', null);
@@ -195,7 +218,7 @@
 
   /* 체크인 — 이름 적기 */
   R.checkin = function () {
-    return journey() + ciBar()
+    return ciBar() + journey()
       + '<div class="main">'
       + card(false, true)
       + '<div class="field"><label for="nick">' + esc(U('guestLabel')) + '</label>'
@@ -204,19 +227,18 @@
       + '<div class="err" id="err" role="alert"></div></div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-act="checkin">' + esc(U('checkinCta')) + '</button>'
-      + '<div class="sub center" style="font-size:12px">' + esc(U('noSignup')) + '</div>'
+      + '<div class="sub center" style="font-size:12px">' + lines('noSignup') + '</div>'
       + '</div>' + navBar('back', null);
   };
 
   /* 스탬프 적립 화면 */
   R.board = function () {
-    return journey() + ciBar()
+    return ciBar() + journey()
       + '<div class="main">'
       + card(false)
       + nextPill()
       + '<div class="grow"></div>'
       + stampRow(view.pop)
-      + '<div class="sub center" style="font-size:12.5px">' + esc(U('scanHow')) + '</div>'
       + '<div class="grow"></div>'
       + '</div>' + navBar(S.hist.length ? 'back' : null, null);
   };
@@ -225,34 +247,52 @@
   R.ready = function () {
     // 어떤 경로로 들어와도 코드가 비어 있지 않게 합니다
     if (!S.code) { S.code = makeCode(); save(); }
-    return journey() + ciBar()
+    return ciBar() + journey()
       + '<div class="main">'
-      + card(true)
+      + card(true, false, 'congrats')
       + '<div class="center"><div class="h-title">' + esc(U('readyTitle')) + '</div>'
-      + '<div class="sub" style="margin-top:4px">' + esc(U('readyBody', { desk: CFG.checkout.desk })) + '</div></div>'
+      + '<div class="sub" style="margin-top:6px">' + lines('readyBody', { desk: CFG.checkout.desk }) + '</div></div>'
       + '<div class="code">' + esc(S.code) + '</div>'
       + '<div class="grow"></div>'
       + '<button class="btn" data-act="checkout">' + esc(U('readyCta')) + '</button>'
       + '</div>' + markOnly();
   };
 
-  /* 체크아웃 완료 */
-  R.done = function () {
+  /* 퇴실 뒤 — 다음 머무를 곳 안내. 아직 도장이 남았으면 이어 가기 단추가 붙습니다 */
+  R.after = function () {
     var rows = CFG.annex.map(function (a) {
       return '<button class="row" data-poster="' + a.id + '">'
         + '<span class="lb"><b>' + esc(a.label) + '</b><span>' + esc(a.title) + ' · ' + esc(a.when || a.sub) + '</span></span>'
         + '<span class="arr">' + icon('out') + '</span></button>';
     }).join('');
-    return ciBar()
+    var more = !isDone();
+    return ciBar() + journey()
       + '<div class="main">'
-      + '<div class="grow"></div>'
-      + card(true, true)
-      + '<div class="thanks">' + esc(U('doneBody')) + '</div>'
-      + '<div class="sectitle" style="margin-top:12px">' + esc(U('nextStay')) + '</div>'
+      + card(true, true, more ? 'congrats' : 'goldenKey')
+      + '<div class="pill">' + esc(U('thanks')) + '</div>'
+      + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
       + '<div class="annex">' + rows + '</div>'
+      + '<div class="btnrow">'
+      + '<button class="btn ghost" data-act="notice">' + esc(U('noticeBtn')) + '</button>'
+      + (more ? '<button class="btn" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
+      + '</div>'
       + '<div class="grow"></div>'
-      + '</div>' + markOnly();
+      + '</div>' + markOnly() + noticeBox();
   };
+
+  /* 안내 쪽지 */
+  function noticeBox() {
+    return '<div class="notice" id="notice" role="dialog" aria-modal="true" hidden>'
+      + '<div class="box"><div class="hd"><b>' + esc(U('noticeBtn')) + '</b>'
+      + '<button class="x" data-act="notice-close" aria-label="close">' + icon('close') + '</button></div>'
+      + '<p>' + lines('noticeBody') + '</p>'
+      + '<button class="btn" data-act="notice-close">&#10003;</button>'
+      + '</div></div>';
+  }
+
+  /* 체크아웃 완료 */
+  /* 7개를 다 모은 마지막 화면 — 금 열쇠 */
+  R.done = function () { return R.after(); };
 
   /* 성수 · 신촌 안내 */
   R.poster = function () {
@@ -280,7 +320,7 @@
   function render() {
     app.innerHTML = (R[view.name] || R.intro)();
     document.documentElement.lang =
-      S.lang === 'zhCN' ? 'zh-CN' : S.lang === 'zhTW' ? 'zh-TW' : (S.lang || 'ko');
+      S.lang === 'zhCN' ? 'zh-CN' : S.lang === 'zhTW' ? 'zh-TW' : (S.lang || 'en');
     window.scrollTo(0, 0);
     view.pop = null;
   }
@@ -328,16 +368,16 @@
   }
 
   function arrive(sp) {
-    if (!S.nick) { pending = sp.id; go('checkin'); return; }
-    if (S.checkedOut) { go('done'); return; }
-    if (S.got[sp.id]) { go('board'); toast(U('already')); return; }
+    if (!S.nick) { pending = sp.id; go(S.langPicked ? 'checkin' : 'lang'); return; }
+    if (S.got[sp.id]) { go(S.checkedOut && isDone() ? 'after' : 'board'); toast(U('already')); return; }
 
     var at = slotOf(sp);
     // 도장이 찍히는 동안 뒤에 지금 화면이 비쳐 보이도록 먼저 그려 둡니다
     go('board', null, true);
     pressThen(function () {
       award(sp);
-      if (isDone()) { go('ready'); return; }
+      if (!S.checkedOut && atCheckout()) { go('ready'); return; }
+      if (isDone()) { go('after'); return; }
       go('board', { pop: at });
     });
   }
@@ -347,7 +387,7 @@
     var b = e.target.closest('[data-go],[data-act],[data-lang],[data-poster]');
     if (!b) return;
 
-    if (b.dataset.lang) { S.lang = b.dataset.lang; save(); render(); return; }
+    if (b.dataset.lang) { S.lang = b.dataset.lang; S.langPicked = true; save(); render(); return; }
     if (b.dataset.poster) { go('poster', { poster: b.dataset.poster }); return; }
 
     if (b.dataset.go) {
@@ -358,8 +398,8 @@
         go(prev && prev !== view.name ? prev : 'intro', null, true);
         return;
       }
-      if (to === 'checkin' && !S.lang) { S.lang = CFG.defaultLang || CFG.langs[0]; save(); }
-      if (to === 'board' && S.checkedOut) { go('done'); return; }
+      if (to === 'checkin') { if (!S.lang) S.lang = CFG.defaultLang || CFG.langs[0]; S.langPicked = true; save(); }
+      if (to === 'board' && S.checkedOut && isDone()) { go('after'); return; }
       go(to);
       return;
     }
@@ -377,7 +417,7 @@
       if (first && !S.got[first.id]) {
         pressThen(function () {
           award(first);
-          if (isDone()) { go('ready'); return; }
+          if (!S.checkedOut && atCheckout()) { go('ready'); return; }
           go('board', { pop: slotOf(first) });
         });
       } else {
@@ -386,10 +426,16 @@
       return;
     }
 
+    if (b.dataset.act === 'notice' || b.dataset.act === 'notice-close') {
+      var box = document.getElementById('notice');
+      if (box) box.hidden = (b.dataset.act === 'notice-close');
+      return;
+    }
+
     if (b.dataset.act === 'checkout') {
       S.checkedOut = new Date().toISOString();
       save();
-      go('done');
+      go('after');
       return;
     }
   });
@@ -411,8 +457,9 @@
   }
 
   function resume() {
-    if (S.checkedOut) return 'done';
-    if (isDone()) return 'ready';
+    if (S.checkedOut && isDone()) return 'after';
+    if (!S.checkedOut && atCheckout()) return 'ready';
+    if (S.checkedOut) return 'board';
     if (S.nick) return 'board';
     return 'intro';
   }
