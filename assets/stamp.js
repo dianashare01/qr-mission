@@ -162,10 +162,12 @@
       + (used ? ' used' : '') + '" role="img" aria-label="' + esc(c.title || '') + '">'
       + (cap ? '<span class="cap">' + esc(U(cap)) + '</span>' : '')
       + '<svg class="key" viewBox="0 0 100 208.3" aria-hidden="true">'
-      // 검정 카드의 표는 위에서 아래로 옅어지는 금색입니다 (시안 keycard 아랫줄)
-      + '<defs><linearGradient id="rkgold" x1="0" y1="0" x2="0" y2="1">'
-      + '<stop offset="0" stop-color="#F8E5B3"/>'
-      + '<stop offset="1" stop-color="#D9B771"/></linearGradient></defs>'
+      // 검정 카드의 표는 비스듬히 빛이 스친 금색입니다 (시안 keycard 아랫줄).
+      // 왼위·오아래가 환하고 오위·왼아래가 어둡습니다 — 135도 결.
+      + '<defs><linearGradient id="rkgold" x1="0" y1="0" x2="1" y2="1">'
+      + '<stop offset="0" stop-color="#F3DCA2"/>'
+      + '<stop offset=".48" stop-color="#CCA253"/>'
+      + '<stop offset="1" stop-color="#F5D489"/></linearGradient></defs>'
       + '<path d="' + KEY_PATH + '"/></svg>'
       + '<b class="t1">' + esc(c.title || '') + '</b>'
       + '<i class="t2">' + esc(c.sub || '') + '</i>'
@@ -302,8 +304,8 @@
       + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
       + '<div class="annex">' + rows + '</div>'
       + '<div class="btnrow">'
-      + '<button class="btn ghost" data-act="notice">' + esc(U('noticeBtn')) + '</button>'
-      + (more ? '<button class="btn" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
+      + '<button class="btn" data-act="notice">' + esc(U('noticeBtn')) + '</button>'
+      + (more ? '<button class="btn ghost" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
       + '</div>'
       + '<div class="grow"></div>'
       + '</div>' + markOnly() + noticeBox();
