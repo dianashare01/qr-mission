@@ -348,19 +348,6 @@ img { display: block; max-width: 100%; }
   background: none; border: 0;
 }
 
-/* 선물을 건넨 뒤 — 카드가 바탕에 묻히고 완료 표가 얹힙니다 */
-.usedmark {
-  position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%, -50%) rotate(-11deg);
-  z-index: 2;
-  padding: 5px 15px;
-  border: 2px solid var(--gold-light);
-  border-radius: 6px;
-  background: rgba(13, 43, 32, .62);
-  color: var(--gold-light);
-  font-size: 11.5px; font-weight: 700; letter-spacing: .16em;
-  white-space: nowrap;
-}
 
 /* 한 번뿐이라는 안내 */
 .once {
@@ -451,12 +438,15 @@ img { display: block; max-width: 100%; }
 }
 .rk.gold .cap { color: #2E2409; font-weight: 700; }
 
-/* 완료 처리된 카드 — 바탕색 너울을 덮습니다.
-   카드 자체에 opacity 를 주면 그 위의 완료 표까지 흐려집니다. */
-.rk.used::after {
-  content: ''; position: absolute; inset: 0; z-index: 1;
-  background: rgba(13, 43, 32, .62);
+/* 확인코드를 넣은 뒤 — 시안(06-1·06-2)대로 검정 바탕에 금색 표로 바뀝니다.
+   색은 keycard.png 아랫줄 검정 카드를 재서 옮긴 것입니다. */
+.rk.used {
+  background: #111111;
+  color: #F7EED9;
 }
+.rk.used .key { fill: url(#rkgold); }
+.rk.used .cap { color: #DEC892; font-weight: 400; }
+.rk.used .t2 { color: #979F90; opacity: 1; }
 
 </style>
 </head>

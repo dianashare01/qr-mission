@@ -162,10 +162,13 @@
       + (used ? ' used' : '') + '" role="img" aria-label="' + esc(c.title || '') + '">'
       + (cap ? '<span class="cap">' + esc(U(cap)) + '</span>' : '')
       + '<svg class="key" viewBox="0 0 100 208.3" aria-hidden="true">'
+      // 검정 카드의 표는 위에서 아래로 옅어지는 금색입니다 (시안 keycard 아랫줄)
+      + '<defs><linearGradient id="rkgold" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0" stop-color="#F8E5B3"/>'
+      + '<stop offset="1" stop-color="#D9B771"/></linearGradient></defs>'
       + '<path d="' + KEY_PATH + '"/></svg>'
       + '<b class="t1">' + esc(c.title || '') + '</b>'
       + '<i class="t2">' + esc(c.sub || '') + '</i>'
-      + (used ? '<span class="usedmark">' + esc(U('usedBadge')) + '</span>' : '')
       + '</div>';
   }
 
