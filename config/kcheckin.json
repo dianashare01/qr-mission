@@ -325,7 +325,35 @@
       "en": "NEXT",
       "zhCN": "下一站：",
       "zhTW": "下一站："
+    },
+    "usedBadge": {
+      "en": "COMPLETED",
+      "zhCN": "已完成",
+      "zhTW": "已完成"
+    },
+    "onceOnly": {
+      "en": "Your gift has been handed over. It can be claimed only once.",
+      "zhCN": "礼物已领取，每人仅限一次。",
+      "zhTW": "禮物已領取，每人僅限一次。"
+    },
+    "waitStaff": {
+      "en": "Please show this screen to one of our staff member.",
+      "zhCN": "请将该画面向职员出示。",
+      "zhTW": "請向工作人員出示此畫面。"
     }
   },
-  "defaultLang": "en"
+  "defaultLang": "en",
+  "admin": {
+    "_note": "확인코드는 적어 두지 않고 흩뜨린 값(codeKey)만 둡니다. 코드를 바꾸려면 node _tools/admin-code.js <새 코드> 로 새 값을 받아 여기에 넣으세요.",
+    "codeKey": "46a538fad57b1fbc",
+    "taps": 3,
+    "title": "관리자 확인",
+    "label": "확인코드",
+    "ph": "6자리 숫자를 입력해 주세요",
+    "bad": "코드가 맞지 않습니다",
+    "doneAlready": "이미 완료 처리된 카드입니다",
+    "notReady": "아직 완료 처리할 카드가 아닙니다",
+    "reset": "시험용 — 이 휴대폰 기록 지우기",
+    "resetAgain": "정말 지울까요? 한 번 더 누르세요"
+  }
 }

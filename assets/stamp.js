@@ -26,7 +26,7 @@
 
   /* ── 저장 ──────────────────────────────────────── */
   function fresh() {
-    return { v: 1, lang: null, nick: '', got: {}, order: [], code: null, checkedOut: null, hist: [] };
+    return { v: 1, lang: null, nick: '', got: {}, order: [], checkedOut: null, redeemed: null, hist: [] };
   }
   function load() {
     try {
@@ -89,13 +89,21 @@
     return S.lang === 'en' ? (nm + ' (' + fl + ')') : (nm + '（' + fl + '）');
   }
 
-  /* 체크아웃 코드 — 시안의 A1B2 C3D4-E5F6 모양 */
-  function makeCode() {
-    var CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    var out = '';
-    for (var i = 0; i < 12; i++) out += CH[Math.floor(Math.random() * CH.length)];
-    return out.slice(0, 4) + ' ' + out.slice(4, 8) + '-' + out.slice(8, 12);
+  /* 확인코드를 흩뜨려 견줍니다.
+     설정 파일은 홈페이지에 그대로 올라가므로 숫자를 적어 두지 않습니다.
+     여섯 자리는 백만 가지뿐이라 작정하면 맞혀 볼 수 있습니다 — 자물쇠가 아니라
+     눈에 안 띄게 하는 정도입니다. 선물은 직원이 직접 건네므로 그 정도면 됩니다.
+     코드를 바꿀 때는 node _tools/admin-code.js <새 코드> */
+  function dg1(str, salt) {
+    var h = 2166136261;
+    str = salt + str;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h ^= h >>> 15; h = Math.imul(h, 2246822507);
+    h ^= h >>> 13; h = Math.imul(h, 3266489909);
+    h ^= h >>> 16;
+    return ('0000000' + (h >>> 0).toString(16)).slice(-8);
   }
+  function digest(str) { return dg1(str, 'kchk1:') + dg1(str, 'kchk2:'); }
 
   /* ── 작은 그림 ─────────────────────────────────── */
   function icon(name) {
@@ -113,7 +121,10 @@
   /* ── 공통 조각 ─────────────────────────────────── */
   /* 위쪽 표기 — KOREA CHECK-IN 과 Imagine your Korea 가 한 장에 들어 있습니다 */
   function ciBar() {
-    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="KOREA CHECK-IN"></div>';
+    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="KOREA CHECK-IN">'
+      // Imagine your Korea 쪽을 세 번 누르면 관리자 확인 창이 열립니다
+      + '<button class="tapzone" data-act="adm-tap" tabindex="-1" aria-hidden="true"></button>'
+      + '</div>';
   }
 
   /* 디자인에 두 줄로 적힌 글귀는 그대로 두 줄로 보여 줍니다 */
@@ -135,11 +146,17 @@
 
   /* 카드. cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
   function card(gold, small, cap) {
+    // 확인코드를 넣은 뒤로 선물 카드는 투명해지고 완료 표가 얹힙니다
+    var used = gold && !!S.redeemed;
     var img = '<img class="card' + (small ? ' sm' : '') + '" src="' + A
       + (gold ? 'card-gold.png' : 'card-green.png') + '" alt="KOREA CHECK-IN">';
-    if (!cap) return img;
-    return '<div class="cardwrap' + (small ? ' sm' : '') + (gold ? ' gold' : '') + '">'
-      + '<span class="cap">' + esc(U(cap)) + '</span>' + img + '</div>';
+    if (!cap && !used) return img;
+    return '<div class="cardwrap' + (small ? ' sm' : '') + (gold ? ' gold' : '')
+      + (used ? ' used' : '') + '">'
+      + (cap ? '<span class="cap">' + esc(U(cap)) + '</span>' : '')
+      + img
+      + (used ? '<span class="usedmark">' + esc(U('usedBadge')) + '</span>' : '')
+      + '</div>';
   }
 
   function nextPill() {
@@ -245,16 +262,14 @@
 
   /* 7/7 체크아웃 준비 — 뒤로가기 없음 */
   R.ready = function () {
-    // 어떤 경로로 들어와도 코드가 비어 있지 않게 합니다
-    if (!S.code) { S.code = makeCode(); save(); }
     return ciBar() + journey()
       + '<div class="main">'
       + card(true, false, 'congrats')
       + '<div class="center"><div class="h-title">' + esc(U('readyTitle')) + '</div>'
       + '<div class="sub" style="margin-top:6px">' + lines('readyBody', { desk: CFG.checkout.desk }) + '</div></div>'
-      + '<div class="code">' + esc(S.code) + '</div>'
       + '<div class="grow"></div>'
-      + '<button class="btn" data-act="checkout">' + esc(U('readyCta')) + '</button>'
+      // 시안대로 「아직 누르지 마세요」 — 끝내는 것은 직원의 확인코드입니다
+      + '<button class="btn" data-act="wait">' + esc(U('readyCta')) + '</button>'
       + '</div>' + markOnly();
   };
 
@@ -270,6 +285,7 @@
       + '<div class="main">'
       + card(true, true, more ? 'congrats' : 'goldenKey')
       + '<div class="pill">' + esc(U('thanks')) + '</div>'
+      + (S.redeemed ? '<div class="once">' + esc(U('onceOnly')) + '</div>' : '')
       + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
       + '<div class="annex">' + rows + '</div>'
       + '<div class="btnrow">'
@@ -287,6 +303,23 @@
       + '<button class="x" data-act="notice-close" aria-label="close">' + icon('close') + '</button></div>'
       + '<p>' + lines('noticeBody') + '</p>'
       + '<button class="btn" data-act="notice-close">&#10003;</button>'
+      + '</div></div>';
+  }
+
+  /* 관리자 확인 창 — 직원이 보는 것이라 글귀는 한국어입니다 (시안 popup) */
+  function admBox() {
+    var a = CFG.admin || {};
+    return '<div class="adm" id="adm" role="dialog" aria-modal="true" hidden>'
+      + '<div class="box">'
+      + '<div class="hd"><b>' + esc(a.title) + '</b>'
+      + '<button class="x" data-act="adm-close" aria-label="close">' + icon('close') + '</button></div>'
+      + '<label for="admcode">' + esc(a.label) + '</label>'
+      + '<input id="admcode" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" '
+      + 'autocomplete="off" placeholder="' + esc(a.ph) + '">'
+      + '<div class="err" id="admerr" role="alert"></div>'
+      + '<button class="btn" data-act="adm-ok">&#10003;</button>'
+      + '<div class="admfoot" id="admfoot" hidden>'
+      + '<button class="lnk" data-act="adm-reset">' + esc(a.reset) + '</button></div>'
       + '</div></div>';
   }
 
@@ -318,7 +351,7 @@
 
   /* ── 그리기 ────────────────────────────────────── */
   function render() {
-    app.innerHTML = (R[view.name] || R.intro)();
+    app.innerHTML = (R[view.name] || R.intro)() + admBox();
     document.documentElement.lang =
       S.lang === 'zhCN' ? 'zh-CN' : S.lang === 'zhTW' ? 'zh-TW' : (S.lang || 'en');
     window.scrollTo(0, 0);
@@ -349,7 +382,6 @@
     if (S.got[sp.id]) return false;
     S.got[sp.id] = { at: new Date().toISOString() };
     S.order.push(sp.id);
-    if (isDone() && !S.code) S.code = makeCode();
     save();
     return true;
   }
@@ -380,6 +412,84 @@
       if (isDone()) { go('after'); return; }
       go('board', { pop: at });
     });
+  }
+
+  /* ── 관리자 확인 ───────────────────────────────── */
+  /* 머리말의 Imagine your Korea 쪽을 세 번 누르면 창이 열립니다.
+     손님 눈에 띄는 단추는 두지 않았습니다 — 직원만 아는 길입니다. */
+  var taps = 0;
+  var tapTimer = null;
+
+  function admTap() {
+    taps++;
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(function () { taps = 0; }, 1500);
+    if (taps >= ((CFG.admin || {}).taps || 3)) { taps = 0; admOpen(); }
+  }
+
+  function admOpen() {
+    var box = document.getElementById('adm');
+    if (!box) return;
+    box.hidden = false;
+    var err = document.getElementById('admerr');
+    if (err) err.textContent = '';
+    var foot = document.getElementById('admfoot');
+    if (foot) foot.hidden = true;     // 시험용 지우기는 코드가 맞아야 보입니다
+    var el = document.getElementById('admcode');
+    if (el) { el.value = ''; el.focus(); }
+  }
+
+  function admClose() {
+    var box = document.getElementById('adm');
+    if (box) box.hidden = true;
+    taps = 0;
+  }
+
+  function admOk() {
+    var a = CFG.admin || {};
+    var el = document.getElementById('admcode');
+    var err = document.getElementById('admerr');
+    if (!el) return;
+    var v = (el.value || '').trim();
+
+    if (digest(v) !== a.codeKey) {
+      if (err) err.textContent = a.bad;
+      el.select();
+      return;
+    }
+
+    // 코드가 맞고 아직 안 건넸으면 바로 완료 처리합니다 (직원 손이 한 번 덜 갑니다)
+    if (atCheckout() && !S.redeemed) { redeem(); return; }
+
+    // 이미 끝났거나 아직 차례가 아니면 까닭을 적고 시험용 지우기를 내어 줍니다
+    if (err) err.textContent = S.redeemed ? a.doneAlready : a.notReady;
+    var foot = document.getElementById('admfoot');
+    if (foot) foot.hidden = false;
+  }
+
+  /* 선물을 건넸다는 표 — 이 뒤로 카드는 투명해지고 두 번은 안 됩니다 */
+  function redeem() {
+    S.redeemed = new Date().toISOString();
+    if (!S.checkedOut) S.checkedOut = S.redeemed;
+    save();
+    admClose();
+    go('after');
+  }
+
+  /* 시험용 — 이 휴대폰 기록만 지워 처음부터 다시 해 봅니다.
+     손이 스쳐 손님 기록을 날리지 않도록 두 번 눌러야 지워집니다. */
+  function admReset(btn) {
+    if (btn.dataset.sure !== '1') {
+      btn.dataset.sure = '1';
+      btn.textContent = (CFG.admin || {}).resetAgain || '';
+      return;
+    }
+    try { localStorage.removeItem(KEY); } catch (e) { /* 저장소를 못 쓰는 경우 */ }
+    S = fresh();
+    S.lang = CFG.defaultLang || CFG.langs[0];
+    pending = null;
+    admClose();
+    go('intro', null, true);
   }
 
   /* ── 누름 처리 ─────────────────────────────────── */
@@ -432,18 +542,23 @@
       return;
     }
 
-    if (b.dataset.act === 'checkout') {
-      S.checkedOut = new Date().toISOString();
-      save();
-      go('after');
-      return;
-    }
+    // 시안의 「아직 누르지 마세요」 — 눌러도 끝나지 않고 직원을 부르라고만 합니다
+    if (b.dataset.act === 'wait') { toast(U('waitStaff')); return; }
+
+    if (b.dataset.act === 'adm-tap') { admTap(); return; }
+    if (b.dataset.act === 'adm-close') { admClose(); return; }
+    if (b.dataset.act === 'adm-ok') { admOk(); return; }
+    if (b.dataset.act === 'adm-reset') { admReset(b); return; }
   });
 
   app.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && e.target.id === 'nick') {
       var btn = app.querySelector('[data-act="checkin"]');
       if (btn) btn.click();
+    }
+    if (e.key === 'Enter' && e.target.id === 'admcode') {
+      var ok = app.querySelector('[data-act="adm-ok"]');
+      if (ok) ok.click();
     }
   });
 

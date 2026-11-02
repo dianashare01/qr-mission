@@ -207,15 +207,6 @@ img { display: block; max-width: 100%; }
 .err { min-height: 20px; font-size: 12.5px; color: #E6B98A; }
 
 /* ── 체크아웃 ──────────────────────────────────── */
-.code {
-  font-family: var(--mono);
-  font-size: 18px;
-  letter-spacing: .16em;
-  color: var(--gold-light);
-  padding: 9px 16px;
-  border: 1px dashed var(--ring);
-  border-radius: 10px;
-}
 .thanks {
   flex: none;
   padding: 10px 20px;
@@ -311,7 +302,10 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 
 /* ── v0.3 에서 더해진 것 ───────────────────────── */
-.ci img.head { height: 30px; width: auto; opacity: 1; }
+/* 디자인 머리말은 가로로 꽉 찹니다 — KOREA CHECK-IN 은 왼쪽 끝,
+   Imagine your Korea 는 오른쪽 끝. 높이를 못박으면 그림이 좁아져
+   오른쪽 표가 화면 한가운데로 옵니다. */
+.ci img.head { width: 100%; height: auto; aspect-ratio: 654 / 40; opacity: 1; }
 
 .langs.col { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
 .langs.col .lang {
@@ -350,6 +344,71 @@ img { display: block; max-width: 100%; }
 .notice .x svg { width: 16px; height: 16px; }
 .notice p { margin: 12px 0 16px; font-size: 13px; line-height: 1.65; color: var(--ink-sub); }
 .notice .btn { margin: 0; }
+
+/* ── v0.4 에서 더해진 것 — 관리자 확인 ──────────
+   머리말 Imagine your Korea 쪽의 보이지 않는 누름칸, 확인 창,
+   그리고 완료 처리된 뒤 투명해지는 카드입니다. */
+.ci { position: relative; }
+.ci .tapzone {
+  /* 오른쪽 Imagine your Korea 표 위. 머리말 띠가 20px 밖에 안 돼서
+     손가락이 닿게 아래로 조금 더 내려 잡았습니다. */
+  position: absolute; top: 0; right: 0;
+  width: 34%; height: 44px;
+  background: none; border: 0;
+}
+
+/* 선물을 건넨 뒤 — 카드가 투명해지고 완료 표가 얹힙니다 */
+.cardwrap.used .card { opacity: .42; filter: grayscale(.15); }
+.cardwrap.used .cap { opacity: .42; }
+.usedmark {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) rotate(-11deg);
+  z-index: 2;
+  padding: 5px 15px;
+  border: 2px solid var(--gold-light);
+  border-radius: 6px;
+  background: rgba(13, 43, 32, .62);
+  color: var(--gold-light);
+  font-size: 11.5px; font-weight: 700; letter-spacing: .16em;
+  white-space: nowrap;
+}
+
+/* 한 번뿐이라는 안내 */
+.once {
+  align-self: center; margin-top: 10px; max-width: 300px;
+  text-align: center; font-size: 12px; line-height: 1.55; color: var(--ink-sub);
+}
+
+/* 확인 창 (시안 popup_StampTourNotice) */
+.adm {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(6, 18, 13, .72);
+}
+.adm[hidden] { display: none; }
+.adm .box {
+  width: 100%; max-width: 320px; padding: 16px 18px 18px;
+  border-radius: 14px; background: #16402E; border: 1px solid var(--ring);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+}
+.adm .hd { display: flex; align-items: center; justify-content: space-between; }
+.adm .hd b { font-size: 18px; font-weight: 700; }
+.adm .x { width: 30px; height: 30px; display: grid; place-items: center; color: var(--gold-light); }
+.adm .x svg { width: 18px; height: 18px; }
+.adm label { display: block; margin: 14px 0 7px; font-size: 13px; color: var(--ink); }
+.adm input {
+  width: 100%; height: 52px; padding: 0 16px;
+  border: 1px solid var(--ring); border-radius: 12px;
+  background: #11341F; color: var(--ink);
+  font-family: var(--mono); font-size: 16px; letter-spacing: .18em;
+}
+.adm input::placeholder { font-family: var(--sans); font-size: 13.5px; letter-spacing: 0; color: var(--ink-sub); }
+.adm input:focus { outline: none; border-color: var(--gold); }
+.adm .err { min-height: 18px; margin: 6px 2px 8px; }
+.adm .btn { min-height: 52px; }
+.adm .admfoot { margin-top: 12px; text-align: center; }
+.adm .admfoot[hidden] { display: none; }
+.adm .lnk { font-size: 12px; line-height: 1.5; color: var(--ink-sub); text-decoration: underline; }
 
 </style>
 </head>
