@@ -144,17 +144,27 @@
       + '</div><div class="bars">' + bars + '</div>';
   }
 
-  /* 카드. cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
+  /* 룸키 카드 — 그림을 붙이지 않고 그려서 냅니다.
+     디자이너가 준 카드 그림은 160x242 짜리 한 배뿐이라, 휴대폰이 한 점을
+     두세 점으로 늘려 그리면서 뭉갰습니다. 결·모서리·글자는 CSS 로,
+     K 열쇠 표는 선 그림으로 그리면 아무리 키워도 또렷합니다.
+     표의 길은 _tools/trace-key.js 가 그림에서 떠낸 것입니다. */
+  var KEY_PATH = 'M1 0 L20.8 0.5 L21.4 50 L69.8 0 L97.9 0.5 L44.3 58.3 L100 119.3 '
+    + 'L72.9 119.3 L53.1 99.5 L20.8 67.2 L20.8 157.8 L49 158.8 L49.5 174.5 L35.9 176 '
+    + 'L34.9 189.6 L21.4 190.1 L19.8 207.8 L0.5 206.2 Z';
+
+  /* cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
   function card(gold, small, cap) {
     // 확인코드를 넣은 뒤로 선물 카드는 투명해지고 완료 표가 얹힙니다
     var used = gold && !!S.redeemed;
-    var img = '<img class="card' + (small ? ' sm' : '') + '" src="' + A
-      + (gold ? 'card-gold.png' : 'card-green.png') + '" alt="KOREA CHECK-IN">';
-    if (!cap && !used) return img;
-    return '<div class="cardwrap' + (small ? ' sm' : '') + (gold ? ' gold' : '')
-      + (used ? ' used' : '') + '">'
+    var c = CFG.card || {};
+    return '<div class="rk' + (gold ? ' gold' : '') + (small ? ' sm' : '')
+      + (used ? ' used' : '') + '" role="img" aria-label="' + esc(c.title || '') + '">'
       + (cap ? '<span class="cap">' + esc(U(cap)) + '</span>' : '')
-      + img
+      + '<svg class="key" viewBox="0 0 100 208.3" aria-hidden="true">'
+      + '<path d="' + KEY_PATH + '"/></svg>'
+      + '<b class="t1">' + esc(c.title || '') + '</b>'
+      + '<i class="t2">' + esc(c.sub || '') + '</i>'
       + (used ? '<span class="usedmark">' + esc(U('usedBadge')) + '</span>' : '')
       + '</div>';
   }

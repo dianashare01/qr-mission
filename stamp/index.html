@@ -101,8 +101,7 @@ img { display: block; max-width: 100%; }
 .center { text-align: center; }
 
 /* ── 룸키 ──────────────────────────────────────── */
-.card { flex: none; width: 172px; filter: drop-shadow(0 16px 30px rgba(0, 0, 0, .38)); }
-.card.sm { width: 132px; }
+/* 카드는 그림이 아니라 그려서 냅니다 — 아래 「v0.4 룸키 카드」 참고 */
 
 /* ── NEXT 알약 ─────────────────────────────────── */
 .nextpill {
@@ -305,7 +304,7 @@ img { display: block; max-width: 100%; }
 /* 디자인 머리말은 가로로 꽉 찹니다 — KOREA CHECK-IN 은 왼쪽 끝,
    Imagine your Korea 는 오른쪽 끝. 높이를 못박으면 그림이 좁아져
    오른쪽 표가 화면 한가운데로 옵니다. */
-.ci img.head { width: 100%; height: auto; aspect-ratio: 654 / 40; opacity: 1; }
+.ci img.head { width: 100%; height: auto; aspect-ratio: 327 / 20; opacity: 1; }
 
 .langs.col { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
 .langs.col .lang {
@@ -315,14 +314,6 @@ img { display: block; max-width: 100%; }
 }
 .langs.col .lang[aria-pressed='true'] { box-shadow: 0 0 0 2px var(--ink) inset; }
 
-/* 카드 위에 얹는 작은 글귀 */
-.cardwrap { position: relative; display: flex; justify-content: center; }
-.cardwrap .cap {
-  position: absolute; top: 7%; left: 0; right: 0; text-align: center;
-  font-size: 10.5px; letter-spacing: .04em; color: var(--gold-light); z-index: 1;
-}
-.cardwrap.sm .cap { font-size: 8.5px; top: 6%; }
-.cardwrap.gold .cap { color: #2E2409; font-weight: 700; }
 
 /* 고맙다는 쪽지 */
 .pill {
@@ -357,9 +348,7 @@ img { display: block; max-width: 100%; }
   background: none; border: 0;
 }
 
-/* 선물을 건넨 뒤 — 카드가 투명해지고 완료 표가 얹힙니다 */
-.cardwrap.used .card { opacity: .42; filter: grayscale(.15); }
-.cardwrap.used .cap { opacity: .42; }
+/* 선물을 건넨 뒤 — 카드가 바탕에 묻히고 완료 표가 얹힙니다 */
 .usedmark {
   position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%) rotate(-11deg);
@@ -409,6 +398,65 @@ img { display: block; max-width: 100%; }
 .adm .admfoot { margin-top: 12px; text-align: center; }
 .adm .admfoot[hidden] { display: none; }
 .adm .lnk { font-size: 12px; line-height: 1.5; color: var(--ink-sub); text-decoration: underline; }
+
+/* ── v0.4 룸키 카드 — 그려서 냅니다 ──────────────
+   디자이너 그림(160x242)은 한 배뿐이라 휴대폰에서 뭉갰습니다.
+   결·모서리·글자는 CSS, K 열쇠 표는 선 그림(SVG)이라 아무리 키워도 또렷합니다.
+   숫자는 모두 원래 그림을 재서 옮긴 것입니다 (카드 속살 152 x 230). */
+.rk {
+  --w: 172px;
+  position: relative;
+  flex: none;
+  width: var(--w);
+  height: calc(var(--w) * 230 / 152);
+  border-radius: calc(var(--w) * .053);
+  background: linear-gradient(90deg, #385A45 0%, #18392C 50%, #0E2A1F 100%);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, .38);
+  color: var(--ink);
+  overflow: hidden;
+}
+.rk.sm { --w: 132px; }
+
+/* 금 열쇠 — 가운데가 환한 금결, 글자와 표는 짙은 초록 */
+.rk.gold {
+  background: linear-gradient(90deg, #BB9A59 0%, #AE8D51 10%, #F1DCA3 50%, #C0974C 100%);
+  color: #12291F;
+}
+
+.rk .key {
+  position: absolute;
+  left: 36.8%; top: 20.9%;
+  width: 31.6%; height: 43.5%;
+  fill: #FFFFFF;
+}
+.rk.gold .key { fill: #12291F; }
+
+.rk .t1, .rk .t2 {
+  position: absolute; left: 0; right: 0;
+  transform: translateY(-50%);
+  text-align: center; white-space: nowrap; font-style: normal;
+}
+.rk .t1 { top: 73%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
+.rk .t2 { top: 80.9%; font-size: calc(var(--w) * .038); letter-spacing: .045em; opacity: .62; }
+.rk.gold .t2 { opacity: .72; }
+
+.rk .cap {
+  position: absolute; left: 0; right: 0; top: 12%;
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: calc(var(--w) * .061);
+  letter-spacing: .04em;
+  color: var(--gold-light);
+  z-index: 1;
+}
+.rk.gold .cap { color: #2E2409; font-weight: 700; }
+
+/* 완료 처리된 카드 — 바탕색 너울을 덮습니다.
+   카드 자체에 opacity 를 주면 그 위의 완료 표까지 흐려집니다. */
+.rk.used::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: rgba(13, 43, 32, .62);
+}
 
 </style>
 </head>
