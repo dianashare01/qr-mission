@@ -305,7 +305,7 @@
       + '<div class="annex">' + rows + '</div>'
       + '<div class="btnrow">'
       + '<button class="btn" data-act="notice">' + esc(U('noticeBtn')) + '</button>'
-      + (more ? '<button class="btn ghost" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
+      + (more ? '<button class="btn soft" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
       + '</div>'
       + '<div class="grow"></div>'
       + '</div>' + markOnly() + noticeBox();

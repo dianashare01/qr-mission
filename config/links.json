@@ -2,8 +2,8 @@
   "_note": "인쇄한 QR 은 go/?k=<이름> 을 가리킵니다. 아래 url 만 바꿔 넣고 푸시하면, 인쇄한 QR 은 그대로 둔 채 가는 곳만 바뀝니다. url 이 비어 있으면 '준비 중' 화면이 나옵니다.",
   "links": {
     "ksurvey": {
-      "title": "KOREA, CHECK-IN Survey",
-      "url": "",
+      "title": "TRAVEL SURVEY",
+      "url": "https://dianashare01.github.io/qr-mission/survey/",
       "pendingTitle": "The survey is being prepared",
       "pendingBody": "This QR code will open the survey as soon as it goes live."
     }

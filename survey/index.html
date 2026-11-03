@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D2B20">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<title>TRAVEL SURVEY — KOREA, CHECK-IN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* KOREA, CHECK-IN — 설문 언어 고르기
+   시안 02_언어선택.png (375x812) 을 재서 옮겼습니다.
+   인쇄한 설문 QR 은 go/?k=ksurvey 를 가리키고, 그 쪽이 이 쪽으로 넘겨 줍니다.
+   설문 주소를 바꾸려면 아래 <a href> 세 줄만 고치면 됩니다. */
+
+:root {
+  --bg: #0D2B20;
+  --ink: #F7EED9;
+  --sub: #FFFFFF;
+  --btn-from: #E9CA6F;
+  --btn-to: #CC9F36;
+  --btn-ink: #0C291F;
+  --sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+body {
+  min-height: 100%;
+  background: #071A12;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+
+main {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 24px calc(24px + env(safe-area-inset-bottom));
+}
+
+/* 머리말 — 스탬프 쪽과 같은 그림입니다.
+   높이를 못박으면 그림이 좁아져 Imagine your Korea 가 가운데로 옵니다. */
+.head { width: 100%; height: auto; aspect-ratio: 327 / 20; }
+
+.mid { flex: none; }
+/* 글자 크기와 사이는 시안을 재서 맞춘 값입니다 —
+   제목 글줄 폭 155px, 부제 168px, 첫 단추가 머리말 아래 177px */
+h1 {
+  margin-top: 104px;
+  font-size: 19.5px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: .01em;
+  text-align: center;
+}
+.sub {
+  margin-top: 12px;
+  font-size: 12.8px;
+  line-height: 1.4;
+  color: var(--sub);
+  text-align: center;
+  word-break: keep-all;
+}
+
+.langs {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--btn-from), var(--btn-to));
+  color: var(--btn-ink);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  text-align: center;
+  text-decoration: none;
+}
+.btn:active { filter: brightness(.94); }
+
+.grow { flex: 1; }
+
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<main>
+  <img class="head" src="../assets/stamp/head.png" alt="KOREA CHECK-IN · Imagine your Korea">
+
+  <div class="mid">
+    <h1>TRAVEL SURVEY</h1>
+    <p class="sub">Please select your language.</p>
+
+    <!-- 설문 주소는 이 세 줄이 전부입니다. 바뀌면 여기만 고치세요.
+         영문 / 중국어 간체 / 중국어 번체 차례입니다. -->
+    <nav class="langs">
+      <a class="btn" href="https://forms.gle/SEpUTYPhLUgcNiW97" rel="noopener">English</a>
+      <a class="btn" href="https://forms.gle/CfzGCheKMvz5wdb87" rel="noopener">中文(简体)</a>
+      <a class="btn" href="https://forms.gle/DfTtUQV62uPJruh46" rel="noopener">中文(繁體)</a>
+    </nav>
+  </div>
+
+  <div class="grow"></div>
+</main>
+
+</body>
+</html>
