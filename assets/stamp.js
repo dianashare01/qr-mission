@@ -154,9 +154,8 @@
     + 'L34.9 189.6 L21.4 190.1 L19.8 207.8 L0.5 206.2 Z';
 
   /* cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
-  function card(gold, small, cap) {
-    // 확인코드를 넣은 뒤로 선물 카드는 투명해지고 완료 표가 얹힙니다
-    var used = gold && !!S.redeemed;
+  function card(gold, small, cap, used) {
+    // used 는 퇴실 뒤 화면에서만 켭니다 — 검정 바탕에 금색 표
     var c = CFG.card || {};
     return '<div class="rk' + (gold ? ' gold' : '') + (small ? ' sm' : '')
       + (used ? ' used' : '') + '" role="img" aria-label="' + esc(c.title || '') + '">'
@@ -188,10 +187,11 @@
     CFG.spots.forEach(function (sp, i) {
       var on = !!S.got[sp.id];
       var isNew = (popIndex != null && i === popIndex);
-      var img = on
+      // 아직 안 찍힌 자리에는 몇 번째인지 숫자를 넣습니다 (시안 04)
+      var inner = on
         ? '<img src="' + A + (isNew ? 'stamp-new.png' : 'stamp-on.png') + '" alt="">'
-        : '';
-      out += '<div class="s ' + (on ? 'on' : '') + (isNew ? ' pop' : '') + '">' + img + '</div>';
+        : '<span class="n">' + (i + 1) + '</span>';
+      out += '<div class="s ' + (on ? 'on' : '') + (isNew ? ' pop' : '') + '">' + inner + '</div>';
     });
     return '<div class="stamps">' + out + '</div>';
   }
@@ -263,29 +263,28 @@
       + '</div>' + navBar('back', null);
   };
 
-  /* 스탬프 적립 화면 */
+  /* 스탬프 적립 화면.
+     다섯 개째부터 카드가 금 열쇠로 바뀌고 아래에 단추 둘이 붙습니다 (시안 04·04-1).
+     예전에는 다섯 개째에 따로 「체크아웃 준비」 화면으로 넘어갔는데,
+     새 시안은 이 화면에 그대로 단추를 답니다. */
   R.board = function () {
+    var gift = atCheckout();
+    var canOut = gift && !S.redeemed;
     return ciBar() + journey()
       + '<div class="main">'
-      + card(false)
+      // 선물을 받은 뒤로는 스탬프 화면에서도 검정 카드입니다
+      + card(gift, false, gift ? 'goldenKey' : null, gift && !!S.redeemed)
       + nextPill()
       + '<div class="grow"></div>'
       + stampRow(view.pop)
+      + (canOut
+        ? '<div class="btnrow">'
+          + '<button class="btn" data-act="ready">' + esc(U('readyBtn')) + '</button>'
+          + '<button class="btn" data-act="keepgoing">' + esc(U('continueBtn')) + '</button>'
+          + '</div>'
+        : '')
       + '<div class="grow"></div>'
       + '</div>' + navBar(S.hist.length ? 'back' : null, null);
-  };
-
-  /* 7/7 체크아웃 준비 — 뒤로가기 없음 */
-  R.ready = function () {
-    return ciBar() + journey()
-      + '<div class="main">'
-      + card(true, false, 'congrats')
-      + '<div class="center"><div class="h-title">' + esc(U('readyTitle')) + '</div>'
-      + '<div class="sub" style="margin-top:6px">' + lines('readyBody', { desk: CFG.checkout.desk }) + '</div></div>'
-      + '<div class="grow"></div>'
-      // 시안대로 「아직 누르지 마세요」 — 끝내는 것은 직원의 확인코드입니다
-      + '<button class="btn" data-act="wait">' + esc(U('readyCta')) + '</button>'
-      + '</div>' + markOnly();
   };
 
   /* 퇴실 뒤 — 다음 머무를 곳 안내. 아직 도장이 남았으면 이어 가기 단추가 붙습니다 */
@@ -298,7 +297,7 @@
     var more = !isDone();
     return ciBar() + journey()
       + '<div class="main">'
-      + card(true, true, more ? 'congrats' : 'goldenKey')
+      + card(true, true, more ? 'congrats' : 'goldenKey', !!S.redeemed)
       + '<div class="pill">' + esc(U('thanks')) + '</div>'
       + (S.redeemed ? '<div class="once">' + esc(U('onceOnly')) + '</div>' : '')
       + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
@@ -423,8 +422,8 @@
     go('board', null, true);
     pressThen(function () {
       award(sp);
-      if (!S.checkedOut && atCheckout()) { go('ready'); return; }
-      if (isDone()) { go('after'); return; }
+      // 일곱 개를 다 모았어도 선물을 아직 안 받았으면 스탬프 화면에 머뭅니다
+      if (isDone() && S.redeemed) { go('after'); return; }
       go('board', { pop: at });
     });
   }
@@ -542,7 +541,6 @@
       if (first && !S.got[first.id]) {
         pressThen(function () {
           award(first);
-          if (!S.checkedOut && atCheckout()) { go('ready'); return; }
           go('board', { pop: slotOf(first) });
         });
       } else {
@@ -557,8 +555,10 @@
       return;
     }
 
-    // 시안의 「아직 누르지 마세요」 — 눌러도 끝나지 않고 직원을 부르라고만 합니다
-    if (b.dataset.act === 'wait') { toast(U('waitStaff')); return; }
+    // 시안 04 — 「READY TO CHECK-OUT」 을 누르면 직원 확인 창이 열립니다
+    if (b.dataset.act === 'ready') { admOpen(); return; }
+    // 「이어 가시겠어요?」 — 다음 QR 을 찍으시라고만 알려 줍니다
+    if (b.dataset.act === 'keepgoing') { toast(U('scanHow')); return; }
 
     if (b.dataset.act === 'adm-tap') { admTap(); return; }
     if (b.dataset.act === 'adm-close') { admClose(); return; }
@@ -588,7 +588,6 @@
 
   function resume() {
     if (S.checkedOut && isDone()) return 'after';
-    if (!S.checkedOut && atCheckout()) return 'ready';
     if (S.checkedOut) return 'board';
     if (S.nick) return 'board';
     return 'intro';

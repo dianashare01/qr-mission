@@ -122,12 +122,14 @@ img { display: block; max-width: 100%; }
 /* ── 스탬프 일곱 칸 ─────────────────────────────── */
 .stamps { flex: none; display: flex; gap: 7px; justify-content: center; }
 .stamps .s {
-  width: 38px; height: 38px;
+  width: 37px; height: 37px;
   border-radius: 50%;
-  border: 1.5px solid var(--ring);
+  border: 1px solid #6E8079;
   display: grid; place-items: center;
   overflow: hidden;
 }
+/* 아직 안 찍힌 자리의 숫자 — 시안 04 를 재서 옮긴 색입니다 */
+.stamps .s .n { font-size: 14px; font-weight: 500; line-height: 1; color: #62766E; }
 .stamps .s.on { border: 0; }
 .stamps .s img { width: 100%; height: 100%; object-fit: contain; }
 .stamps .s.pop img { animation: pop .5s cubic-bezier(.2, .9, .3, 1.35) both; }
@@ -140,8 +142,9 @@ img { display: block; max-width: 100%; }
   min-height: 54px;
   padding: 12px 18px;
   border-radius: 999px;
-  background: linear-gradient(100deg, #CBA85E, #F0DE9E 45%, #C49E4F);
-  color: #2A2107;
+  /* 새 시안의 단추 결 (04·06 을 재서 옮김) — 설문 쪽과 같습니다 */
+  background: linear-gradient(90deg, #E9CA6F, #CA9E32);
+  color: #0C291F;
   font-size: 14.5px;
   font-weight: 700;
   letter-spacing: .04em;
@@ -471,6 +474,6 @@ img { display: block; max-width: 100%; }
 <!-- ?v= 는 묵은 파일을 밀어내는 꼬리표입니다. assets/stamp.js 를 고칠 때마다
      숫자를 하나 올려 주세요. 깃허브가 10분 동안 묵혀 두는데, 그 사이
      새 꾸밈과 옛 stamp.js 가 섞이면 단추 색 같은 게 어긋납니다. -->
-<script src="../assets/stamp.js?v=4"></script>
+<script src="../assets/stamp.js?v=6"></script>
 </body>
 </html>

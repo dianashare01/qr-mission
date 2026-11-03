@@ -340,6 +340,11 @@
       "en": "Please show this screen to one of our staff member.",
       "zhCN": "请将该画面向职员出示。",
       "zhTW": "請向工作人員出示此畫面。"
+    },
+    "readyBtn": {
+      "en": "READY TO CHECK-OUT (5F)",
+      "zhCN": "现在可以退房（5楼）",
+      "zhTW": "現在可以退房（5樓）"
     }
   },
   "defaultLang": "en",
