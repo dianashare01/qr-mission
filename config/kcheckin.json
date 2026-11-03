@@ -46,8 +46,8 @@
       },
       "name": {
         "en": "THE RECEPTION",
-        "zhCN": "接待处",
-        "zhTW": "接待處"
+        "zhCN": "接待展位",
+        "zhTW": "接待展位"
       },
       "auto": true
     },
@@ -62,8 +62,8 @@
       },
       "name": {
         "en": "MINIBAR",
-        "zhCN": "迷你吧",
-        "zhTW": "迷你吧"
+        "zhCN": "迷你吧展示架",
+        "zhTW": "迷你吧展示架"
       }
     },
     {
@@ -77,8 +77,8 @@
       },
       "name": {
         "en": "LOCAL CONCIERGE",
-        "zhCN": "本地信息柜台",
-        "zhTW": "在地資訊櫃台"
+        "zhCN": "地区推广台",
+        "zhTW": "在地推廣台"
       }
     },
     {
@@ -92,8 +92,8 @@
       },
       "name": {
         "en": "FOOD TRAILER",
-        "zhCN": "餐车",
-        "zhTW": "餐車"
+        "zhCN": "餐车服务台",
+        "zhTW": "餐車服務台"
       }
     },
     {
@@ -122,8 +122,8 @@
       },
       "name": {
         "en": "K-CLASS",
-        "zhCN": "韩国文化体验课程",
-        "zhTW": "韓國文化體驗課程"
+        "zhCN": "K-CLASS",
+        "zhTW": "K-CLASS"
       }
     },
     {
@@ -137,8 +137,8 @@
       },
       "name": {
         "en": "CHECK-OUT ZONE",
-        "zhCN": "退房区",
-        "zhTW": "退房區"
+        "zhCN": "退房柜台",
+        "zhTW": "退房櫃台"
       }
     }
   ],

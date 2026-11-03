@@ -121,7 +121,7 @@
   /* ── 공통 조각 ─────────────────────────────────── */
   /* 위쪽 표기 — KOREA CHECK-IN 과 Imagine your Korea 가 한 장에 들어 있습니다 */
   function ciBar() {
-    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="KOREA CHECK-IN">'
+    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="Imagine your Korea">'
       // Imagine your Korea 쪽을 세 번 누르면 관리자 확인 창이 열립니다
       + '<button class="tapzone" data-act="adm-tap" tabindex="-1" aria-hidden="true"></button>'
       + '</div>';
@@ -240,7 +240,8 @@
     return ciBar() + journey()
       + '<div class="main">'
       + '<div class="grow"></div>'
-      + '<div class="center"><div class="h-title">' + esc(U('langTitle')) + '</div>'
+      // 제목이 두 줄로 쪼개지지 않게 — 글자를 줄여서라도 한 줄로 (.one)
+      + '<div class="center"><div class="h-title one">' + esc(U('langTitle')) + '</div>'
       + '<div class="sub" style="margin-top:4px">' + esc(U('langSub')) + '</div></div>'
       + '<div class="langs col">' + btns + '</div>'
       + '<div class="grow"></div>'
