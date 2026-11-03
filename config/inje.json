@@ -108,12 +108,12 @@
   },
   "spots": [
     {
-      "id": "s1",
+      "id": "s7",
       "order": 1,
       "place": "1F 서문",
       "placeNote": "서문 시트 옆. 시작 안내 겸용",
       "hint": "서문 시트 옆",
-      "token": "tb5686",
+      "token": "den42x",
       "item": {
         "name": "별",
         "label": "1F 서문"
@@ -153,12 +153,12 @@
       }
     },
     {
-      "id": "s2",
+      "id": "s6",
       "order": 2,
       "place": "1F 행잉북·테이블 맵핑",
       "placeNote": "테이블 모서리. 맵핑 투사면 밖",
       "hint": "테이블 모서리",
-      "token": "hkm9by",
+      "token": "62fadg",
       "item": {
         "name": "바람",
         "label": "행잉북·테이블"
@@ -198,12 +198,12 @@
       }
     },
     {
-      "id": "s3",
+      "id": "s5",
       "order": 3,
       "place": "1F 마리서사 재현실",
       "placeNote": "서가 선반",
       "hint": "서가 선반",
-      "token": "mepacb",
+      "token": "rq5dxn",
       "item": {
         "name": "세월",
         "label": "마리서사"
@@ -292,12 +292,12 @@
       }
     },
     {
-      "id": "s5",
+      "id": "s3",
       "order": 5,
       "place": "2F 시 낭송 방",
       "placeNote": "방 입구. 녹음 중 스캔 방지",
       "hint": "방 입구",
-      "token": "rq5dxn",
+      "token": "mepacb",
       "item": {
         "name": "숙녀",
         "label": "시 낭송 방"
@@ -337,12 +337,12 @@
       }
     },
     {
-      "id": "s6",
+      "id": "s2",
       "order": 6,
       "place": "2F 타자기 방",
       "placeNote": "타자기 책상 위",
       "hint": "타자기 책상 위",
-      "token": "62fadg",
+      "token": "hkm9by",
       "item": {
         "name": "가을",
         "label": "타자기 방"
@@ -382,12 +382,12 @@
       }
     },
     {
-      "id": "s7",
+      "id": "s1",
       "order": 7,
       "place": "2F 바테이블 방",
       "placeNote": "바 상판. 완주 후 리워드 수령 동선과 연결",
       "hint": "바 상판",
-      "token": "den42x",
+      "token": "tb5686",
       "item": {
         "name": "술병",
         "label": "바테이블 방"
@@ -466,7 +466,7 @@
     "poem": {
       "label": "당신의 시",
       "labelFormat": "당신의 시 · {mbti}",
-      "fromSpot": "s7",
+      "fromSpot": "s1",
       "placeholder": "마지막 질문에서 MBTI 를 고르면 당신의 시가 열립니다.",
       "byType": {
         "INTJ": {
