@@ -24,9 +24,82 @@
   var KEY = 'qrm:kcheckin';
   var A = '../assets/stamp/';
 
+  /* ── 서버에 남기기 ─────────────────────────────
+     화면은 늘 휴대폰 기록으로 돕니다. 서버는 **보고용 사본**일 뿐이라
+     안 가도 투어는 그대로 굴러갑니다. 못 보낸 도장은 q 에 쌓아 두었다가
+     다음에 켤 때 다시 보냅니다. */
+  // 내 컴퓨터에서 확인할 때는 가까이 있는 서버를 씁니다 (wrangler dev)
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var API = LOCAL ? 'http://127.0.0.1:8787' : 'https://qr-mission-api.jhmonounity.workers.dev';
+  var PROJECT = 'kcheckin';
+
+  // 머리글을 안 붙입니다 — 붙이면 브라우저가 미리 한 번 더 물어 느려집니다
+  function tell(path, data) {
+    try {
+      return fetch(API + path, { method: 'POST', body: JSON.stringify(data), keepalive: true })
+        .then(function (r) { return r.json(); })
+        .catch(function () { return null; });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  }
+
+  /* 다녀간 수 — 누가 왔는지는 안 보냅니다.
+     날짜와 '이 브라우저가 오늘 처음인지' 예·아니오뿐입니다. */
+  function firstToday() {
+    try {
+      var day = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+      if (localStorage.getItem('qrm:day') === day) return false;
+      localStorage.setItem('qrm:day', day);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /* 못 보낸 것들을 다시 보냅니다. 서버가 받았다고 해야 지웁니다. */
+  function flush() {
+    if (!S.sid) return;
+    (S.q || []).slice().forEach(function (id) {
+      tell('/api/answer', { sessionId: S.sid, project: PROJECT, spotId: id }).then(function (r) {
+        if (!r || !r.ok) return;
+        var i = S.q.indexOf(id);
+        if (i >= 0) { S.q.splice(i, 1); save(); }
+      });
+    });
+    if (S.redeemed && !S.rsent) {
+      tell('/api/redeem', { sessionId: S.sid, project: PROJECT }).then(function (r) {
+        if (r && r.ok) { S.rsent = true; save(); }
+      });
+    }
+  }
+
+  function sendStamp(id) {
+    if (!S.q) S.q = [];
+    if (S.q.indexOf(id) < 0) { S.q.push(id); save(); }
+    flush();
+  }
+
+  /* 이름을 적으면 그때 한 번 자리를 만듭니다 */
+  function openSession() {
+    if (S.sid || !S.nick) return;
+    tell('/api/session', { project: PROJECT, nickname: S.nick, lang: S.lang || 'en' })
+      .then(function (r) {
+        if (!r || !r.ok || !r.sessionId) return;
+        S.sid = r.sessionId;
+        save();
+        flush();
+      });
+  }
+
   /* ── 저장 ──────────────────────────────────────── */
   function fresh() {
-    return { v: 1, lang: null, nick: '', got: {}, order: [], checkedOut: null, redeemed: null, hist: [] };
+    return {
+      v: 1, lang: null, nick: '', got: {}, order: [], checkedOut: null, redeemed: null, hist: [],
+      sid: null,      // 서버가 매긴 이 손님의 번호
+      q: [],          // 아직 서버에 못 보낸 도장들 (끊겼다 이어져도 안 잃어버리게)
+      rsent: false    // 선물 수령을 서버에 알렸는지
+    };
   }
   function load() {
     try {
@@ -398,6 +471,7 @@
     S.got[sp.id] = { at: new Date().toISOString() };
     S.order.push(sp.id);
     save();
+    sendStamp(sp.id);
     return true;
   }
 
@@ -487,6 +561,7 @@
     S.redeemed = new Date().toISOString();
     if (!S.checkedOut) S.checkedOut = S.redeemed;
     save();
+    flush();
     admClose();
     go('after');
   }
@@ -535,6 +610,7 @@
       if (v.length < 2) { document.getElementById('err').textContent = U('errShort'); el.focus(); return; }
       S.nick = v;
       save();
+      openSession();
 
       // 리셉션으로 들어왔으면 스탬프 1개를 자동으로 줍니다
       var first = pending ? spotById(pending) : CFG.spots[0];
@@ -597,6 +673,10 @@
   function boot() {
     S = load();
     if (!S.lang) S.lang = CFG.defaultLang || CFG.langs[0];
+    if (!S.q) S.q = [];
+
+    tell('/api/hit', { site: PROJECT, page: 'stamp', first: firstToday() });
+    flush();
 
     var q = new URLSearchParams(location.search);
 

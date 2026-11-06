@@ -214,8 +214,11 @@ async function redeem(req, env) {
   if (!b.sessionId) return bad('sessionId 가 필요합니다', env, req);
 
   // 비밀값을 넣을 때 줄바꿈이 섞여 들어가는 일이 잦아 앞뒤 공백은 무시한다
+  // K-컬처는 직원이 앱 화면에서 확인코드를 넣어 끝내므로 서버 번호를 따로 묻지 않습니다.
+  // (여기 남는 줄은 보고용 숫자일 뿐, 선물을 내주는 문은 앱 쪽에 있습니다.)
+  const noPin = String(b.project || '') === 'kcheckin';
   const expected = String(env.STAFF_PIN || '').trim();
-  if (expected && String(b.pin || '').trim() !== expected) {
+  if (!noPin && expected && String(b.pin || '').trim() !== expected) {
     return bad('번호가 맞지 않습니다', env, req, 403);
   }
 
@@ -341,6 +344,46 @@ async function stats(req, env, url) {
 }
 
 /* ── 관리자: 남겨진 기록 보기 ────────────────────── */
+/* 들어온 사람 목록 — 이름·언어·도장 수·선물 수령 여부.
+   K-컬처 관리자 쪽이 이걸로 엑셀을 만듭니다. */
+async function adminSessions(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+
+  const project = url.searchParams.get('project');
+  const limit = Math.min(5000, Math.max(1, Number(url.searchParams.get('limit') || 2000)));
+  const where = project ? ' WHERE s.project = ?' : '';
+  const bindP = project ? [project] : [];
+
+  const rows = await env.DB.prepare(
+    'SELECT s.id, s.nickname, s.lang, s.created_at,'
+    + ' (SELECT COUNT(*) FROM answers a WHERE a.session_id = s.id) AS stamps,'
+    + ' (SELECT r.redeemed_at FROM redeems r WHERE r.session_id = s.id) AS redeemed_at'
+    + ' FROM sessions s' + where + ' ORDER BY s.created_at DESC LIMIT ?'
+  ).bind(...bindP, limit).all();
+
+  const total = await env.DB.prepare(
+    'SELECT COUNT(*) AS n FROM sessions s' + where
+  ).bind(...bindP).first();
+
+  const list = (rows.results || []).map((r) => ({
+    nickname: r.nickname,
+    lang: r.lang,
+    stamps: r.stamps,
+    redeemedAt: r.redeemed_at || null,
+    createdAt: r.created_at,
+  }));
+
+  if (url.searchParams.get('format') === 'csv') {
+    const out = [['번호', '이름', '언어', '도장 수', '선물 수령', '들어온 때(UTC)']];
+    list.forEach((r, i) => out.push([
+      total.n - i, r.nickname, r.lang, r.stamps, r.redeemedAt ? 'O' : '', r.createdAt,
+    ]));
+    return csv(out, `sessions-${project || 'all'}.csv`, env, req);
+  }
+
+  return json({ ok: true, project: project || '전체', total: total.n, sessions: list }, env, req);
+}
+
 async function adminMessages(req, env, url) {
   if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
 
@@ -389,7 +432,22 @@ async function adminMessages(req, env, url) {
 /* ── 홈페이지 접속자 수 ──────────────────────────── */
 
 /* 셀 수 있는 사이트. 아무 이름이나 들어와 표가 지저분해지는 것을 막습니다. */
-const SITES = new Set(['testimony']);
+const SITES = new Set(['testimony', 'kcheckin']);
+
+/* 엑셀에서 바로 열리는 표.
+   맨 앞 \ufeff 가 없으면 엑셀이 한글을 깨뜨립니다. */
+function csv(rows, filename, env, req) {
+  const text = '\ufeff' + rows
+    .map((r) => r.map((c) => `"${String(c == null ? '' : c).replace(/"/g, '""')}"`).join(','))
+    .join('\r\n');
+  return new Response(text, {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      ...cors(env, req),
+    },
+  });
+}
 
 /** 한국 시간 기준 날짜 (2026-10-29) */
 function kstDay(back = 0) {
@@ -444,6 +502,12 @@ async function visits(req, env, url) {
   const first = await env.DB.prepare(
     'SELECT MIN(day) AS day FROM visits WHERE site = ?'
   ).bind(site).first();
+
+  if (url.searchParams.get('format') === 'csv') {
+    const out = [['날짜(한국)', '화면', '들른 수', '사람 수']];
+    (rows.results || []).forEach((r) => out.push([r.day, r.page, r.views, r.uniq]));
+    return csv(out, `visits-${site}.csv`, env, req);
+  }
 
   return json({
     ok: true,
@@ -521,6 +585,7 @@ export default {
       if (p === '/api/messages/recent' && req.method === 'GET') return await recentMessages(req, env, url);
       if (p === '/api/admin/stats' && req.method === 'GET') return await stats(req, env, url);
       if (p === '/api/admin/messages' && req.method === 'GET') return await adminMessages(req, env, url);
+      if (p === '/api/admin/sessions' && req.method === 'GET') return await adminSessions(req, env, url);
       if (p === '/api/hit' && req.method === 'POST') return await hit(req, env);
       if (p === '/api/content' && req.method === 'GET') return await getContent(req, env, url);
       if (p === '/api/admin/visits' && req.method === 'GET') return await visits(req, env, url);
