@@ -347,15 +347,69 @@ async function stats(req, env, url) {
 /* ── 관리자: 남겨진 기록 보기 ────────────────────── */
 /* 들어온 사람 목록 — 이름·언어·도장 수·선물 수령 여부.
    K-컬처 관리자 쪽이 이걸로 엑셀을 만듭니다. */
+const PHOTO_KEEP_DAYS = 30;                  // 한 달 뒤 저절로 지웁니다
+
+/* 하루 한 번 깨어나 한 달 지난 영수증을 치웁니다.
+   Supabase 에는 R2 같은 수명 규칙이 없어 우리가 직접 지웁니다. */
+async function sweepPhotos(env) {
+  if (!sbReady(env)) return 0;
+
+  /* 무료 요금제는 **한 주 동안 아무도 안 쓰면 프로젝트가 잠깁니다.**
+     행사 사이에 조용한 주가 끼면 손님이 올릴 수 없게 되므로,
+     치울 것이 없어도 매일 한 번은 창고를 건드려 깨워 둡니다. */
+  try {
+    await fetch(String(env.SB_URL).replace(/\/+$/, '') + '/storage/v1/bucket/' + sbBucket(env),
+      { headers: sbHead(env) });
+  } catch (e) { /* 못 깨워도 치우는 일은 계속합니다 */ }
+
+  const cut = new Date(Date.now() - PHOTO_KEEP_DAYS * 86400 * 1000).toISOString();
+  const old = await env.DB.prepare(
+    'SELECT k FROM photos WHERE created_at < ? LIMIT 500'
+  ).bind(cut).all();
+
+  let gone = 0;
+  for (const r of (old.results || [])) {
+    try {
+      await fetch(sbUrl(env, r.k), { method: 'DELETE', headers: sbHead(env) });
+      await env.DB.prepare('DELETE FROM photos WHERE k = ?').bind(r.k).run();
+      gone++;
+    } catch (e) { /* 한 장이 안 지워져도 나머지는 계속 */ }
+  }
+  return gone;
+}
+
 /* ── 손님이 올린 사진 (영수증) ──────────────────
    파일은 R2 창고에, 「어디에 있는지」만 D1 에 둡니다.
    누구나 올릴 수 있는 길이라 크기·종류를 좁게 막습니다. */
 
 const PHOTO_MAX = 10 * 1024 * 1024;          // 한 장 10MB
+const PHOTO_QUOTA = 1024 * 1024 * 1024;      // 무료 요금제가 주는 1GB
+
+/* 사진 창고는 Supabase Storage 입니다 (무료 1GB, 카드 안 받음).
+   Cloudflare R2 는 계정에서 따로 켜야 해서 쓰지 않았습니다.
+
+   넣어 두어야 하는 비밀값 (wrangler secret put)
+     SB_URL     https://<프로젝트>.supabase.co
+     SB_KEY     service_role 키 — 서버에서만 씁니다. 손님 화면에는 절대 두지 마세요.
+     SB_BUCKET  창고 이름 (안 적으면 receipts) */
+function sbReady(env) { return !!(env.SB_URL && env.SB_KEY); }
+function sbBucket(env) { return env.SB_BUCKET || 'receipts'; }
+
+function sbUrl(env, key) {
+  return String(env.SB_URL).replace(/\/+$/, '')
+    + '/storage/v1/object/' + sbBucket(env) + '/'
+    + key.split('/').map(encodeURIComponent).join('/');
+}
+function sbHead(env, extra) {
+  return Object.assign({
+    apikey: env.SB_KEY,
+    Authorization: 'Bearer ' + env.SB_KEY,
+  }, extra || {});
+}
 const PHOTO_OK = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
 
 async function photoUp(req, env, url) {
-  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+  if (!sbReady(env)) return bad('사진 창고가 아직 없습니다', env, req, 503);
 
   const project = cleanKey(url.searchParams.get('p'), 32);
   const spot = cleanKey(url.searchParams.get('s'), 32);
@@ -376,7 +430,29 @@ async function photoUp(req, env, url) {
   // 날짜별로 묶어 두면 나중에 눈으로 찾기 좋습니다
   const key = `${project}/${kstDay()}/${uuid()}.${ext}`;
 
-  await env.PHOTOS.put(key, body, { httpMetadata: { contentType: mime } });
+  // 창고가 꽉 찼으면 받지 않습니다 — 넘겨 받아 놓고 잃어버리는 것보다 낫습니다
+  const used = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM photos').first();
+  if (Number(used.b) + body.byteLength > PHOTO_QUOTA) {
+    return bad('창고가 가득 찼습니다. 운영자에게 알려 주세요', env, req, 507);
+  }
+
+  const up = await fetch(sbUrl(env, key), {
+    method: 'POST',
+    headers: sbHead(env, { 'Content-Type': mime, 'x-upsert': 'false' }),
+    body,
+  });
+  if (!up.ok) {
+    // 왜 거절했는지는 창고가 알려 줍니다 — 안 적어 두면 고칠 길이 없습니다
+    let why = '';
+    try { why = (await up.text()).slice(0, 300); } catch (e) { /* 본문이 없을 수도 */ }
+    console.log('사진 올리기 실패', up.status, why);
+    return json({
+      ok: false,
+      error: '창고에 넣지 못했습니다 (' + up.status + ')',
+      detail: why,
+    }, env, req, 502);
+  }
+
   await env.DB.prepare(
     'INSERT INTO photos (k, project, spot, bytes, mime, created_at) VALUES (?,?,?,?,?,?)'
   ).bind(key, project, spot || null, body.byteLength, mime, now()).run();
@@ -409,11 +485,17 @@ async function adminPhotos(req, env, url) {
     return csv(out, `photos-${project || 'all'}.csv`, env, req);
   }
 
+  // 남은 용량은 **창고 전체**(모든 행사 합)로 셉니다 — 1GB 를 같이 쓰니까요
+  const all = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM photos').first();
+
   return json({
     ok: true,
     project: project || '전체',
     total: sum.n,
     bytes: sum.b,
+    usedBytes: Number(all.b),
+    quotaBytes: PHOTO_QUOTA,
+    keepDays: PHOTO_KEEP_DAYS,
     photos: rows.results || [],
   }, env, req);
 }
@@ -421,14 +503,14 @@ async function adminPhotos(req, env, url) {
 /* 한 장 내려받기 — 관리자만. 주소에 코드를 담아 부릅니다. */
 async function adminPhoto(req, env, url) {
   if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
-  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+  if (!sbReady(env)) return bad('사진 창고가 아직 없습니다', env, req, 503);
 
   const k = url.searchParams.get('k') || '';
   const row = await env.DB.prepare('SELECT k, mime FROM photos WHERE k = ?').bind(k).first();
   if (!row) return bad('그런 사진이 없습니다', env, req, 404);
 
-  const obj = await env.PHOTOS.get(row.k);
-  if (!obj) return bad('창고에서 사라졌습니다 (한 달이 지났을 수 있습니다)', env, req, 404);
+  const obj = await fetch(sbUrl(env, row.k), { headers: sbHead(env) });
+  if (!obj.ok) return bad('창고에서 사라졌습니다 (한 달이 지났을 수 있습니다)', env, req, 404);
 
   const down = url.searchParams.get('download') === '1';
   const headers = {
@@ -442,13 +524,13 @@ async function adminPhoto(req, env, url) {
 
 async function adminPhotoDel(req, env, url) {
   if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
-  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+  if (!sbReady(env)) return bad('사진 창고가 아직 없습니다', env, req, 503);
 
   const k = url.searchParams.get('k') || '';
   const row = await env.DB.prepare('SELECT k FROM photos WHERE k = ?').bind(k).first();
   if (!row) return bad('그런 사진이 없습니다', env, req, 404);
 
-  await env.PHOTOS.delete(row.k);
+  await fetch(sbUrl(env, row.k), { method: 'DELETE', headers: sbHead(env) });
   await env.DB.prepare('DELETE FROM photos WHERE k = ?').bind(row.k).run();
   return json({ ok: true }, env, req);
 }
@@ -702,10 +784,20 @@ export default {
       if (p === '/api/admin/visits' && req.method === 'GET') return await visits(req, env, url);
       if (p === '/api/admin/content' && req.method === 'POST') return await putContent(req, env, url);
       if (p === '/api/health') return json({ ok: true, at: now() }, env, req);
+      // 손으로 치우고 싶을 때 (관리자만)
+      if (p === '/api/admin/photos/sweep' && req.method === 'POST') {
+        if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+        return json({ ok: true, removed: await sweepPhotos(env) }, env, req);
+      }
 
       return bad('없는 주소입니다', env, req, 404);
     } catch (e) {
       return json({ ok: false, error: '서버 오류', detail: String(e && e.message) }, env, req, 500);
     }
+  },
+
+  // 하루 한 번 깨어나 한 달 지난 영수증을 치웁니다 (wrangler.toml 의 crons)
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(sweepPhotos(env));
   },
 };

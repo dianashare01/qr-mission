@@ -176,6 +176,41 @@ h1 {
 
   var MAX = 10 * 1024 * 1024;
 
+  /* 올리기 전에 사진을 줄입니다.
+     영수증은 글씨만 읽히면 되니 긴 쪽 1600px 이면 넉넉하고,
+     휴대폰 원본 4~8MB 가 보통 200~400KB 로 줄어 창고도 아끼고 빨리 올라갑니다.
+     줄이다 잘 안 되면 원본을 그대로 올립니다. */
+  var LONG = 1600;
+
+  function shrink(f) {
+    return new Promise(function (done) {
+      if (!/^image\//.test(f.type) || /heic|heif/i.test(f.type)) return done(f);
+      var url = URL.createObjectURL(f);
+      var im = new Image();
+      im.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = im.naturalWidth, h = im.naturalHeight;
+        var big = Math.max(w, h);
+        if (!big || big <= LONG) return done(f);
+        var r = LONG / big;
+        try {
+          var c = document.createElement('canvas');
+          c.width = Math.round(w * r);
+          c.height = Math.round(h * r);
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          c.toBlob(function (b2) {
+            // 줄인 게 더 크면 원본이 낫습니다
+            done(b2 && b2.size < f.size ? b2 : f);
+          }, 'image/jpeg', 0.82);
+        } catch (e) {
+          done(f);
+        }
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); done(f); };
+      im.src = url;
+    });
+  }
+
   var q = new URLSearchParams(location.search);
   var PROJECT = q.get('p') || 'photo';
   var SPOT = q.get('s') || '';
@@ -211,6 +246,13 @@ h1 {
     $('send').disabled = true;
     $('msg').textContent = '올리는 중입니다…';
 
+    shrink(file).then(function (body) {
+      send(body);
+    });
+  });
+
+  function send(file) {
+
     // 파일을 그대로 보냅니다. Content-Type 으로 종류를 알려 줍니다.
     fetch(API + '/api/photo?p=' + encodeURIComponent(PROJECT)
           + (SPOT ? '&s=' + encodeURIComponent(SPOT) : ''), {
@@ -232,7 +274,7 @@ h1 {
         $('send').disabled = false;
         $('msg').textContent = '인터넷이 끊긴 것 같습니다. 다시 해 주세요.';
       });
-  });
+  }
 
   $('again').addEventListener('click', function () { location.reload(); });
 })();

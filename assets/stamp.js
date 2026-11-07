@@ -223,9 +223,19 @@
     // (성수는 입구에서 도장을 안 줘서 0 개인 채로 스탬프 화면에 설 수 있습니다)
     var n = (view.name === 'intro') ? Math.max(1, count()) : count();
     var bars = '';
-    CFG.spots.forEach(function (sp) {
-      bars += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
-    });
+    if (CFG.stamps) {
+      /* 칸 수를 따로 정한 전시(성수)는 막대도 그 수만큼입니다.
+         거점은 8곳이지만 입구는 도장을 안 줘서 막대는 7개입니다. */
+      var got = count();
+      for (var i = 0; i < total(); i++) {
+        bars += '<i class="' + (i < got ? 'on' : '') + '"></i>';
+      }
+    } else {
+      /* 그 밖의 전시(K-컬처)는 막대 하나가 거점 하나입니다 — 하던 대로 */
+      CFG.spots.forEach(function (sp) {
+        bars += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
+      });
+    }
     return '<div class="journey">'
       + '<span class="lb">' + esc(U('journey')) + '</span>'
       + '<span class="ct"><b>' + n + '</b> / ' + total() + '</span>'

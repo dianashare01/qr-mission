@@ -1,8 +1,8 @@
 /* 영수증 관리자 화면
  *
  * 손님이 올린 사진을 보고, 내려받고, 지웁니다.
- * 사진 자체는 Cloudflare R2 창고에 있고 여기서는 주소만 다룹니다.
- * 창고 수명 규칙에 따라 한 달이 지난 것은 저절로 사라집니다.
+ * 사진 자체는 Supabase Storage 창고에 있고 여기서는 주소만 다룹니다.
+ * 서버가 하루 한 번 깨어나 한 달 지난 것을 치웁니다.
  */
 
 (function () {
@@ -77,6 +77,28 @@
         ].map(function (s) {
           return '<div class="stat"><div class="k">' + s[0] + '</div><div class="v">' + s[1] + '</div></div>';
         }).join('');
+
+        /* 남은 용량 — 창고(무료 1GB)를 모든 행사가 같이 씁니다 */
+        var quota = d.quotaBytes || 0;
+        var used = d.usedBytes || 0;
+        if (quota) {
+          var pct = Math.min(100, Math.round(used / quota * 1000) / 10);
+          $('gauge-left').textContent = '쓴 용량 ' + mb(used) + ' / ' + mb(quota);
+          $('gauge-right').textContent = '남음 ' + mb(Math.max(0, quota - used));
+          $('gauge-fill').style.width = Math.max(pct, used > 0 ? 1.5 : 0) + '%';
+          var bar = $('gauge-fill').parentNode;
+          bar.className = 'bar' + (pct >= 90 ? ' full' : pct >= 70 ? ' warn' : '');
+          // 지금 속도라면 몇 장쯤 더 들어가는지 — 눈대중이 있어야 판단이 섭니다
+          var avg = d.total ? (used / d.total) : 0;
+          $('gauge-note').textContent = pct >= 90
+            ? '창고가 거의 찼습니다. 받아 두고 지워 주세요.'
+            : (avg ? ('지금 크기라면 ' + Math.floor((quota - used) / avg).toLocaleString('ko-KR')
+                     + '장쯤 더 들어갑니다 (한 장 평균 ' + mb(avg) + ')')
+                   : '아직 올라온 것이 없습니다.');
+        } else {
+          $('gauge').style.display = 'none';
+        }
+        if (d.keepDays) $('keep').textContent = d.keepDays + '일';
 
         $('sum').textContent = list.length
           ? ('모두 ' + d.total + '장 · 최근 올린 것부터')
