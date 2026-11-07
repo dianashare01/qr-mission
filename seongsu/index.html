@@ -1,57 +1,583 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0D2B20">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
-<title>성수 팝업 — 준비 중</title>
+<title>SEONGSU STAMP TOUR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* 성수 팝업 — 아직 내용이 정해지지 않았습니다.
-   인쇄한 QR(?p=seongsu&s=ss1&t=…)이 이 쪽으로 들어옵니다.
-   화면이 준비되면 이 파일만 갈아 끼우면 되고, QR 은 그대로 씁니다. */
+/* KOREA, CHECK-IN — QR 스탬프 투어
+   디자인 시안(01 첫 화면 · 02 단계별 화면 · 03 카메라 스캔 · 07 성수·신촌)을 따릅니다.
+   그림은 assets/stamp/ 에, 문구와 거점은 config/kcheckin.json 에 있습니다. */
+
 :root {
   --bg: #0D2B20;
+  --gold: #C9A961;
+  --gold-light: #F0DE9E;
+  --gold-deep: #A8873F;
   --ink: #F2F0E9;
-  --sub: #9FB3A6;
-  --gold: #E9CA6F;
+  --ink-sub: #9FB3A6;
+  --bar-off: #2A4B38;
+  --ring: #3E5C48;
+  --paper: #F2F0E9;
+  --paper-ink: #163123;
+
   --sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --mono: ui-monospace, 'SFMono-Regular', Consolas, monospace;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { height: 100%; }
 body {
   min-height: 100%;
-  background: var(--bg);
+  background: #071A12;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── 기관 표기 ─────────────────────────────────── */
+.ci {
+  flex: none;
+  padding: 18px 20px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+  justify-content: space-between;
+  gap: 12px;
+}
+.ci img { height: 22px; width: auto; opacity: .95; }
+
+/* ── YOUR STAMP JOURNEY + n / 7 ────────────────── */
+.journey {
+  flex: none;
+  padding: 16px 20px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.journey .lb { font-size: 11.5px; font-weight: 700; letter-spacing: .14em; }
+.journey .ct { font-size: 13px; letter-spacing: .06em; color: var(--ink-sub); }
+.journey .ct b { color: var(--gold-light); font-weight: 700; }
+
+/* 일곱 칸 막대 */
+.bars { flex: none; padding: 9px 20px 0; display: flex; gap: 6px; }
+.bars i { flex: 1; height: 3px; border-radius: 2px; background: var(--bar-off); }
+.bars i.on { background: linear-gradient(90deg, var(--gold-deep), var(--gold-light)); }
+
+/* ── 본문 ──────────────────────────────────────── */
+.main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px 10px;
+  animation: fade .24s ease both;
+}
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+.grow { flex: 1; }
+.center { text-align: center; }
+
+/* ── 룸키 ──────────────────────────────────────── */
+/* 카드는 그림이 아니라 그려서 냅니다 — 아래 「v0.4 룸키 카드」 참고 */
+
+/* ── NEXT 알약 ─────────────────────────────────── */
+.nextpill {
+  flex: none;
+  max-width: 100%;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nextpill b { font-weight: 700; }
+
+/* ── 스탬프 일곱 칸 ─────────────────────────────── */
+.stamps { flex: none; display: flex; gap: 7px; justify-content: center; }
+.stamps .s {
+  width: 37px; height: 37px;
+  border-radius: 50%;
+  border: 1px solid #6E8079;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+/* 아직 안 찍힌 자리의 숫자 — 시안 04 를 재서 옮긴 색입니다 */
+.stamps .s .n { font-size: 14px; font-weight: 500; line-height: 1; color: #62766E; }
+.stamps .s.on { border: 0; }
+.stamps .s img { width: 100%; height: 100%; object-fit: contain; }
+.stamps .s.pop img { animation: pop .5s cubic-bezier(.2, .9, .3, 1.35) both; }
+@keyframes pop { from { transform: scale(.5); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+
+/* ── 단추 ──────────────────────────────────────── */
+.btn {
+  flex: none;
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  /* 새 시안의 단추 결 (04·06 을 재서 옮김) — 설문 쪽과 같습니다 */
+  background: linear-gradient(90deg, #E9CA6F, #CA9E32);
+  color: #0C291F;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
   text-align: center;
 }
-main { max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.mark { font-size: 11.5px; font-weight: 700; letter-spacing: .18em; color: var(--gold); }
-h1 { font-size: 22px; font-weight: 700; line-height: 1.45; word-break: keep-all; }
-p { font-size: 14px; color: var(--sub); word-break: keep-all; }
-.rule { width: 34px; height: 1px; background: #3E5C48; }
+
+/* ── 아래 길잡이 ───────────────────────────────── */
+.nav {
+  flex: none;
+  padding: 10px 24px calc(18px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.nav .ico {
+  width: 44px; height: 44px;
+  flex: none;
+  display: grid; place-items: center;
+  border: 1px solid var(--ring);
+  border-radius: 50%;
+  color: var(--gold-light);
+}
+.nav .ico svg { width: 18px; height: 18px; }
+.nav .ico.off { visibility: hidden; }
+.nav .mark { height: 34px; width: auto; opacity: .95; }
+
+/* ── 첫 화면 ───────────────────────────────────── */
+.bigmark { flex: none; width: 152px; }
+.h-title { font-size: 25px; font-weight: 700; letter-spacing: .02em; }
+/* 언어 고르기 제목은 한 줄로 둡니다. SCAN QR CODE TO CHECK-IN 이 25px 에서
+   359px 이라 375 화면(쓸 수 있는 폭 327)에서 쪼개졌습니다.
+   화면 폭에 따라 줄여, 320 짜리 작은 폰에서도 한 줄로 들어갑니다. */
+.h-title.one {
+  white-space: nowrap;
+  font-size: 19px;
+  font-size: min(22px, 5.8vw);
+}
+.sub { font-size: 14px; color: var(--ink-sub); }
+
+/* ── 언어 ──────────────────────────────────────── */
+.langs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.lang {
+  min-height: 42px; padding: 0 16px;
+  border: 1px solid var(--ring);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.lang[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: rgba(201, 169, 97, .16);
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+/* ── 이름 적기 ─────────────────────────────────── */
+.field { width: 100%; display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; color: var(--ink-sub); }
+.field input {
+  height: 54px; padding: 0 18px;
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+  background: #0A2419;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+}
+.field input:focus { outline: none; border-color: var(--gold); }
+.err { min-height: 20px; font-size: 12.5px; color: #E6B98A; }
+
+/* ── 체크아웃 ──────────────────────────────────── */
+.thanks {
+  flex: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ── 성수 · 신촌 ───────────────────────────────── */
+.annex { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.annex .row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--ring);
+  border-radius: 14px;
+  text-align: left;
+}
+.annex .row .lb { flex: 1; min-width: 0; }
+.annex .row .lb b { display: block; font-size: 15px; font-weight: 700; letter-spacing: .04em; color: var(--gold-light); }
+.annex .row .lb span { font-size: 12.5px; color: var(--ink-sub); }
+.annex .row .arr { flex: none; color: var(--gold-light); }
+.annex .row .arr svg { width: 20px; height: 20px; }
+.sectitle { align-self: flex-start; font-size: 13px; font-weight: 700; letter-spacing: .1em; }
+
+.poster { width: 100%; }
+.poster img { width: 100%; border-radius: 12px; }
+
+/* ── 도장 찍히는 연출 ─────────────────────────────
+   디자이너가 준 0.8초 영상을 그림 스무 장으로 펼쳐 한 칸씩 넘깁니다.
+   투명 webm 은 아이폰 사파리에서 뒤가 까맣게 나와 쓰지 못합니다. */
+.press {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 26, 18, .65);   /* 뒤 화면이 비쳐 보이게 */
+}
+/* 도장이 화면 가로의 약 63%, 중심이 위쪽 45% 에 오도록 (시안 기준) */
+.press .anim {
+  width: 157%;
+  aspect-ratio: 1;
+  transform: translateY(-18.6%);
+  background-image: url('../assets/stamp/press.webp');
+  background-repeat: no-repeat;
+  background-size: 500% 400%;
+  animation: stamping .8s step-end forwards;
+}
+@keyframes stamping {
+  0% { background-position: 0% 0%; }
+  5% { background-position: 25% 0%; }
+  10% { background-position: 50% 0%; }
+  15% { background-position: 75% 0%; }
+  20% { background-position: 100% 0%; }
+  25% { background-position: 0% 33.3333%; }
+  30% { background-position: 25% 33.3333%; }
+  35% { background-position: 50% 33.3333%; }
+  40% { background-position: 75% 33.3333%; }
+  45% { background-position: 100% 33.3333%; }
+  50% { background-position: 0% 66.6667%; }
+  55% { background-position: 25% 66.6667%; }
+  60% { background-position: 50% 66.6667%; }
+  65% { background-position: 75% 66.6667%; }
+  70% { background-position: 100% 66.6667%; }
+  75% { background-position: 0% 100%; }
+  80% { background-position: 25% 100%; }
+  85% { background-position: 50% 100%; }
+  90% { background-position: 75% 100%; }
+  95% { background-position: 100% 100%; }
+}
+
+/* ── 알림 ──────────────────────────────────────── */
+.toast {
+  position: absolute;
+  left: 20px; right: 20px; top: 70px;
+  z-index: 40;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-size: 13.5px;
+  text-align: center;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .35);
+}
+
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+
+/* ── v0.3 에서 더해진 것 ───────────────────────── */
+/* 디자인 머리말은 가로로 꽉 찹니다 — KOREA CHECK-IN 은 왼쪽 끝,
+   Imagine your Korea 는 오른쪽 끝. 높이를 못박으면 그림이 좁아져
+   오른쪽 표가 화면 한가운데로 옵니다. */
+.ci img.head { width: 100%; height: auto; aspect-ratio: 327 / 20; opacity: 1; }
+
+.langs.col { flex-direction: column; align-items: stretch; gap: 10px; width: 100%; }
+.langs.col .lang {
+  width: 100%; height: 44px; border-radius: 22px; font-size: 14px; font-weight: 700;
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-deep));
+  color: var(--bg); border: 0;
+}
+.langs.col .lang[aria-pressed='true'] { box-shadow: 0 0 0 2px var(--ink) inset; }
+
+
+/* 고맙다는 쪽지 */
+.pill {
+  align-self: center; margin-top: 14px; padding: 7px 16px; border-radius: 999px;
+  background: var(--paper); color: var(--paper-ink); font-size: 12.5px; font-weight: 700;
+}
+
+.btnrow { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 16px; }
+.btnrow .btn { flex: none; width: 100%; margin: 0; }
+/* 아직 도장이 남았을 때만 붙는 「이어 가기」 — 가라앉혀 NOTICE 와 안 다투게.
+   이름을 ghost 에서 soft 로 바꿨습니다 — NOTICE 가 한때 ghost 였던 탓에
+   휴대폰에 옛 stamp.js 가 남아 있으면 NOTICE 가 투명하게 떴습니다. */
+.btn.soft {
+  background: none;
+  border: 1px solid var(--ring);
+  color: var(--gold-light);
+  font-weight: 500;
+}
+
+/* 안내 쪽지 */
+.notice { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(6, 18, 13, .62); }
+.notice[hidden] { display: none; }
+.notice .box { width: 100%; max-width: 320px; padding: 16px 18px 18px; border-radius: 14px; background: #16402E; border: 1px solid var(--ring); }
+.notice .hd { display: flex; align-items: center; justify-content: space-between; }
+.notice .hd b { font-size: 14.5px; letter-spacing: .04em; }
+.notice .x { width: 28px; height: 28px; display: grid; place-items: center; background: none; border: 0; color: var(--ink); }
+.notice .x svg { width: 16px; height: 16px; }
+.notice p { margin: 12px 0 16px; font-size: 13px; line-height: 1.65; color: var(--ink-sub); }
+.notice .btn { margin: 0; }
+
+/* ── v0.4 에서 더해진 것 — 관리자 확인 ──────────
+   머리말 Imagine your Korea 쪽의 보이지 않는 누름칸, 확인 창,
+   그리고 완료 처리된 뒤 투명해지는 카드입니다. */
+.ci { position: relative; }
+.ci .tapzone {
+  /* 오른쪽 Imagine your Korea 표 위. 머리말 띠가 20px 밖에 안 돼서
+     손가락이 닿게 아래로 조금 더 내려 잡았습니다. */
+  position: absolute; top: 0; right: 0;
+  width: 34%; height: 44px;
+  background: none; border: 0;
+}
+
+
+/* 한 번뿐이라는 안내 */
+.once {
+  align-self: center; margin-top: 10px; max-width: 300px;
+  text-align: center; font-size: 12px; line-height: 1.55; color: var(--ink-sub);
+}
+
+/* 확인 창 (시안 popup_StampTourNotice) */
+.adm {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(6, 18, 13, .72);
+}
+.adm[hidden] { display: none; }
+.adm .box {
+  width: 100%; max-width: 320px; padding: 16px 18px 18px;
+  border-radius: 14px; background: #16402E; border: 1px solid var(--ring);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+}
+.adm .hd { display: flex; align-items: center; justify-content: space-between; }
+.adm .hd b { font-size: 18px; font-weight: 700; }
+.adm .x { width: 30px; height: 30px; display: grid; place-items: center; color: var(--gold-light); }
+.adm .x svg { width: 18px; height: 18px; }
+.adm label { display: block; margin: 14px 0 7px; font-size: 13px; color: var(--ink); }
+.adm input {
+  width: 100%; height: 52px; padding: 0 16px;
+  border: 1px solid var(--ring); border-radius: 12px;
+  background: #11341F; color: var(--ink);
+  font-family: var(--mono); font-size: 16px; letter-spacing: .18em;
+}
+.adm input::placeholder { font-family: var(--sans); font-size: 13.5px; letter-spacing: 0; color: var(--ink-sub); }
+.adm input:focus { outline: none; border-color: var(--gold); }
+.adm .err { min-height: 18px; margin: 6px 2px 8px; }
+.adm .btn { min-height: 52px; }
+.adm .admfoot { margin-top: 12px; text-align: center; }
+.adm .admfoot[hidden] { display: none; }
+.adm .lnk { font-size: 12px; line-height: 1.5; color: var(--ink-sub); text-decoration: underline; }
+
+/* ── v0.4 룸키 카드 — 그려서 냅니다 ──────────────
+   디자이너 그림(160x242)은 한 배뿐이라 휴대폰에서 뭉갰습니다.
+   결·모서리·글자는 CSS, K 열쇠 표는 선 그림(SVG)이라 아무리 키워도 또렷합니다.
+   숫자는 모두 원래 그림을 재서 옮긴 것입니다 (카드 속살 152 x 230). */
+.rk {
+  --w: 172px;
+  position: relative;
+  flex: none;
+  width: var(--w);
+  height: calc(var(--w) * 230 / 152);
+  border-radius: calc(var(--w) * .053);
+  background: linear-gradient(90deg, #385A45 0%, #18392C 50%, #0E2A1F 100%);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, .38);
+  color: var(--ink);
+  overflow: hidden;
+}
+.rk.sm { --w: 132px; }
+
+/* 금 열쇠 — 가운데가 환한 금결, 글자와 표는 짙은 초록 */
+.rk.gold {
+  background: linear-gradient(90deg, #BB9A59 0%, #AE8D51 10%, #F1DCA3 50%, #C0974C 100%);
+  color: #12291F;
+}
+
+.rk .key {
+  position: absolute;
+  left: 36.8%; top: 20.9%;
+  width: 31.6%; height: 43.5%;
+  fill: #FFFFFF;
+}
+.rk.gold .key { fill: #12291F; }
+
+.rk .t1, .rk .t2 {
+  position: absolute; left: 0; right: 0;
+  transform: translateY(-50%);
+  text-align: center; white-space: nowrap; font-style: normal;
+}
+.rk .t1 { top: 73%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
+.rk .t2 { top: 80.9%; font-size: calc(var(--w) * .038); letter-spacing: .045em; opacity: .62; }
+.rk.gold .t2 { opacity: .72; }
+
+.rk .cap {
+  position: absolute; left: 0; right: 0; top: 12%;
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: calc(var(--w) * .061);
+  letter-spacing: .04em;
+  color: var(--gold-light);
+  z-index: 1;
+}
+.rk.gold .cap { color: #2E2409; font-weight: 700; }
+
+/* 확인코드를 넣은 뒤 — 시안(06-1·06-2)대로 검정 바탕에 금색 표로 바뀝니다.
+   색은 keycard.png 아랫줄 검정 카드를 재서 옮긴 것입니다. */
+.rk.used {
+  background: #111111;
+  color: #F7EED9;
+}
+.rk.used .key { fill: url(#rkgold); }
+.rk.used .cap { color: #DEC892; font-weight: 400; }
+.rk.used .t2 { color: #979F90; opacity: 1; }
+/* 검정 카드는 속알맹이가 초록·금 카드보다 4% 쯤 아래에 있습니다
+   (시안 keycard 아랫줄을 재서 옮긴 값) */
+.rk.used .cap { top: 14.9%; }
+.rk.used .key { left: 35.2%; top: 24.7%; width: 30.8%; height: 44.1%; }
+.rk.used .t1 { top: 77.5%; }
+.rk.used .t2 { top: 85.7%; }
+
+/* ── 성수에서만 쓰는 것 ──────────────────────────
+   스탬프 화면 아래 「QR 찍기 · 안내 · 지도」, 그리고 안내·지도 화면입니다. */
+.tools { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.btn.line {
+  background: none;
+  border: 1px solid var(--ring);
+  color: var(--ink);
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn.line svg { width: 18px; height: 18px; flex: none; }
+.btnrow.two { flex-direction: row; margin-top: 0; }
+
+/* 안내 화면 — 거점을 누르면 주소가 펼쳐집니다 */
+.lead {
+  width: 100%; margin-top: 18px;
+  font-size: 13.5px; line-height: 1.6; color: var(--ink);
+  text-align: center; word-break: keep-all;
+}
+.stops {
+  width: 100%; margin-top: 18px;
+  border-radius: 14px; overflow: hidden;
+  background: #16402E;
+}
+.stop + .stop { border-top: 1px solid rgba(255, 255, 255, .07); }
+.stop .hd {
+  width: 100%; min-height: 46px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  text-align: left; font-size: 13px; font-weight: 700; color: var(--ink);
+}
+.stop .no {
+  flex: none; width: 21px; height: 21px; border-radius: 50%;
+  border: 1px solid var(--gold); color: var(--gold-light);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 500;
+}
+.stop .nm { flex: 1; min-width: 0; }
+.stop .ar { flex: none; color: var(--gold-light); font-size: 15px; }
+/* 펼쳐진 줄은 종이색으로 뒤집어 눈에 띄게 (시안대로) */
+.stop.open .hd { background: var(--paper); color: var(--paper-ink); }
+.stop.open .no { border-color: var(--paper-ink); color: var(--paper-ink); }
+.stop.open .ar { color: var(--paper-ink); }
+.stop .ad {
+  margin: 0; padding: 12px 14px 14px 45px;
+  background: #0A2419; color: var(--ink-sub);
+  font-size: 12.5px; line-height: 1.5; word-break: keep-all;
+}
+
+/* 지도 화면 — 시안 03 맵 */
+.mapimg { width: 100%; margin-top: 10px; border-radius: 14px; }
+
+/* 「각 가게에서 QR 안내판을 찾으세요」 — 왼쪽에 안내판 그림 */
+.qrnote {
+  width: 100%; margin-top: 16px;
+  display: flex; align-items: stretch; gap: 14px;
+  border: 1px solid var(--ring); border-radius: 12px;
+  overflow: hidden;
+}
+.qrnote .pic {
+  flex: none; width: 52px;
+  background: var(--paper); color: var(--paper-ink);
+  display: grid; place-items: center;
+}
+.qrnote .pic svg { width: 24px; height: 32px; }
+.qrnote p {
+  flex: 1; min-width: 0;
+  padding: 14px 14px 14px 0;
+  display: flex; align-items: center;
+  font-size: 13px; line-height: 1.45; color: var(--ink); word-break: keep-all;
+}
+
+.legend {
+  width: 100%; margin-top: 18px; padding: 0; list-style: none;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px;
+}
+.legend li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; line-height: 1.35; color: var(--ink); word-break: keep-all;
+}
+.legend .no {
+  flex: none; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--paper); color: var(--paper-ink);
+  display: grid; place-items: center; font-size: 10.5px; font-weight: 700;
+}
+/* ★ 은 금색 — 시안대로 */
+.legend .no.star { background: var(--gold); color: #2A2107; font-size: 11px; }
+
+/* 안내·지도 화면 아래의 넓은 뒤로 단추 */
+.backbar { flex: none; padding: 10px 24px calc(18px + env(safe-area-inset-bottom)); }
+.btn.line.wide { min-height: 48px; }
+.btn.line.wide svg { width: 20px; height: 20px; color: var(--gold-light); }
+
 </style>
 </head>
 <body>
 
-<main>
-  <p class="mark">SEONGSU</p>
-  <h1>준비 중입니다</h1>
-  <div class="rule"></div>
-  <p>곧 이 자리에서 만나요.<br>무신사 메가스토어 성수 · 11월 10–15일</p>
-</main>
+<div id="app"></div>
 
+<!-- ?v= 는 묵은 파일을 밀어내는 꼬리표입니다. assets/stamp.js 를 고칠 때마다
+     숫자를 하나 올려 주세요. 깃허브가 10분 동안 묵혀 두는데, 그 사이
+     새 꾸밈과 옛 stamp.js 가 섞이면 단추 색 같은 게 어긋납니다. -->
+<script>
+  // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
+  window.STAMP = { project: 'seongsu' };
+</script>
+<script src="../assets/stamp.js?v=9"></script>
 </body>
 </html>

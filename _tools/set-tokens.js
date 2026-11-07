@@ -14,6 +14,8 @@ const crypto = require('crypto');
 
 const project = process.argv[2];
 const force = process.argv.includes('--force');
+// 지점을 나중에 더했을 때 — 이미 인쇄한 토큰은 그대로 두고 새 것만 채웁니다
+const onlyNew = process.argv.includes('--새것만') || process.argv.includes('--only-new');
 
 if (!project) {
   console.error('사용법: node _tools/set-tokens.js <프로젝트>   예) wianbu');
@@ -36,20 +38,22 @@ function token(len = 6) {
   return s;
 }
 
-const already = cfg.spots.filter((s) => s.token && !/^CHANGE-ME/i.test(s.token));
-if (already.length && !force) {
+const isReal = (t) => !!t && !/^CHANGE-ME/i.test(t);
+const already = cfg.spots.filter((s) => isReal(s.token));
+if (already.length && !force && !onlyNew) {
   console.error('\n⚠️  이미 바뀐 토큰이 ' + already.length + '개 있습니다.');
   already.forEach((s) => console.error('    ' + s.id + '  ' + s.token));
   console.error('\n  QR 을 이미 인쇄했다면 다시 바꾸면 안 됩니다.');
-  console.error('  그래도 바꾸려면 뒤에 --force 를 붙이세요.\n');
+  console.error('  더한 지점만 채우려면 --새것만 을, 전부 다시 만들려면 --force 를 붙이세요.\n');
   process.exit(1);
 }
 
-// 같은 값이 겹치지 않게
-const used = new Set();
+// 같은 값이 겹치지 않게 — 이미 쓰는 토큰도 넣어 둡니다
+const used = new Set(already.map((s) => s.token));
 let text = raw;
 
 cfg.spots.forEach((s) => {
+  if (onlyNew && isReal(s.token)) return;   // 인쇄한 것은 건드리지 않습니다
   let t;
   do { t = token(); } while (used.has(t));
   used.add(t);

@@ -1,20 +1,426 @@
 {
-  "_주의": "성수 팝업 — 막 시작한 설정입니다. 지점·문구는 아직 정해지지 않았습니다.",
+  "_주의": "주소는 1·2번만 디자인 화면에서 직접 확인했습니다. 나머지는 번역 PPT 의 목록 차례를 따랐고, 영문 주소는 중문을 도로명 규칙대로 옮긴 것입니다 — 확인 부탁드립니다.",
   "_토큰": "spots 의 id 와 token 은 인쇄한 QR 에 들어갑니다. 한 번 인쇄한 뒤에는 절대 바꾸지 마세요.",
   "project": "seongsu",
-  "title": "성수 팝업",
-  "event": "KOREA CHECK-IN · SEONGSU",
-  "place": "무신사 메가스토어 성수",
-  "period": {
-    "open": "2026-11-10",
-    "close": "2026-11-15"
-  },
+  "title": "SEONGSU STAMP TOUR",
+  "event": "KOREA CHECK-IN",
+  "place": "MUSINSA MEGASTORE SEONGSU",
   "spots": [
     {
-      "order": 1,
+      "order": 0,
       "id": "ss1",
       "token": "x4699q",
-      "place": "입구"
+      "place": "입구",
+      "name": {
+        "ko": "입구",
+        "en": "MUSINSA Megastore Seongsu",
+        "zhCN": "MUSINSA Megastore Seongsu",
+        "zhTW": "MUSINSA Megastore Seongsu"
+      },
+      "addr": {
+        "en": "62 Seongsui-ro, Seongdong-gu, Seoul",
+        "zhCN": "首尔城东区圣水二路62号",
+        "zhTW": "首爾城東區聖水二路62號"
+      },
+      "checkin": true
+    },
+    {
+      "order": 1,
+      "id": "ss8",
+      "token": "z4rk7p",
+      "place": "지점 01_무신사 스탠다드",
+      "name": {
+        "ko": "무신사 스탠다드",
+        "en": "MUSINSA STANDARD SEONGSU",
+        "zhCN": "MUSINSA STANDARD SEONGSU",
+        "zhTW": "MUSINSA STANDARD SEONGSU"
+      },
+      "addr": {
+        "en": "83 Yeonmujang-gil, Seongdong-gu, Seoul",
+        "zhCN": "首尔城东区演武场街83号",
+        "zhTW": "首爾城東區演武場街83號"
+      }
+    },
+    {
+      "order": 2,
+      "id": "ss2",
+      "token": "rwedcw",
+      "place": "지점 02_29CM 홈",
+      "name": {
+        "ko": "29CM 홈",
+        "en": "29CM HOME SEONGSU",
+        "zhCN": "29CM HOME SEONGSU",
+        "zhTW": "29CM HOME SEONGSU"
+      },
+      "addr": {
+        "en": "57 Yeonmujang-gil, Seongdong-gu, Seoul",
+        "zhCN": "首尔城东区演武场街57号",
+        "zhTW": "首爾城東區演武場街57號"
+      }
+    },
+    {
+      "order": 3,
+      "id": "ss3",
+      "token": "hzc8jr",
+      "place": "지점 03_무신사 킥스",
+      "name": {
+        "ko": "무신사 킥스",
+        "en": "MUSINSA KICKS SEONGSU",
+        "zhCN": "MUSINSA KICKS SEONGSU",
+        "zhTW": "MUSINSA KICKS SEONGSU"
+      },
+      "addr": {
+        "en": "96 Seongsui-ro, Seongdong-gu, Seoul B1–2F",
+        "zhCN": "首尔城东区圣水二路96号 B1~2F",
+        "zhTW": "首爾城東區聖水二路96號 B1~2F"
+      }
+    },
+    {
+      "order": 4,
+      "id": "ss4",
+      "token": "2x542j",
+      "place": "지점 04_무신사 엠프티",
+      "name": {
+        "ko": "무신사 엠프티",
+        "en": "MUSINSA EMPTY SEONGSU",
+        "zhCN": "MUSINSA EMPTY SEONGSU",
+        "zhTW": "MUSINSA EMPTY SEONGSU"
+      },
+      "addr": {
+        "en": "97 Seongsui-ro, Seongdong-gu, Seoul",
+        "zhCN": "首尔城东区圣水二路97号",
+        "zhTW": "首爾城東區聖水二路97號"
+      }
+    },
+    {
+      "order": 5,
+      "id": "ss5",
+      "token": "pezvyf",
+      "place": "지점 05_리얼스빈티지",
+      "name": {
+        "ko": "리얼스빈티지",
+        "en": "RE EARTH VINTAGE",
+        "zhCN": "RE EARTH VINTAGE",
+        "zhTW": "RE EARTH VINTAGE"
+      },
+      "addr": {
+        "en": "38 Seongsui-ro 7-gil, Seongdong-gu, Seoul B1",
+        "zhCN": "首尔城东区圣水二路7街38号 B1",
+        "zhTW": "首爾城東區聖水二路7街38號 B1"
+      }
+    },
+    {
+      "order": 6,
+      "id": "ss6",
+      "token": "d6xp8x",
+      "place": "지점 06_해칭룸",
+      "name": {
+        "ko": "해칭룸",
+        "en": "HATCHINGROOM",
+        "zhCN": "HATCHINGROOM",
+        "zhTW": "HATCHINGROOM"
+      },
+      "addr": {
+        "en": "33 Seongsuil-ro 6-gil, Seongdong-gu, Seoul 1F",
+        "zhCN": "首尔城东区圣水一路6街33号 1F",
+        "zhTW": "首爾城東區聖水一路6街33號 1F"
+      }
+    },
+    {
+      "order": 7,
+      "id": "ss7",
+      "token": "64ttwk",
+      "place": "지점 07_포그씨",
+      "name": {
+        "ko": "포그씨",
+        "en": "FOGSY",
+        "zhCN": "FOGSY",
+        "zhTW": "FOGSY"
+      },
+      "addr": {
+        "en": "24-11 Achasan-ro 5-gil, Seongdong-gu, Seoul 2F",
+        "zhCN": "首尔城东区峨嵯山路5街24-11号 2F",
+        "zhTW": "首爾城東區峨嵯山路5街24-11號 2F"
+      }
     }
-  ]
+  ],
+  "checkout": {
+    "at": 3,
+    "desk": {
+      "ko": "무신사 스테이션 성수",
+      "en": "MUSINSA STATION SEONGSU"
+    }
+  },
+  "ui": {
+    "journey": {
+      "en": "STEPS",
+      "zhCN": "进度",
+      "zhTW": "階段"
+    },
+    "stampTour": {
+      "en": "SEONGSU STAMP TOUR",
+      "zhCN": "圣水集章之旅",
+      "zhTW": "聖水集章之旅"
+    },
+    "tagline": {
+      "en": "COLLECT 3 STAMPS & GET A GIFT",
+      "zhCN": "集齐3个印章换取纪念品。",
+      "zhTW": "集齊3個印章換取禮品。"
+    },
+    "continueCta": {
+      "en": "CONTINUE TO CHECK-IN",
+      "zhCN": "继续办理入住",
+      "zhTW": "繼續辦理入住"
+    },
+    "langTitle": {
+      "en": "SCAN QR CODE TO CHECK-IN",
+      "zhCN": "扫描二维码即可办理入住。",
+      "zhTW": "掃描QR碼即可辦理入住。"
+    },
+    "langSub": {
+      "en": "Please select your language.",
+      "zhCN": "请选择语言。",
+      "zhTW": "請選擇語言。"
+    },
+    "guestLabel": {
+      "en": "Please enter guest name here.",
+      "zhCN": "请输入访客姓名。",
+      "zhTW": "請輸入訪客姓名。"
+    },
+    "guestPh": {
+      "en": "Please enter guest name from 2 to 10 characters.",
+      "zhCN": "2至10个字符",
+      "zhTW": "2至10個字元"
+    },
+    "checkinCta": {
+      "en": "Press here to move to next screen",
+      "zhCN": "点击此按钮前往下一页面",
+      "zhTW": "點擊此按鈕前往下一個畫面"
+    },
+    "errShort": {
+      "en": "Please enter at least 2 characters.",
+      "zhCN": "请至少输入2个字符。",
+      "zhTW": "請至少輸入2個字元。"
+    },
+    "noSignup": {
+      "en": "No sign-up required.\nData is saved only in the browser on this phone.",
+      "zhCN": "无需注册会员。仅保存在此手机的浏览器中。",
+      "zhTW": "無需註冊會員。僅儲存於此手機的瀏覽器中。"
+    },
+    "scanHow": {
+      "en": "Find and scan the QR code at each stop.",
+      "zhCN": "找到各地点的二维码后并扫描。",
+      "zhTW": "找到各地點的QR碼後並掃描。"
+    },
+    "next": {
+      "en": "NEXT",
+      "zhCN": "NEXT",
+      "zhTW": "NEXT"
+    },
+    "back": {
+      "en": "BACK",
+      "zhCN": "返回",
+      "zhTW": "返回"
+    },
+    "stampGot": {
+      "en": "Stamp collected",
+      "zhCN": "已获得印章",
+      "zhTW": "已獲得印章"
+    },
+    "already": {
+      "en": "You already have this stamp.",
+      "zhCN": "这个印章已经收集过了。",
+      "zhTW": "這個印章已經收集過了。"
+    },
+    "badQr": {
+      "en": "This QR code is not part of the tour.",
+      "zhCN": "这不是本次活动的二维码。",
+      "zhTW": "這不是本次活動的QR碼。"
+    },
+    "congrats": {
+      "en": "Congratulation !",
+      "zhCN": "恭喜您！",
+      "zhTW": "恭喜您！"
+    },
+    "readyTitle": {
+      "en": "READY TO CHECK-OUT",
+      "zhCN": "现在可以退房了。",
+      "zhTW": "現在可以退房了"
+    },
+    "readyBody": {
+      "en": "Please check out at the {desk}.\nPlease show this screen to one of our staff member.",
+      "zhCN": "请前往5楼退房柜台办理退房。\n请将该画面向职员出示。",
+      "zhTW": "請至5樓退房櫃台辦理退房。\n請向工作人員出示此畫面。"
+    },
+    "readyCta": {
+      "en": "Do not press the button yet",
+      "zhCN": "请先不要点击按钮",
+      "zhTW": "請先不要按下按鈕"
+    },
+    "goldenKey": {
+      "en": "Golden key received!",
+      "zhCN": "已领取黄金钥匙！",
+      "zhTW": "已領取黃金鑰匙！"
+    },
+    "thanks": {
+      "en": "Thank you for staying with us!",
+      "zhCN": "感谢您的光临。",
+      "zhTW": "感謝您的光臨。"
+    },
+    "nextStay": {
+      "en": "We look forward to welcoming you back.",
+      "zhCN": "下一个目的地正在等您。",
+      "zhTW": "下一個停留地點正等著您。"
+    },
+    "noticeBtn": {
+      "en": "NOTICE",
+      "zhCN": "说明",
+      "zhTW": "說明"
+    },
+    "continueBtn": {
+      "en": "Would you like to continue?",
+      "zhCN": "是否要继续?",
+      "zhTW": "是否要繼續？"
+    },
+    "noticeBody": {
+      "en": "Your stamp tour records will be saved until November 30, 2026.\nEach stamp can be earned only once per branch.",
+      "zhCN": "集章之旅记录将保存至2026年11月30日。\n各站点的印章仅可累积1次。",
+      "zhTW": "集章之旅紀錄將保存至2026年11月30日。\n各據點的印章僅可累積1次。"
+    },
+    "closedTitle": {
+      "en": "STAMP TOUR CLOSED",
+      "zhCN": "活动已结束",
+      "zhTW": "活動已結束"
+    },
+    "closedBody": {
+      "en": "This stamp tour has ended. Thank you for joining us.",
+      "zhCN": "本次集章之旅已结束，感谢您的参与。",
+      "zhTW": "本次集章之旅已結束，感謝您的參與。"
+    },
+    "scanTitle": {
+      "en": "SCAN CHECK-IN QR CODE",
+      "zhCN": "请扫描二维码",
+      "zhTW": "請掃描QR碼"
+    },
+    "doneTitle": {
+      "en": "CHECK-OUT COMPLETE",
+      "zhCN": "退房完成",
+      "zhTW": "退房完成"
+    },
+    "doneBody": {
+      "en": "Thank you for staying with us!",
+      "zhCN": "感谢你的入住！",
+      "zhTW": "感謝你的入住！"
+    },
+    "nextLabel": {
+      "en": "NEXT",
+      "zhCN": "下一站：",
+      "zhTW": "下一站："
+    },
+    "usedBadge": {
+      "en": "COMPLETED",
+      "zhCN": "已完成",
+      "zhTW": "已完成"
+    },
+    "onceOnly": {
+      "en": "Your gift has been handed over. It can be claimed only once.",
+      "zhCN": "礼物已领取，每人仅限一次。",
+      "zhTW": "禮物已領取，每人僅限一次。"
+    },
+    "waitStaff": {
+      "en": "Please show this screen to one of our staff member.",
+      "zhCN": "请将该画面向职员出示。",
+      "zhTW": "請向工作人員出示此畫面。"
+    },
+    "readyBtn": {
+      "en": "READY TO CHECK-OUT",
+      "zhCN": "现在可以退房了",
+      "zhTW": "現在可以退房了"
+    },
+    "guideBtn": {
+      "en": "GUIDE",
+      "zhCN": "说明",
+      "zhTW": "說明"
+    },
+    "mapBtn": {
+      "en": "MAP",
+      "zhCN": "地图",
+      "zhTW": "地圖"
+    },
+    "scanBtn": {
+      "en": "SCAN QR CODE",
+      "zhCN": "请扫描二维码",
+      "zhTW": "請掃描QR碼"
+    },
+    "guideLead": {
+      "en": "Choose any 3 of the 7 stops and collect your stamps.\nTap a stop to see its address.",
+      "zhCN": "请从7个地点中任选3处收集印章。点击地点即可查看地址。",
+      "zhTW": "請從7個地點中任選3處，收集印章。點擊地點即可顯示地址。"
+    },
+    "mapLead": {
+      "en": "Find and scan the QR code at each stop.",
+      "zhCN": "找到各地点的二维码后并扫描。",
+      "zhTW": "找到各地點的QR碼後並掃描。"
+    },
+    "readyNote": {
+      "en": "Keep collecting stamps, or check out at MUSINSA STATION SEONGSU.",
+      "zhCN": "可以继续集章，或前往 MUSINSA STATION SEONGSU 办理退房。",
+      "zhTW": "可以繼續集章，或前往 MUSINSA STATION SEONGSU 辦理退房。"
+    }
+  },
+  "langs": [
+    "en",
+    "zhCN",
+    "zhTW"
+  ],
+  "langNames": {
+    "en": "English",
+    "zhCN": "中文(简体)",
+    "zhTW": "中文(繁體)"
+  },
+  "defaultLang": "en",
+  "mode": "stamp",
+  "prototype": false,
+  "theme": {
+    "bg": "#0D2B20",
+    "gold": "#C9A961",
+    "goldLight": "#F0DE9E",
+    "goldDeep": "#A8873F",
+    "ink": "#F2F0E9",
+    "inkSub": "#9FB3A6",
+    "barOff": "#2A4B38",
+    "ring": "#3E5C48",
+    "paper": "#F2F0E9",
+    "paperInk": "#163123"
+  },
+  "admin": {
+    "_note": "확인코드는 적어 두지 않고 흩뜨린 값(codeKey)만 둡니다. 코드를 바꾸려면 node _tools/admin-code.js <새 코드> 로 새 값을 받아 여기에 넣으세요.",
+    "codeKey": "46a538fad57b1fbc",
+    "taps": 3,
+    "title": "관리자 확인",
+    "label": "확인코드",
+    "ph": "6자리 숫자를 입력해 주세요",
+    "bad": "코드가 맞지 않습니다",
+    "doneAlready": "이미 완료 처리된 카드입니다",
+    "notReady": "아직 완료 처리할 카드가 아닙니다",
+    "reset": "시험용 — 이 휴대폰 기록 지우기",
+    "resetAgain": "정말 지울까요? 한 번 더 누르세요"
+  },
+  "card": {
+    "title": "KOREA CHECK-IN",
+    "sub": "MUSINSA MEGASTORE SEONGSU"
+  },
+  "tools": true,
+  "map": "assets/seongsu/map.png",
+  "annex": [
+    {
+      "id": "sinchon",
+      "label": "SINCHON",
+      "title": "HyundaiU-PLEX",
+      "sub": "Sinchon B1 | NOV 17 – 22",
+      "when": "NOV 17–22",
+      "image": "assets/seongsu/sinchon.png"
+    }
+  ],
+  "stamps": 7
 }

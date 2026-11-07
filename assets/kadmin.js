@@ -16,9 +16,19 @@
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var API = LOCAL ? 'http://127.0.0.1:8787' : 'https://qr-mission-api.jhmonounity.workers.dev';
 
-  var PROJECT = window.ADMIN_PROJECT || 'kcheckin';
-  var SITE = window.ADMIN_SITE || 'kcheckin';
-  var TITLE = window.ADMIN_TITLE || '';
+  /* 전시가 여럿이면 위에 고르는 단추가 생깁니다.
+     쪽에서 window.ADMIN_SHOWS = [{ key, site, title }, …] 로 넘깁니다. */
+  var SHOWS = window.ADMIN_SHOWS || [{
+    key: window.ADMIN_PROJECT || 'kcheckin',
+    site: window.ADMIN_SITE || 'kcheckin',
+    title: window.ADMIN_TITLE || ''
+  }];
+  var cur = 0;
+  // 맨 위·창 이름에 쓰는 이름은 전시와 따로입니다
+  var HEAD = window.ADMIN_TITLE || SHOWS[0].title;
+  var PROJECT = SHOWS[0].key;
+  var SITE = SHOWS[0].site;
+  var TITLE = SHOWS[0].title;
   var STORE = 'qrm-admin-code';     // 코드는 이 브라우저에만 남습니다
 
   var $ = function (id) { return document.getElementById(id); };
@@ -62,6 +72,26 @@
     return API + path + '?format=csv&key=' + encodeURIComponent(code) + (extra || '');
   }
 
+  /* 고르는 단추 줄 */
+  function shows(code) {
+    var box = $('shows');
+    if (!box || SHOWS.length < 2) return;
+    box.innerHTML = SHOWS.map(function (s, i) {
+      return '<button class="ghost' + (i === cur ? ' on' : '') + '" data-i="' + i + '">'
+        + esc(s.title) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('button'), function (b) {
+      b.onclick = function () {
+        cur = +b.dataset.i;
+        PROJECT = SHOWS[cur].key;
+        SITE = SHOWS[cur].site;
+        TITLE = SHOWS[cur].title;
+        $('title2').textContent = TITLE;
+        load(code);
+      };
+    });
+  }
+
   function load(code) {
     $('go').disabled = true;
     $('err').classList.add('hidden');
@@ -86,6 +116,7 @@
         $('login').classList.add('hidden');
         $('panel').classList.remove('hidden');
         $('updated').textContent = '마지막 갱신 ' + new Date().toLocaleTimeString('ko-KR');
+        shows(code);
 
         /* ── 한눈에 ───────────────────────────── */
         var views = 0, uniq = 0;
@@ -104,7 +135,7 @@
 
         $('since').textContent = (vs && vs.since)
           ? ('센 날짜 ' + vs.since + ' 부터')
-          : '아직 다녀간 기록이 없습니다.';
+          : '아직 다녀간 기록이 없습니다. (화면을 열어야 쌓이기 시작합니다)';
 
         /* ── 들어온 분들 ──────────────────────── */
         var list = ss.sessions || [];
@@ -158,8 +189,8 @@
   }
 
   /* 시작 */
-  document.title = TITLE + ' 관리자';
-  $('title').textContent = TITLE;
+  document.title = HEAD + ' 관리자';
+  $('title').textContent = HEAD;
   $('title2').textContent = TITLE;
 
   $('go').addEventListener('click', function () {

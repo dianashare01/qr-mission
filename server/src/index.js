@@ -432,7 +432,7 @@ async function adminMessages(req, env, url) {
 /* ── 홈페이지 접속자 수 ──────────────────────────── */
 
 /* 셀 수 있는 사이트. 아무 이름이나 들어와 표가 지저분해지는 것을 막습니다. */
-const SITES = new Set(['testimony', 'kcheckin']);
+const SITES = new Set(['testimony', 'kcheckin', 'seongsu']);
 
 /* 엑셀에서 바로 열리는 표.
    맨 앞 \ufeff 가 없으면 엑셀이 한글을 깨뜨립니다. */

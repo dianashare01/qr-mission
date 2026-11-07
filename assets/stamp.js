@@ -8,7 +8,8 @@
  *   ?p=kcheckin&s=<스팟>&t=<토큰>
  *
  * 기록은 이 휴대폰·이 브라우저에만 남습니다(회원가입 없음).
- * 문구·거점·기간은 config/kcheckin.json 에만 있습니다.
+ * 문구·거점·기간은 config/<전시>.json 에만 있습니다.
+ * 한 코드로 여러 전시를 돌립니다 (K-컬처·성수). 쪽에서 window.STAMP 로 고릅니다.
  */
 
 (function () {
@@ -21,7 +22,14 @@
   var pending = null;     // 체크인 전에 찍은 QR
   var toastTimer = null;
 
-  var KEY = 'qrm:kcheckin';
+  /* 어느 전시인지는 쪽이 정합니다 —
+       <script>window.STAMP = { project: 'seongsu' };</script>
+     안 적으면 K-컬처(kcheckin)로 봅니다. 설정·저장칸·서버 이름이 모두 여기서 갈립니다. */
+  var SHOW = window.STAMP || {};
+  var PROJECT = SHOW.project || 'kcheckin';
+  var CONFIG = SHOW.config || ('../config/' + PROJECT + '.json');
+
+  var KEY = 'qrm:' + PROJECT;
   var A = '../assets/stamp/';
 
   /* ── 서버에 남기기 ─────────────────────────────
@@ -31,7 +39,6 @@
   // 내 컴퓨터에서 확인할 때는 가까이 있는 서버를 씁니다 (wrangler dev)
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var API = LOCAL ? 'http://127.0.0.1:8787' : 'https://qr-mission-api.jhmonounity.workers.dev';
-  var PROJECT = 'kcheckin';
 
   // 머리글을 안 붙입니다 — 붙이면 브라우저가 미리 한 번 더 물어 느려집니다
   function tell(path, data) {
@@ -138,15 +145,21 @@
     for (var i = 0; i < CFG.spots.length; i++) if (CFG.spots[i].id === sp.id) return i;
     return 0;
   }
-  function total() { return CFG.spots.length; }
+  // 도장 칸 수. 설정에 stamps 가 있으면 그 수를, 없으면 거점 수를 씁니다.
+  // 성수는 QR 이 8개(입구 + 가게 7곳)인데 칸은 7개입니다.
+  function total() { return CFG.stamps || CFG.spots.length; }
   function count() { return S.order.length; }
   function isDone() { return count() >= total(); }
   /* 선물·퇴실은 5개째에 — 남은 2개는 이어서 모읍니다 */
   function atCheckout() { return count() >= (CFG.checkout.at || total()); }
 
+  // 입구처럼 이름만 적고 지나가는 자리. 도장도 안 주고 「다음 갈 곳」에도 안 뜹니다.
+  function isCheckin(sp) { return !!(sp && sp.checkin); }
+
   function nextSpot() {
     for (var i = 0; i < CFG.spots.length; i++) {
-      if (!S.got[CFG.spots[i].id]) return CFG.spots[i];
+      var sp = CFG.spots[i];
+      if (!isCheckin(sp) && !S.got[sp.id]) return sp;
     }
     return null;
   }
@@ -206,7 +219,9 @@
   }
 
   function journey() {
-    var n = Math.max(1, count());
+    // 첫 화면은 시안대로 1 부터 보여 주고, 그 밖에서는 실제로 모은 수를 보여 줍니다.
+    // (성수는 입구에서 도장을 안 줘서 0 개인 채로 스탬프 화면에 설 수 있습니다)
+    var n = (view.name === 'intro') ? Math.max(1, count()) : count();
     var bars = '';
     CFG.spots.forEach(function (sp) {
       bars += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
@@ -257,14 +272,28 @@
 
   function stampRow(popIndex) {
     var out = '';
-    CFG.spots.forEach(function (sp, i) {
-      var on = !!S.got[sp.id];
-      var isNew = (popIndex != null && i === popIndex);
-      // 아직 안 찍힌 자리에는 몇 번째인지 숫자를 넣습니다 (시안 04)
+
+    function cell(on, isNew, label) {
       var inner = on
         ? '<img src="' + A + (isNew ? 'stamp-new.png' : 'stamp-on.png') + '" alt="">'
-        : '<span class="n">' + (i + 1) + '</span>';
-      out += '<div class="s ' + (on ? 'on' : '') + (isNew ? ' pop' : '') + '">' + inner + '</div>';
+        // 아직 안 찍힌 자리에는 몇 번째인지 숫자를 넣습니다 (시안 04)
+        : '<span class="n">' + label + '</span>';
+      return '<div class="s ' + (on ? 'on' : '') + (isNew ? ' pop' : '') + '">' + inner + '</div>';
+    }
+
+    if (CFG.stamps) {
+      /* 칸 수를 따로 정한 전시(성수)는 **몇 개 모았나**만 보여 줍니다.
+         일곱 곳 가운데 아무 세 곳이나 되는 방식이라 칸과 가게를 묶지 않습니다. */
+      var got = count();
+      for (var i = 0; i < total(); i++) {
+        out += cell(i < got, popIndex != null && i === got - 1, i + 1);
+      }
+      return '<div class="stamps">' + out + '</div>';
+    }
+
+    /* 그 밖의 전시(K-컬처)는 칸 하나가 거점 하나입니다 — 하던 대로 */
+    CFG.spots.forEach(function (sp, i) {
+      out += cell(!!S.got[sp.id], popIndex != null && i === popIndex, i + 1);
     });
     return '<div class="stamps">' + out + '</div>';
   }
@@ -280,6 +309,13 @@
       + '<img class="mark" src="' + A + 'logo.png" alt="KOREA CHECK-IN">'
       + side('next', right)
       + '</div>';
+  }
+
+  /* 시안의 안내·지도 화면은 아래가 넓은 뒤로 단추 하나입니다 */
+  function backBar() {
+    return '<div class="backbar">'
+      + '<button type="button" class="btn line wide" data-go="back" aria-label="'
+      + esc(U('back')) + '">' + icon('back') + '</button></div>';
   }
 
   function markOnly() {
@@ -351,6 +387,7 @@
       + nextPill()
       + '<div class="grow"></div>'
       + stampRow(view.pop)
+      + tools()
       + (canOut
         ? '<div class="btnrow">'
           + '<button class="btn" data-act="ready">' + esc(U('readyBtn')) + '</button>'
@@ -361,9 +398,72 @@
       + '</div>' + navBar(S.hist.length ? 'back' : null, null);
   };
 
+  /* 스탬프 화면 아래의 거드는 단추들 — 설정에 tools 가 있을 때만 붙습니다.
+     성수는 「QR 찍기 · 안내 · 지도」 셋입니다 (K-컬처에는 없습니다). */
+  function tools() {
+    if (!CFG.tools) return '';
+    return '<div class="tools">'
+      + '<button class="btn line" data-act="scan">'
+      + '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" '
+      + 'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2'
+      + 'M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>'
+      + esc(U('scanBtn')) + '</button>'
+      + '<div class="btnrow two">'
+      + '<button class="btn" data-go="guide">' + esc(U('guideBtn')) + '</button>'
+      + '<button class="btn" data-go="map">' + esc(U('mapBtn')) + '</button>'
+      + '</div></div>';
+  }
+
+  /* 거점 목록 — 누르면 주소가 펼쳐집니다 (시안 01 가이드) */
+  R.guide = function () {
+    var rows = CFG.spots.map(function (sp, i) {
+      var open = (view.open === sp.id);
+      var no = sp.order === 0 ? '★' : String(sp.order);
+      return '<div class="stop' + (open ? ' open' : '') + '">'
+        + '<button class="hd" data-act="stop" data-id="' + esc(sp.id) + '">'
+        + '<span class="no">' + no + '</span>'
+        + '<span class="nm">' + esc(one(sp.name)) + '</span>'
+        + '<span class="ar" aria-hidden="true">' + (open ? '\u2303' : '\u2304') + '</span>'
+        + '</button>'
+        + (open ? '<p class="ad">' + esc(one(sp.addr)) + '</p>' : '')
+        + '</div>';
+    }).join('');
+    return ciBar()
+      + '<div class="main">'
+      + '<p class="lead">' + lines('guideLead') + '</p>'
+      + '<div class="stops">' + rows + '</div>'
+      + '<div class="grow"></div>'
+      + '</div>' + backBar();
+  };
+
+  /* 지도 — 그림 한 장과 거점 이름표 */
+  R.map = function () {
+    var legend = CFG.spots.map(function (sp) {
+      var star = sp.order === 0;
+      return '<li><span class="no' + (star ? ' star' : '') + '">'
+        + (star ? '★' : String(sp.order)) + '</span>' + esc(one(sp.name)) + '</li>';
+    }).join('');
+    return ciBar()
+      + '<div class="main">'
+      + (CFG.map ? '<img class="mapimg" src="../' + esc(CFG.map) + '" alt="">' : '')
+      // 세워 둔 QR 안내판 그림 — 「각 가게에서 이걸 찾으세요」
+      + '<div class="qrnote">'
+      + '<span class="pic"><svg viewBox="0 0 24 32" aria-hidden="true">'
+      + '<rect x="7" y="3" width="10" height="10" rx="1.4" fill="none" '
+      + 'stroke="currentColor" stroke-width="1.5"/>'
+      + '<path d="M12 13v14M6 29h12" fill="none" stroke="currentColor" '
+      + 'stroke-width="1.5" stroke-linecap="round"/></svg></span>'
+      + '<p>' + lines('mapLead') + '</p>'
+      + '</div>'
+      + '<ul class="legend">' + legend + '</ul>'
+      + '<div class="grow"></div>'
+      + '</div>' + backBar();
+  };
+
   /* 퇴실 뒤 — 다음 머무를 곳 안내. 아직 도장이 남았으면 이어 가기 단추가 붙습니다 */
   R.after = function () {
-    var rows = CFG.annex.map(function (a) {
+    var rows = (CFG.annex || []).map(function (a) {
       return '<button class="row" data-poster="' + a.id + '">'
         + '<span class="lb"><b>' + esc(a.label) + '</b><span>' + esc(a.title) + ' · ' + esc(a.when || a.sub) + '</span></span>'
         + '<span class="arr">' + icon('out') + '</span></button>';
@@ -451,7 +551,7 @@
       if (S.hist.length > 20) S.hist.shift();
       save();
     }
-    view = { name: name };
+    view = { name: name };   // 화면이 바뀌면 펼쳐 둔 주소도 닫힙니다
     if (extra) Object.keys(extra).forEach(function (k) { view[k] = extra[k]; });
     render();
   }
@@ -490,6 +590,8 @@
 
   function arrive(sp) {
     if (!S.nick) { pending = sp.id; go(S.langPicked ? 'checkin' : 'lang'); return; }
+    // 입구는 도장을 주지 않습니다 — 이미 이름을 적었으면 그냥 스탬프 화면으로
+    if (isCheckin(sp)) { go(S.checkedOut && isDone() ? 'after' : 'board'); return; }
     if (S.got[sp.id]) { go(S.checkedOut && isDone() ? 'after' : 'board'); toast(U('already')); return; }
 
     var at = slotOf(sp);
@@ -612,10 +714,11 @@
       save();
       openSession();
 
-      // 리셉션으로 들어왔으면 스탬프 1개를 자동으로 줍니다
+      // 리셉션처럼 도장을 함께 주는 곳이면 1개를 자동으로 줍니다.
+      // 입구(checkin)로 들어왔으면 이름만 받고 넘어갑니다.
       var first = pending ? spotById(pending) : CFG.spots[0];
       pending = null;
-      if (first && !S.got[first.id]) {
+      if (first && !isCheckin(first) && !S.got[first.id]) {
         pressThen(function () {
           award(first);
           go('board', { pop: slotOf(first) });
@@ -631,6 +734,15 @@
       if (box) box.hidden = (b.dataset.act === 'notice-close');
       return;
     }
+
+    // 거점 한 줄을 누르면 주소가 펼쳐지고, 다시 누르면 접힙니다
+    if (b.dataset.act === 'stop') {
+      view.open = (view.open === b.dataset.id) ? null : b.dataset.id;
+      render();
+      return;
+    }
+    // 앱 안에 카메라를 두지 않습니다 — 휴대폰 기본 카메라로 찍으시면 됩니다
+    if (b.dataset.act === 'scan') { toast(U('scanHow')); return; }
 
     // 시안 04 — 「READY TO CHECK-OUT」 을 누르면 직원 확인 창이 열립니다
     if (b.dataset.act === 'ready') { admOpen(); return; }
@@ -706,7 +818,7 @@
     go(resume());
   }
 
-  fetch('../config/kcheckin.json', { cache: 'no-store' })
+  fetch(CONFIG, { cache: 'no-store' })
     .then(function (r) {
       if (!r.ok) throw new Error('설정 파일을 찾지 못했습니다 (' + r.status + ')');
       return r.json();

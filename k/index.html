@@ -6,6 +6,10 @@
 <meta name="robots" content="noindex">
 <title>관리자</title>
 <link rel="stylesheet" href="../assets/admin.css">
+<style>
+  /* 지금 보고 있는 전시 */
+  #shows .on { background: #1f2937; color: #fff; border-color: #1f2937; }
+</style>
 </head>
 <body>
 
@@ -34,6 +38,8 @@
       <button class="ghost" id="logout">나가기</button>
     </div>
   </div>
+
+  <div class="row" id="shows" style="flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
 
   <div class="card">
     <h2>한눈에</h2>
@@ -71,10 +77,14 @@
 </div>
 
 <script>
-  window.ADMIN_PROJECT = 'kcheckin';
-  window.ADMIN_SITE = 'kcheckin';
+  // 전시를 늘리려면 여기에 한 줄 더하면 됩니다
+  window.ADMIN_SHOWS = [
+    { key: 'kcheckin', site: 'kcheckin', title: 'K-컬처 · 하이커그라운드' },
+    { key: 'seongsu',  site: 'seongsu',  title: '성수 팝업' }
+  ];
   window.ADMIN_TITLE = 'KOREA, CHECK-IN';
 </script>
-<script src="../assets/kadmin.js"></script>
+<!-- ?v= 는 묵은 파일을 밀어내는 꼬리표입니다. kadmin.js 를 고칠 때마다 숫자를 올려 주세요. -->
+<script src="../assets/kadmin.js?v=2"></script>
 </body>
 </html>
