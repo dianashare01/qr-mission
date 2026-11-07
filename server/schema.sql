@@ -80,3 +80,16 @@ CREATE TABLE IF NOT EXISTS content (
   updated_at TEXT NOT NULL,
   PRIMARY KEY (site, k)
 );
+
+-- ── 손님이 올린 사진 (영수증) ────────────────────
+-- 파일 자체는 R2 창고에 있고, 여기에는 어디에 있는지와 언제 올렸는지만 둡니다.
+-- 한 달이 지나면 창고에서 저절로 지워집니다 (R2 수명 규칙).
+CREATE TABLE IF NOT EXISTS photos (
+  k          TEXT PRIMARY KEY,            -- 창고 안의 파일 이름
+  project    TEXT NOT NULL,
+  spot       TEXT,                        -- 어느 QR 로 들어왔는지
+  bytes      INTEGER NOT NULL,
+  mime       TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_photos_project ON photos(project, created_at);

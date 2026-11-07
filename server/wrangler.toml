@@ -11,6 +11,12 @@ binding = "DB"
 database_name = "qr-mission"
 database_id = "45086f6a-6fb4-4218-9c2d-aba5ac225039"
 
+# 사진 창고 (영수증). 먼저 만들어 두셔야 합니다:
+#   npx wrangler r2 bucket create qr-photos
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "qr-photos"
+
 [vars]
 # 전시 페이지 주소만 허용합니다. 비워 두면 모든 곳에서 호출할 수 있습니다.
 # localhost 는 만들 때 확인하는 용도입니다. 브라우저에서 다른 사이트가 부르는 것만 막는 설정이라,

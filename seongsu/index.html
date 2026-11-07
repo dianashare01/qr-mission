@@ -475,8 +475,13 @@ img { display: block; max-width: 100%; }
 
 /* ── 성수에서만 쓰는 것 ──────────────────────────
    스탬프 화면 아래 「QR 찍기 · 안내 · 지도」, 그리고 안내·지도 화면입니다. */
-.tools { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+/* 시안 홈_02_단계별 화면_01 을 재서 옮긴 값입니다 —
+   QR 찍기 단추 327x44, 그 아래 둘은 158x40 에 사이 11px.
+   보통 단추(54px)보다 낮아서 여기서 따로 정합니다. */
+.tools { width: 100%; display: flex; flex-direction: column; gap: 11px; margin-top: 27px; }
 .btn.line {
+  /* 높이를 못박습니다 — 보통 단추의 padding 이 끼면 44 를 넘깁니다 */
+  height: 44px; min-height: 0; padding: 0 16px;
   background: none;
   border: 1px solid var(--ring);
   color: var(--ink);
@@ -484,7 +489,15 @@ img { display: block; max-width: 100%; }
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn.line svg { width: 18px; height: 18px; flex: none; }
-.btnrow.two { flex-direction: row; margin-top: 0; }
+
+/* 둘을 나란히 — .btn 의 width:100% 를 풀어야 한 줄에 섭니다 */
+.btnrow.two { flex-direction: row; gap: 11px; margin-top: 0; }
+.btnrow.two .btn {
+  flex: 1; width: auto;
+  height: 40px; min-height: 0; padding: 0 12px;
+  font-size: 13.5px;
+  display: flex; align-items: center; justify-content: center;
+}
 
 /* 안내 화면 — 거점을 누르면 주소가 펼쳐집니다 */
 .lead {

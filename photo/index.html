@@ -6,52 +6,236 @@
 <meta name="theme-color" content="#0D2B20">
 <meta name="format-detection" content="telephone=no">
 <meta name="robots" content="noindex">
-<title>사진 올리기 — 준비 중</title>
+<title>영수증 올리기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* 사진 올리기 — 아직 화면도 기능도 정해지지 않았습니다.
-   인쇄한 QR(?p=photo&s=p1&t=…)이 이 쪽으로 들어옵니다.
-   올리는 화면이 준비되면 이 파일만 갈아 끼우면 되고, QR 은 그대로 씁니다. */
+/* 영수증 올리기 — 임시 화면입니다.
+   디자인이 나오면 이 꾸밈만 갈아 끼우면 되고, 일하는 부분은 그대로 둡니다.
+   인쇄한 QR(?p=photo&s=p1&t=…)이 이 쪽으로 들어옵니다. */
+
 :root {
   --bg: #0D2B20;
   --ink: #F2F0E9;
   --sub: #9FB3A6;
+  --ring: #3E5C48;
   --gold: #E9CA6F;
+  --gold-deep: #CA9E32;
+  --paper: #F2F0E9;
+  --paper-ink: #163123;
   --sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { height: 100%; }
 body {
   min-height: 100%;
-  background: var(--bg);
+  background: #071A12;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+main {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--bg);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+  flex-direction: column;
+  padding: 18px 24px calc(24px + env(safe-area-inset-bottom));
+}
+
+.head { width: 100%; height: auto; aspect-ratio: 327 / 20; }
+.grow { flex: 1; }
+
+h1 {
+  margin-top: 40px;
+  font-size: 21px; font-weight: 700; line-height: 1.35;
+  text-align: center; word-break: keep-all;
+}
+.sub {
+  margin-top: 10px; font-size: 13px; line-height: 1.55; color: var(--sub);
+  text-align: center; word-break: keep-all;
+}
+
+/* 사진 고르는 칸 */
+/* 사진 고르는 칸 — 성수의 안내 상자(.qrnote)와 같은 결입니다 */
+.pick {
+  width: 100%; margin-top: 26px;
+  min-height: 200px;
+  background: #16402E;
+  border: 1px solid var(--ring); border-radius: 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  color: var(--sub); font-size: 13px;
+  overflow: hidden;
+}
+/* 종이색 타일 안의 사진기 — 성수 지도 화면의 안내판 타일과 같은 꼴 */
+.pick .tile {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: var(--paper); color: var(--paper-ink);
+  display: grid; place-items: center;
+}
+.pick .tile svg { width: 26px; height: 26px; }
+.pick img { width: 100%; height: 100%; max-height: 330px; object-fit: contain; }
+.pick.has { padding: 0; gap: 0; background: #0A2419; }
+
+.btn {
+  width: 100%; min-height: 54px; margin-top: 14px;
+  padding: 12px 18px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+  color: #0C291F; font-size: 14.5px; font-weight: 700; letter-spacing: .02em;
   text-align: center;
 }
-main { max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.mark { font-size: 11.5px; font-weight: 700; letter-spacing: .18em; color: var(--gold); }
-h1 { font-size: 22px; font-weight: 700; line-height: 1.45; word-break: keep-all; }
-p { font-size: 14px; color: var(--sub); word-break: keep-all; }
-.rule { width: 34px; height: 1px; background: #3E5C48; }
+.btn[disabled] { opacity: .45; }
+.btn.line {
+  background: none; border: 1px solid var(--ring); color: var(--ink); font-weight: 500;
+}
+
+.note {
+  margin-top: 20px; font-size: 11.5px; line-height: 1.65; color: var(--sub);
+  text-align: center; word-break: keep-all;
+}
+.msg { margin-top: 12px; min-height: 20px; font-size: 12.5px; color: #E6B98A; text-align: center; }
+
+/* 다 올린 뒤 */
+.done { margin-top: 40px; text-align: center; }
+.done .tick {
+  width: 56px; height: 56px; margin: 0 auto 16px;
+  border-radius: 50%; background: var(--gold); color: #0C291F;
+  display: grid; place-items: center;
+}
+.done .tick svg { width: 28px; height: 28px; }
+
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 </style>
 </head>
 <body>
 
 <main>
-  <p class="mark">PHOTO</p>
-  <h1>준비 중입니다</h1>
-  <div class="rule"></div>
-  <p>사진 올리는 화면을 만들고 있습니다.<br>곧 이 자리에서 열립니다.</p>
+  <img class="head" src="../assets/stamp/head.png" alt="Imagine your Korea">
+
+  <!-- 고르고 올리는 화면 -->
+  <section id="form">
+    <h1>영수증을 올려 주세요</h1>
+    <p class="sub">사진 한 장이면 됩니다. 글씨가 잘 보이게 찍어 주세요.</p>
+
+    <label class="pick" id="pick" for="file">
+      <span class="tile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.2-2h5.6L16 5"/>
+        </svg>
+      </span>
+      <span id="picktext">눌러서 영수증 찍기</span>
+    </label>
+    <!-- capture 를 주면 휴대폰에서 바로 카메라가 열립니다 -->
+    <input id="file" type="file" accept="image/*" capture="environment" hidden>
+
+    <button class="btn" id="send" disabled>올리기</button>
+    <p class="msg" id="msg" role="status"></p>
+
+    <p class="note">
+      올려 주신 영수증은 행사 확인용으로만 쓰고 <b>한 달 뒤 자동으로 지워집니다.</b><br>
+      이름·연락처는 받지 않습니다.
+    </p>
+  </section>
+
+  <!-- 다 올린 뒤 -->
+  <section id="done" hidden>
+    <div class="done">
+      <div class="tick">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 12.5l5.5 5.5L20 7"/>
+        </svg>
+      </div>
+      <h1 style="margin:0">올렸습니다</h1>
+      <p class="sub">고맙습니다. 한 장 더 올리시려면 아래를 눌러 주세요.</p>
+    </div>
+    <button class="btn line" id="again">한 장 더 올리기</button>
+  </section>
+
+  <div class="grow"></div>
 </main>
 
+<script>
+(function () {
+  'use strict';
+
+  // 내 컴퓨터에서 확인할 때는 가까이 있는 서버를 씁니다 (wrangler dev)
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var API = LOCAL ? 'http://127.0.0.1:8787' : 'https://qr-mission-api.jhmonounity.workers.dev';
+
+  var MAX = 10 * 1024 * 1024;
+
+  var q = new URLSearchParams(location.search);
+  var PROJECT = q.get('p') || 'photo';
+  var SPOT = q.get('s') || '';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var file = null;
+
+  $('file').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > MAX) {
+      $('msg').textContent = '사진이 너무 큽니다. 10MB 까지 올릴 수 있습니다.';
+      return;
+    }
+    file = f;
+    $('msg').textContent = '';
+    $('send').disabled = false;
+
+    // 고른 사진을 바로 보여 줍니다
+    var url = URL.createObjectURL(f);
+    var pick = $('pick');
+    pick.classList.add('has');
+    pick.innerHTML = '';
+    var img = document.createElement('img');
+    img.src = url;
+    img.alt = '';
+    img.onload = function () { URL.revokeObjectURL(url); };
+    pick.appendChild(img);
+  });
+
+  $('send').addEventListener('click', function () {
+    if (!file) return;
+    $('send').disabled = true;
+    $('msg').textContent = '올리는 중입니다…';
+
+    // 파일을 그대로 보냅니다. Content-Type 으로 종류를 알려 줍니다.
+    fetch(API + '/api/photo?p=' + encodeURIComponent(PROJECT)
+          + (SPOT ? '&s=' + encodeURIComponent(SPOT) : ''), {
+      method: 'POST',
+      headers: { 'Content-Type': file.type || 'image/jpeg' },
+      body: file
+    })
+      .then(function (r) { return r.json().catch(function () { return null; }); })
+      .then(function (d) {
+        if (!d || !d.ok) {
+          $('send').disabled = false;
+          $('msg').textContent = (d && d.error) || '올리지 못했습니다. 잠시 뒤 다시 해 주세요.';
+          return;
+        }
+        $('form').hidden = true;
+        $('done').hidden = false;
+      })
+      .catch(function () {
+        $('send').disabled = false;
+        $('msg').textContent = '인터넷이 끊긴 것 같습니다. 다시 해 주세요.';
+      });
+  });
+
+  $('again').addEventListener('click', function () { location.reload(); });
+})();
+</script>
 </body>
 </html>

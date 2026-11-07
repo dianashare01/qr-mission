@@ -30,7 +30,7 @@ function cors(env, req) {
   const ok = allowed.length === 0 || allowed.includes(origin);
   return {
     'Access-Control-Allow-Origin': ok ? (origin || '*') : 'null',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key',
     'Access-Control-Max-Age': '86400',
   };
@@ -347,6 +347,112 @@ async function stats(req, env, url) {
 /* ── 관리자: 남겨진 기록 보기 ────────────────────── */
 /* 들어온 사람 목록 — 이름·언어·도장 수·선물 수령 여부.
    K-컬처 관리자 쪽이 이걸로 엑셀을 만듭니다. */
+/* ── 손님이 올린 사진 (영수증) ──────────────────
+   파일은 R2 창고에, 「어디에 있는지」만 D1 에 둡니다.
+   누구나 올릴 수 있는 길이라 크기·종류를 좁게 막습니다. */
+
+const PHOTO_MAX = 10 * 1024 * 1024;          // 한 장 10MB
+const PHOTO_OK = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
+
+async function photoUp(req, env, url) {
+  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+
+  const project = cleanKey(url.searchParams.get('p'), 32);
+  const spot = cleanKey(url.searchParams.get('s'), 32);
+  if (!project) return bad('어느 행사인지 알 수 없습니다', env, req);
+
+  const mime = (req.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (!PHOTO_OK.has(mime)) return bad('사진 파일만 올릴 수 있습니다', env, req, 415);
+
+  const len = Number(req.headers.get('Content-Length') || 0);
+  if (len > PHOTO_MAX) return bad('사진이 너무 큽니다 (10MB 까지)', env, req, 413);
+
+  const body = await req.arrayBuffer();
+  if (!body.byteLength) return bad('빈 파일입니다', env, req);
+  if (body.byteLength > PHOTO_MAX) return bad('사진이 너무 큽니다 (10MB 까지)', env, req, 413);
+
+  const ext = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp'
+    : (mime === 'image/heic' || mime === 'image/heif') ? 'heic' : 'jpg';
+  // 날짜별로 묶어 두면 나중에 눈으로 찾기 좋습니다
+  const key = `${project}/${kstDay()}/${uuid()}.${ext}`;
+
+  await env.PHOTOS.put(key, body, { httpMetadata: { contentType: mime } });
+  await env.DB.prepare(
+    'INSERT INTO photos (k, project, spot, bytes, mime, created_at) VALUES (?,?,?,?,?,?)'
+  ).bind(key, project, spot || null, body.byteLength, mime, now()).run();
+
+  return json({ ok: true }, env, req);
+}
+
+async function adminPhotos(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+
+  const project = url.searchParams.get('project');
+  const limit = Math.min(2000, Math.max(1, Number(url.searchParams.get('limit') || 500)));
+  const where = project ? ' WHERE project = ?' : '';
+  const bindP = project ? [project] : [];
+
+  const rows = await env.DB.prepare(
+    'SELECT k, spot, bytes, mime, created_at FROM photos' + where
+    + ' ORDER BY created_at DESC LIMIT ?'
+  ).bind(...bindP, limit).all();
+
+  const sum = await env.DB.prepare(
+    'SELECT COUNT(*) AS n, COALESCE(SUM(bytes), 0) AS b FROM photos' + where
+  ).bind(...bindP).first();
+
+  if (url.searchParams.get('format') === 'csv') {
+    const out = [['번호', '올린 때(UTC)', '찍은 곳', '크기(KB)', '파일']];
+    (rows.results || []).forEach((r, i) => out.push([
+      sum.n - i, r.created_at, r.spot || '', Math.round(r.bytes / 1024), r.k,
+    ]));
+    return csv(out, `photos-${project || 'all'}.csv`, env, req);
+  }
+
+  return json({
+    ok: true,
+    project: project || '전체',
+    total: sum.n,
+    bytes: sum.b,
+    photos: rows.results || [],
+  }, env, req);
+}
+
+/* 한 장 내려받기 — 관리자만. 주소에 코드를 담아 부릅니다. */
+async function adminPhoto(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+
+  const k = url.searchParams.get('k') || '';
+  const row = await env.DB.prepare('SELECT k, mime FROM photos WHERE k = ?').bind(k).first();
+  if (!row) return bad('그런 사진이 없습니다', env, req, 404);
+
+  const obj = await env.PHOTOS.get(row.k);
+  if (!obj) return bad('창고에서 사라졌습니다 (한 달이 지났을 수 있습니다)', env, req, 404);
+
+  const down = url.searchParams.get('download') === '1';
+  const headers = {
+    'Content-Type': row.mime,
+    'Cache-Control': 'private, max-age=60',
+    ...cors(env, req),
+  };
+  if (down) headers['Content-Disposition'] = `attachment; filename="${row.k.split('/').pop()}"`;
+  return new Response(obj.body, { headers });
+}
+
+async function adminPhotoDel(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+  if (!env.PHOTOS) return bad('사진 창고가 아직 없습니다', env, req, 503);
+
+  const k = url.searchParams.get('k') || '';
+  const row = await env.DB.prepare('SELECT k FROM photos WHERE k = ?').bind(k).first();
+  if (!row) return bad('그런 사진이 없습니다', env, req, 404);
+
+  await env.PHOTOS.delete(row.k);
+  await env.DB.prepare('DELETE FROM photos WHERE k = ?').bind(row.k).run();
+  return json({ ok: true }, env, req);
+}
+
 async function adminSessions(req, env, url) {
   if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
 
@@ -587,6 +693,10 @@ export default {
       if (p === '/api/admin/stats' && req.method === 'GET') return await stats(req, env, url);
       if (p === '/api/admin/messages' && req.method === 'GET') return await adminMessages(req, env, url);
       if (p === '/api/admin/sessions' && req.method === 'GET') return await adminSessions(req, env, url);
+      if (p === '/api/photo' && req.method === 'POST') return await photoUp(req, env, url);
+      if (p === '/api/admin/photos' && req.method === 'GET') return await adminPhotos(req, env, url);
+      if (p === '/api/admin/photo' && req.method === 'GET') return await adminPhoto(req, env, url);
+      if (p === '/api/admin/photo' && req.method === 'DELETE') return await adminPhotoDel(req, env, url);
       if (p === '/api/hit' && req.method === 'POST') return await hit(req, env);
       if (p === '/api/content' && req.method === 'GET') return await getContent(req, env, url);
       if (p === '/api/admin/visits' && req.method === 'GET') return await visits(req, env, url);
