@@ -20,6 +20,8 @@
   }
   .shot .row2 .del { color: #b91c1c; border-color: #fecaca; }
   .empty { color: #6b7280; font-size: 14px; }
+  /* 되돌릴 수 없는 단추는 눈에 빨갛게 — 손이 멈추게 */
+  button.ghost.danger { color: #b91c1c; border-color: #fecaca; }
   /* 남은 용량 막대 */
   .bar { margin-top: 7px; height: 9px; border-radius: 5px; background: #e5e7eb; overflow: hidden; }
   .bar i { display: block; height: 100%; width: 0; background: #2563eb; transition: width .3s; }
@@ -71,6 +73,7 @@
     <div class="row" style="margin-top:16px;flex-wrap:wrap;gap:8px">
       <button class="ghost" id="csv">목록 엑셀로 받기</button>
       <button class="ghost" id="all">보이는 것 모두 받기</button>
+      <button class="ghost danger" id="delall">보이는 것 모두 지우기</button>
     </div>
   </div>
 
@@ -83,6 +86,6 @@
 
 </div>
 
-<script src="../assets/padmin.js?v=2"></script>
+<script src="../assets/padmin.js?v=3"></script>
 </body>
 </html>

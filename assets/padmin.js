@@ -159,6 +159,53 @@
           });
         };
 
+        /* 한꺼번에 지우기 — 되돌릴 수 없으니 두 번 묻고, 장수를 보여 줍니다.
+           서버에 한 장씩 보냅니다. 한 번에 몰아 보내는 길을 따로 두지 않은 건,
+           중간에 끊겨도 지워진 것까지는 깔끔하게 남기 때문입니다. */
+        /* 다시 그릴 때 두 단추의 상태도 처음으로 되돌립니다 —
+           안 그러면 한꺼번에 지운 뒤 「모두 받기」가 잠긴 채 남습니다. */
+        $('all').disabled = !list.length;
+        $('all').textContent = '보이는 것 모두 받기';
+
+        var del = $('delall');
+        del.disabled = !list.length;
+        del.textContent = '보이는 것 모두 지우기';
+        delete del.dataset.sure;
+        del.onclick = function () {
+          if (!list.length) return;
+          if (del.dataset.sure !== '1') {
+            del.dataset.sure = '1';
+            del.textContent = '정말 ' + list.length + '장을 지울까요? (한 번 더)';
+            // 10초 안에 다시 안 누르면 없던 일로
+            setTimeout(function () {
+              if (del.dataset.sure === '1') {
+                delete del.dataset.sure;
+                del.textContent = '보이는 것 모두 지우기';
+              }
+            }, 10000);
+            return;
+          }
+
+          del.disabled = true;
+          $('all').disabled = true;
+          var i = 0, failed = 0;
+
+          (function step() {
+            if (i >= list.length) {
+              if (failed) alert(failed + '장은 못 지웠습니다. 새로 고침하고 다시 해 주세요.');
+              load(code);
+              return;
+            }
+            del.textContent = '지우는 중… (' + (i + 1) + '/' + list.length + ')';
+            fetch(API + '/api/admin/photo?key=' + encodeURIComponent(code)
+                  + '&k=' + encodeURIComponent(list[i].k), { method: 'DELETE' })
+              .then(function (r) { return r.json().catch(function () { return null; }); })
+              .then(function (x) { if (!x || !x.ok) failed++; })
+              .catch(function () { failed++; })
+              .then(function () { i++; step(); });
+          })();
+        };
+
         $('csv').onclick = function () {
           location.href = API + '/api/admin/photos?format=csv&key=' + encodeURIComponent(code)
             + '&project=' + encodeURIComponent(PROJECT);
