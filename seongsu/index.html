@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D2B20">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<title>성수 팝업 — 준비 중</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 성수 팝업 — 아직 내용이 정해지지 않았습니다.
+   인쇄한 QR(?p=seongsu&s=ss1&t=…)이 이 쪽으로 들어옵니다.
+   화면이 준비되면 이 파일만 갈아 끼우면 되고, QR 은 그대로 씁니다. */
+:root {
+  --bg: #0D2B20;
+  --ink: #F2F0E9;
+  --sub: #9FB3A6;
+  --gold: #E9CA6F;
+  --sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+main { max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.mark { font-size: 11.5px; font-weight: 700; letter-spacing: .18em; color: var(--gold); }
+h1 { font-size: 22px; font-weight: 700; line-height: 1.45; word-break: keep-all; }
+p { font-size: 14px; color: var(--sub); word-break: keep-all; }
+.rule { width: 34px; height: 1px; background: #3E5C48; }
+</style>
+</head>
+<body>
+
+<main>
+  <p class="mark">SEONGSU</p>
+  <h1>준비 중입니다</h1>
+  <div class="rule"></div>
+  <p>곧 이 자리에서 만나요.<br>무신사 메가스토어 성수 · 11월 10–15일</p>
+</main>
+
+</body>
+</html>

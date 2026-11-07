@@ -1,0 +1,20 @@
+{
+  "_주의": "성수 팝업 — 막 시작한 설정입니다. 지점·문구는 아직 정해지지 않았습니다.",
+  "_토큰": "spots 의 id 와 token 은 인쇄한 QR 에 들어갑니다. 한 번 인쇄한 뒤에는 절대 바꾸지 마세요.",
+  "project": "seongsu",
+  "title": "성수 팝업",
+  "event": "KOREA CHECK-IN · SEONGSU",
+  "place": "무신사 메가스토어 성수",
+  "period": {
+    "open": "2026-11-10",
+    "close": "2026-11-15"
+  },
+  "spots": [
+    {
+      "order": 1,
+      "id": "ss1",
+      "token": "x4699q",
+      "place": "입구"
+    }
+  ]
+}
