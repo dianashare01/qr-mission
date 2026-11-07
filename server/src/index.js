@@ -216,7 +216,8 @@ async function redeem(req, env) {
   // 비밀값을 넣을 때 줄바꿈이 섞여 들어가는 일이 잦아 앞뒤 공백은 무시한다
   // K-컬처는 직원이 앱 화면에서 확인코드를 넣어 끝내므로 서버 번호를 따로 묻지 않습니다.
   // (여기 남는 줄은 보고용 숫자일 뿐, 선물을 내주는 문은 앱 쪽에 있습니다.)
-  const noPin = String(b.project || '') === 'kcheckin';
+  // 앱 화면에서 확인코드로 끝내는 전시들 — 서버 번호를 따로 묻지 않습니다
+  const noPin = ['kcheckin', 'seongsu'].indexOf(String(b.project || '')) >= 0;
   const expected = String(env.STAFF_PIN || '').trim();
   if (!noPin && expected && String(b.pin || '').trim() !== expected) {
     return bad('번호가 맞지 않습니다', env, req, 403);
