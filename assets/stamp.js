@@ -375,6 +375,12 @@
   };
 
   /* 체크인 — 이름 적기 */
+  /* 시안 02 언어선택: 이름이 두 글자가 되기 전에는 단추가 **크림색으로 잠겨** 있습니다.
+     설정에 ctaNeedsName 이 있는 전시에서만 켭니다 — K-컬처는 쓰던 대로 둡니다. */
+  function ctaOff() {
+    return !!CFG.ctaNeedsName && (S.nick || '').trim().length < 2;
+  }
+
   R.checkin = function () {
     return ciBar() + journey()
       + '<div class="main">'
@@ -383,9 +389,12 @@
       + '<input id="nick" type="text" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" '
       + 'placeholder="' + esc(U('guestPh')) + '" value="' + esc(S.nick) + '">'
       + '<div class="err" id="err" role="alert"></div></div>'
-      + '<div class="grow"></div>'
-      + '<button class="btn" data-act="checkin">' + esc(U('checkinCta')) + '</button>'
+      /* 시안 02_언어선택: 단추가 입력칸 **바로 아래**에 붙고,
+         빈자리는 안내문 아래에 남습니다. 아래로 밀지 않습니다. */
+      + '<button class="btn" data-act="checkin"' + (ctaOff() ? ' disabled' : '') + '>'
+      + esc(U('checkinCta')) + '</button>'
       + '<div class="sub center" style="font-size:12px">' + lines('noSignup') + '</div>'
+      + '<div class="grow"></div>'
       + '</div>' + navBar('back', null);
   };
 
@@ -435,10 +444,14 @@
     if (!CFG.tools) return '';
     return '<div class="tools">'
       + '<button class="btn line" data-act="scan">'
-      + '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" '
+      /* 시안(Camera/44px.png)은 QR 모서리 표가 아니라 **사진기**입니다 —
+         몸통은 모서리 둥근 네모, 위 가운데에 작은 뷰파인더, 가운데에 렌즈.
+         글씨는 흰색인데 아이콘만 금색(#D9BB76)이라 색을 따로 줍니다. */
+      + '<svg class="cam" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" '
       + 'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
-      + '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2'
-      + 'M8 20H6a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>'
+      + '<rect x="3" y="6.4" width="18" height="13.2" rx="2.6"/>'
+      + '<path d="M8.6 6.4V5a1.2 1.2 0 0 1 1.2-1.2h4.4A1.2 1.2 0 0 1 15.4 5v1.4"/>'
+      + '<circle cx="12" cy="13" r="3"/></svg>'
       + esc(U('scanBtn')) + '</button>'
       + '<div class="btnrow two">'
       + '<button class="btn" data-go="guide">' + esc(U('guideBtn')) + '</button>'
@@ -784,6 +797,14 @@
     if (b.dataset.act === 'adm-close') { admClose(); return; }
     if (b.dataset.act === 'adm-ok') { admOk(); return; }
     if (b.dataset.act === 'adm-reset') { admReset(b); return; }
+  });
+
+  /* 글자를 넣고 지울 때마다 단추를 켜고 끕니다.
+     화면을 다시 그리지 않습니다 — 그리면 글 쓰던 자리를 놓칩니다. */
+  app.addEventListener('input', function (e) {
+    if (e.target.id !== 'nick' || !CFG.ctaNeedsName) return;
+    var btn = app.querySelector('[data-act="checkin"]');
+    if (btn) btn.disabled = (e.target.value || '').trim().length < 2;
   });
 
   app.addEventListener('keydown', function (e) {

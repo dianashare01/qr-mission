@@ -139,8 +139,11 @@ img { display: block; max-width: 100%; }
 .btn {
   flex: none;
   width: 100%;
-  min-height: 54px;
-  padding: 12px 18px;
+  /* 시안의 알약 단추는 모두 40 입니다 (01_첫 화면 y643~682,
+     02_언어선택 y601~640 을 재서 옮겼습니다). 54 는 제가 틀렸던 값입니다. */
+  height: 40px; min-height: 0;
+  padding: 0 18px;
+  display: flex; align-items: center; justify-content: center;
   border-radius: 999px;
   /* 새 시안의 단추 결 (04·06 을 재서 옮김) — 설문 쪽과 같습니다 */
   background: linear-gradient(90deg, #E9CA6F, #CA9E32);
@@ -149,6 +152,15 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   letter-spacing: .04em;
   text-align: center;
+}
+
+/* 이름이 두 글자가 되기 전 — 시안 02_언어선택 왼쪽 그림.
+   금색이 아니라 크림색 바탕(#F2F0E9)에 흐린 글씨(#B5C0AD)이고 눌리지 않습니다.
+   두 색 모두 시안에서 바로 찍어 온 값입니다. */
+.btn[disabled] {
+  background: var(--paper);
+  color: #B5C0AD;
+  cursor: default;
 }
 
 /* ── 아래 길잡이 ───────────────────────────────── */
@@ -203,17 +215,26 @@ img { display: block; max-width: 100%; }
 
 /* ── 이름 적기 ─────────────────────────────────── */
 .field { width: 100%; display: flex; flex-direction: column; gap: 7px; }
-.field label { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; color: var(--ink-sub); }
+/* 시안의 안내글은 또박또박한 한 문장입니다 — 작은 대문자가 아닙니다.
+   색(#DAD6C2)과 크기는 02_언어선택에서 재어 왔습니다. */
+.field label { font-size: 13px; font-weight: 400; letter-spacing: 0; color: #DAD6C2; }
 .field input {
-  height: 54px; padding: 0 18px;
-  border: 1px solid var(--ring);
+  /* 시안 y529~573 — 44 입니다 */
+  height: 44px; padding: 0 16px;
+  border: 1.5px solid var(--ring);
   border-radius: 12px;
   background: #0A2419;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
 }
-.field input:focus { outline: none; border-color: var(--gold); }
+/* 시안의 안내문은 13px 이라 한 줄에 다 들어갑니다.
+   칸 자체는 16px 로 둬야 아이폰이 누를 때 화면을 확대하지 않으므로,
+   **안내문 글씨만** 따로 줄였습니다. 이름은 열 자까지라 16px 로도 넉넉합니다. */
+.field input::placeholder { font-size: 13px; color: #B4BFAC; }
+
+/* 적는 동안에는 테두리가 금색으로 바뀝니다 (시안 Guest name input 둘째 칸) */
+.field input:focus { outline: none; border-color: #D9BB76; }
 .err { min-height: 20px; font-size: 12.5px; color: #E6B98A; }
 
 /* ── 체크아웃 ──────────────────────────────────── */
@@ -514,6 +535,8 @@ img { display: block; max-width: 100%; }
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn.line svg { width: 18px; height: 18px; flex: none; }
+/* 시안에서 글씨는 흰색인데 사진기만 금색입니다 */
+.btn.line svg.cam { color: #D9BB76; }
 
 /* 둘을 나란히 — .btn 의 width:100% 를 풀어야 한 줄에 섭니다 */
 .btnrow.two { flex-direction: row; gap: 11px; margin-top: 0; }
@@ -616,6 +639,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'seongsu' };
 </script>
-<script src="../assets/stamp.js?v=11"></script>
+<script src="../assets/stamp.js?v=12"></script>
 </body>
 </html>

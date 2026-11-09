@@ -429,5 +429,6 @@
   ],
   "stamps": 7,
   "nextPill": false,
-  "checkoutBox": true
+  "checkoutBox": true,
+  "ctaNeedsName": true
 }
