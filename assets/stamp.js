@@ -207,7 +207,10 @@
   /* ── 공통 조각 ─────────────────────────────────── */
   /* 위쪽 표기 — KOREA CHECK-IN 과 Imagine your Korea 가 한 장에 들어 있습니다 */
   function ciBar() {
-    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="Imagine your Korea">'
+    /* 성수 시안은 왼쪽에 KOREA CHECK-IN 이 함께 있습니다.
+       K-컬처가 쓰던 그림에는 오른쪽 표밖에 없어서, 설정으로 갈아 끼웁니다. */
+    var head = CFG.head ? ('../' + CFG.head) : (A + 'head.png');
+    return '<div class="ci"><img class="head" src="' + esc(head) + '" alt="KOREA CHECK-IN">'
       // Imagine your Korea 쪽을 세 번 누르면 관리자 확인 창이 열립니다
       + '<button class="tapzone" data-act="adm-tap" tabindex="-1" aria-hidden="true"></button>'
       + '</div>';
@@ -513,19 +516,30 @@
         + '<span class="arr">' + icon('out') + '</span></button>';
     }).join('');
     var more = !isDone();
-    return ciBar() + journey()
-      + '<div class="main">'
-      + card(true, true, more ? 'congrats' : 'goldenKey', !!S.redeemed)
+    /* 성수 시안(직원 확인 완료)은 이 화면이 훨씬 단출합니다.
+         · 위 STEPS 막대가 없습니다
+         · 카드는 **전체 금색**에 「Golden key received!」 입니다 (검정 카드가 아닙니다)
+         · 「선물은 한 번만」 줄이 없습니다
+         · 단추는 NOTICE 하나뿐입니다 (「이어 가시겠어요?」 없음)
+         · 아래 길잡이도 없습니다
+       K-컬처는 쓰던 대로 둡니다. */
+    var plain = !!CFG.checkoutBox;
+    return ciBar() + (plain ? '' : journey())
+      /* 이 화면은 사이 띄우기를 시안 값으로 하나씩 못박습니다 (.main 의 기본 16 을 끕니다) */
+      + '<div class="main' + (plain ? ' plain' : '') + '">'
+      + (plain
+        ? card(true, true, 'goldenKey', false)
+        : card(true, true, more ? 'congrats' : 'goldenKey', !!S.redeemed))
       + '<div class="pill">' + esc(U('thanks')) + '</div>'
-      + (S.redeemed ? '<div class="once">' + esc(U('onceOnly')) + '</div>' : '')
+      + ((S.redeemed && !plain) ? '<div class="once">' + esc(U('onceOnly')) + '</div>' : '')
       + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
       + '<div class="annex">' + rows + '</div>'
-      + '<div class="btnrow">'
+      + '<div class="btnrow' + (plain ? ' out' : '') + '">'
       + '<button class="btn" data-act="notice">' + esc(U('noticeBtn')) + '</button>'
-      + (more ? '<button class="btn soft" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
+      + ((more && !plain) ? '<button class="btn soft" data-go="board">' + esc(U('continueBtn')) + '</button>' : '')
       + '</div>'
       + '<div class="grow"></div>'
-      + '</div>' + markOnly() + noticeBox();
+      + '</div>' + (plain ? '' : markOnly()) + noticeBox();
   };
 
   /* 안내 쪽지 */
