@@ -455,9 +455,10 @@
       + '<path d="M8.6 6.4V5a1.2 1.2 0 0 1 1.2-1.2h4.4A1.2 1.2 0 0 1 15.4 5v1.4"/>'
       + '<circle cx="12" cy="13" r="3"/></svg>'
       + esc(U('scanBtn')) + '</button>'
+      /* 왼쪽이 지도, 오른쪽이 주소 목록입니다 — 1차 수정에서 둘의 자리를 맞바꿨습니다 */
       + '<div class="btnrow two">'
-      + '<button class="btn" data-go="guide">' + esc(U('guideBtn')) + '</button>'
       + '<button class="btn" data-go="map">' + esc(U('mapBtn')) + '</button>'
+      + '<button class="btn" data-go="guide">' + esc(U('guideBtn')) + '</button>'
       + '</div></div>';
   }
 

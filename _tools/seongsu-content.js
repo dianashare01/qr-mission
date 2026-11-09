@@ -136,6 +136,16 @@ cfg.spots.forEach(function (s) {
 });
 console.log('\n화면 글귀 ' + Object.keys(cfg.ui).length + '칸 · 선물 ' + cfg.checkout.at + '개째 · 체크아웃 ' + cfg.checkout.desk.en);
 
+/* 이 대본은 v0.2 번역본으로 만든 것입니다.
+   그 뒤 2026-11-09 「성수_스탬프_수정사항_1차」와 v0.4 번역본으로 손본 것이 있어서,
+   그대로 다시 쓰면 주소(서울특별시)·거점명(KOREA CHECK IN RECEPTION)·주소 단추가 되돌아갑니다.
+   그래서 쓰기를 한 겹 더 막아 뒀습니다. */
+if (WRITE && process.argv.indexOf('--되돌려도좋음') < 0) {
+  console.log('');
+  console.log('이 대본은 v0.2 내용이라 1차 수정사항을 되돌립니다. 정말 쓰려면 --되돌려도좋음 도 함께 붙이세요.');
+  process.exit(1);
+}
+
 if (!WRITE) { console.log('\n(아직 쓰지 않았습니다. --쓰기 를 붙이세요)'); process.exit(0); }
 fs.writeFileSync(FILE, JSON.stringify(cfg, null, 2) + '\n', 'utf8');
 console.log('config/seongsu.json 을 고쳤습니다');

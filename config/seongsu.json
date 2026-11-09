@@ -1,10 +1,10 @@
 {
-  "_주의": "주소는 1·2번만 디자인 화면에서 직접 확인했습니다. 나머지는 번역 PPT 의 목록 차례를 따랐고, 영문 주소는 중문을 도로명 규칙대로 옮긴 것입니다 — 확인 부탁드립니다.",
+  "_주의": "주소·거점명은 2026-11-09 「성수_스탬프_수정사항_1차」와 번역본 v0.4 를 그대로 옮긴 것입니다. 서울은 줄이지 않고 Seoul Metropolitan City / 首尔特别市 / 首爾特別市 로 적습니다.",
   "_토큰": "spots 의 id 와 token 은 인쇄한 QR 에 들어갑니다. 한 번 인쇄한 뒤에는 절대 바꾸지 마세요.",
   "project": "seongsu",
   "title": "SEONGSU STAMP TOUR",
   "event": "KOREA CHECK-IN",
-  "place": "MUSINSA MEGASTORE SEONGSU",
+  "place": "KOREA CHECK IN RECEPTION",
   "spots": [
     {
       "order": 0,
@@ -13,14 +13,14 @@
       "place": "입구",
       "name": {
         "ko": "입구",
-        "en": "MUSINSA Megastore Seongsu",
-        "zhCN": "MUSINSA Megastore Seongsu",
-        "zhTW": "MUSINSA Megastore Seongsu"
+        "en": "KOREA CHECK IN RECEPTION",
+        "zhCN": "KOREA CHECK IN RECEPTION",
+        "zhTW": "KOREA CHECK IN RECEPTION"
       },
       "addr": {
-        "en": "62 Seongsui-ro, Seongdong-gu, Seoul",
-        "zhCN": "首尔城东区圣水二路62号",
-        "zhTW": "首爾城東區聖水二路62號"
+        "en": "62 Seongsui-ro, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水二路62号",
+        "zhTW": "首爾特別市城東區聖水二路62號"
       },
       "checkin": true
     },
@@ -36,9 +36,9 @@
         "zhTW": "MUSINSA STANDARD SEONGSU"
       },
       "addr": {
-        "en": "83 Yeonmujang-gil, Seongdong-gu, Seoul",
-        "zhCN": "首尔城东区演武场街83号",
-        "zhTW": "首爾城東區演武場街83號"
+        "en": "83 Yeonmujang-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区演武场街83号",
+        "zhTW": "首爾特別市城東區演武場街83號"
       }
     },
     {
@@ -53,9 +53,9 @@
         "zhTW": "29CM HOME SEONGSU"
       },
       "addr": {
-        "en": "57 Yeonmujang-gil, Seongdong-gu, Seoul",
-        "zhCN": "首尔城东区演武场街57号",
-        "zhTW": "首爾城東區演武場街57號"
+        "en": "57 Yeonmujang-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区演武场街57号",
+        "zhTW": "首爾特別市城東區演武場街57號"
       }
     },
     {
@@ -70,9 +70,9 @@
         "zhTW": "MUSINSA KICKS SEONGSU"
       },
       "addr": {
-        "en": "96 Seongsui-ro, Seongdong-gu, Seoul B1–2F",
-        "zhCN": "首尔城东区圣水二路96号 B1~2F",
-        "zhTW": "首爾城東區聖水二路96號 B1~2F"
+        "en": "B1–2F, 96 Seongsui-ro, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水二路96号 B1~2F",
+        "zhTW": "首爾特別市城東區聖水二路96號 B1~2F"
       }
     },
     {
@@ -87,9 +87,9 @@
         "zhTW": "MUSINSA EMPTY SEONGSU"
       },
       "addr": {
-        "en": "97 Seongsui-ro, Seongdong-gu, Seoul",
-        "zhCN": "首尔城东区圣水二路97号",
-        "zhTW": "首爾城東區聖水二路97號"
+        "en": "97 Seongsui-ro, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水二路97号",
+        "zhTW": "首爾特別市城東區聖水二路97號"
       }
     },
     {
@@ -104,9 +104,9 @@
         "zhTW": "RE EARTH VINTAGE"
       },
       "addr": {
-        "en": "38 Seongsui-ro 7-gil, Seongdong-gu, Seoul B1",
-        "zhCN": "首尔城东区圣水二路7街38号 B1",
-        "zhTW": "首爾城東區聖水二路7街38號 B1"
+        "en": "B1, 38 Seongsui-ro 7-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水二路7街38号 B1",
+        "zhTW": "首爾特別市城東區聖水二路7街38號 B1"
       }
     },
     {
@@ -121,9 +121,9 @@
         "zhTW": "HATCHINGROOM"
       },
       "addr": {
-        "en": "33 Seongsuil-ro 6-gil, Seongdong-gu, Seoul 1F",
-        "zhCN": "首尔城东区圣水一路6街33号 1F",
-        "zhTW": "首爾城東區聖水一路6街33號 1F"
+        "en": "1F, 33 Seongsuil-ro 6-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水一路6街33号 1F",
+        "zhTW": "首爾特別市城東區聖水一路6街33號 1F"
       }
     },
     {
@@ -138,9 +138,9 @@
         "zhTW": "FOGSY"
       },
       "addr": {
-        "en": "24-11 Achasan-ro 5-gil, Seongdong-gu, Seoul 2F",
-        "zhCN": "首尔城东区峨嵯山路5街24-11号 2F",
-        "zhTW": "首爾城東區峨嵯山路5街24-11號 2F"
+        "en": "2F, 24-11 Achasan-ro 5-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区峨嵯山路5街24-11号 2F",
+        "zhTW": "首爾特別市城東區峨嵯山路5街24-11號 2F"
       }
     }
   ],
@@ -338,9 +338,9 @@
       "zhTW": "退房準備完畢"
     },
     "guideBtn": {
-      "en": "GUIDE",
-      "zhCN": "说明",
-      "zhTW": "說明"
+      "en": "LOCATIONS",
+      "zhCN": "地址",
+      "zhTW": "地址"
     },
     "mapBtn": {
       "en": "MAP",
@@ -368,9 +368,9 @@
       "zhTW": "可以繼續集章，或前往 MUSINSA STATION SEONGSU 辦理退房。"
     },
     "checkoutNote": {
-      "en": "Continue your stamp tour\nor check out at MUSINSA MEGASTORE SEONGSU.",
-      "zhCN": "继续集章，\n或在 MUSINSA Megastore 圣水站退房。",
-      "zhTW": "繼續集章，\n或在 MUSINSA Megastore聖水站退房。"
+      "en": "Continue your stamp tour\nor check out at KOREA CHECK IN RECEPTION.",
+      "zhCN": "继续集章，\n或在 KOREA CHECK IN RECEPTION 退房。",
+      "zhTW": "繼續集章，\n或在 KOREA CHECK IN RECEPTION 退房。"
     }
   },
   "langs": [
@@ -413,7 +413,7 @@
   },
   "card": {
     "title": "KOREA CHECK-IN",
-    "sub": "MUSINSA MEGASTORE SEONGSU"
+    "sub": "KOREA CHECK IN RECEPTION"
   },
   "tools": true,
   "map": "assets/seongsu/map.png",
