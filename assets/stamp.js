@@ -146,7 +146,7 @@
     return 0;
   }
   // 도장 칸 수. 설정에 stamps 가 있으면 그 수를, 없으면 거점 수를 씁니다.
-  // 성수는 QR 이 8개(입구 + 가게 7곳)인데 칸은 7개입니다.
+  // 성수는 QR 이 9개(입구 + 가게 8곳)인데 칸은 8개입니다.
   function total() { return CFG.stamps || CFG.spots.length; }
   function count() { return S.order.length; }
   function isDone() { return count() >= total(); }
@@ -227,7 +227,7 @@
     var bars = '';
     if (CFG.stamps) {
       /* 칸 수를 따로 정한 전시(성수)는 막대도 그 수만큼입니다.
-         거점은 8곳이지만 입구는 도장을 안 줘서 막대는 7개입니다. */
+         거점은 9곳이지만 입구는 도장을 안 줘서 막대는 8개입니다. */
       var got = count();
       for (var i = 0; i < total(); i++) {
         bars += '<i class="' + (i < got ? 'on' : '') + '"></i>';
@@ -301,7 +301,7 @@
 
     if (CFG.stamps) {
       /* 칸 수를 따로 정한 전시(성수)는 **몇 개 모았나**만 보여 줍니다.
-         일곱 곳 가운데 아무 세 곳이나 되는 방식이라 칸과 가게를 묶지 않습니다. */
+         여덟 곳 가운데 아무 세 곳이나 되는 방식이라 칸과 가게를 묶지 않습니다. */
       var got = count();
       for (var i = 0; i < total(); i++) {
         out += cell(i < got, popIndex != null && i === got - 1, i + 1);

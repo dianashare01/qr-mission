@@ -1,5 +1,5 @@
 {
-  "_주의": "주소·거점명은 2026-11-09 「성수_스탬프_수정사항_1차」와 번역본 v0.4 를 그대로 옮긴 것입니다. 서울은 줄이지 않고 Seoul Metropolitan City / 首尔特别市 / 首爾特別市 로 적습니다.",
+  "_주의": "주소·거점명은 2026-11-09 「성수_스탬프_수정사항_1차」와 번역본 v0.4, 그리고 같은 날 더한 08 플레임그라운드 자료를 그대로 옮긴 것입니다. 서울은 줄이지 않고 Seoul Metropolitan City / 首尔特别市 / 首爾特別市 로 적습니다.",
   "_토큰": "spots 의 id 와 token 은 인쇄한 QR 에 들어갑니다. 한 번 인쇄한 뒤에는 절대 바꾸지 마세요.",
   "project": "seongsu",
   "title": "SEONGSU STAMP TOUR",
@@ -141,6 +141,23 @@
         "en": "2F, 24-11 Achasan-ro 5-gil, Seongdong-gu, Seoul Metropolitan City",
         "zhCN": "首尔特别市城东区峨嵯山路5街24-11号 2F",
         "zhTW": "首爾特別市城東區峨嵯山路5街24-11號 2F"
+      }
+    },
+    {
+      "order": 8,
+      "id": "ss9",
+      "token": "uq2qy6",
+      "place": "지점 08_플레임그라운드",
+      "name": {
+        "ko": "플레임그라운드",
+        "en": "Flameground by BURGER KING",
+        "zhCN": "Flameground by BURGER KING",
+        "zhTW": "Flameground by BURGER KING"
+      },
+      "addr": {
+        "en": "28 Seongsui-ro 7-gil, Seongdong-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市城东区圣水二路 7街28号",
+        "zhTW": "首爾特別市城東區聖水二路 7街28號"
       }
     }
   ],
@@ -353,9 +370,9 @@
       "zhTW": "請掃描QR碼"
     },
     "guideLead": {
-      "en": "Choose any 3 of the 7 stops and collect your stamps.\nTap a stop to see its address.",
-      "zhCN": "请从7个地点中任选3处收集印章。点击地点即可查看地址。",
-      "zhTW": "請從7個地點中任選3處，收集印章。點擊地點即可顯示地址。"
+      "en": "Choose any 3 of the 8 stops and collect your stamps.\nTap a stop to see its address.",
+      "zhCN": "请从8个地点中任选3处收集印章。点击地点即可查看地址。",
+      "zhTW": "請從8個地點中任選3處，收集印章。點擊地點即可顯示地址。"
     },
     "mapLead": {
       "en": "Find and scan the QR code at each stop.",
@@ -416,7 +433,7 @@
     "sub": "KOREA CHECK IN RECEPTION"
   },
   "tools": true,
-  "map": "assets/seongsu/map.png",
+  "map": "assets/seongsu/map.png?v=2",
   "annex": [
     {
       "id": "sinchon",
@@ -427,7 +444,7 @@
       "image": "assets/seongsu/sinchon.png"
     }
   ],
-  "stamps": 7,
+  "stamps": 8,
   "nextPill": false,
   "checkoutBox": true,
   "ctaNeedsName": true
