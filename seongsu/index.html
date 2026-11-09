@@ -457,6 +457,31 @@ img { display: block; max-width: 100%; }
 }
 .rk.gold .cap { color: #2E2409; font-weight: 700; }
 
+/* 도장 세 개째 — 시안 keycard 둘째 장입니다.
+   바탕은 초록 그대로이고 열쇠만 금색이 되며 테두리에 금선이 한 줄 돕니다.
+   카드 전체가 금색이 되는 것은 직원 확인을 받은 뒤(.gold)라, 손님이
+   「아직 한 걸음 남았다」는 것을 한눈에 알 수 있습니다. */
+.rk.won { box-shadow: 0 16px 30px rgba(0, 0, 0, .38), inset 0 0 0 1px rgba(226, 195, 124, .62); }
+.rk.won .key { fill: url(#rkgold); }
+.rk.won .cap { color: var(--gold-light); font-weight: 500; }
+
+/* 3개째부터 아래에 붙는 안내 상자 (시안 05_3개 획득 · 4~7단계).
+   단추가 아니라 알림이라 금색을 쓰지 않고 테두리만 둘렀습니다.
+   GUIDE/MAP 과 같은 폭, 같은 모서리입니다. */
+.outnote {
+  width: 100%; margin-top: 11px;
+  display: block; text-align: center;
+  padding: 15px 16px 16px;
+  border: 1px solid var(--ring); border-radius: 12px;
+  background: none; color: var(--ink);
+}
+.outnote b { display: block; font-size: 14px; font-weight: 700; letter-spacing: .03em; }
+.outnote span {
+  display: block; margin-top: 7px;
+  font-size: 12.5px; line-height: 1.6; color: var(--sub);
+  word-break: keep-all;
+}
+
 /* 확인코드를 넣은 뒤 — 시안(06-1·06-2)대로 검정 바탕에 금색 표로 바뀝니다.
    색은 keycard.png 아랫줄 검정 카드를 재서 옮긴 것입니다. */
 .rk.used {
@@ -591,6 +616,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'seongsu' };
 </script>
-<script src="../assets/stamp.js?v=10"></script>
+<script src="../assets/stamp.js?v=11"></script>
 </body>
 </html>

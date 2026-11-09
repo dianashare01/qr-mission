@@ -333,9 +333,9 @@
       "zhTW": "請向工作人員出示此畫面。"
     },
     "readyBtn": {
-      "en": "READY TO CHECK-OUT",
-      "zhCN": "现在可以退房了",
-      "zhTW": "現在可以退房了"
+      "en": "READY TO CHECK OUT",
+      "zhCN": "退房准备完毕",
+      "zhTW": "退房準備完畢"
     },
     "guideBtn": {
       "en": "GUIDE",
@@ -366,6 +366,11 @@
       "en": "Keep collecting stamps, or check out at MUSINSA STATION SEONGSU.",
       "zhCN": "可以继续集章，或前往 MUSINSA STATION SEONGSU 办理退房。",
       "zhTW": "可以繼續集章，或前往 MUSINSA STATION SEONGSU 辦理退房。"
+    },
+    "checkoutNote": {
+      "en": "Continue your stamp tour\nor check out at MUSINSA MEGASTORE SEONGSU.",
+      "zhCN": "继续集章，\n或在 MUSINSA Megastore 圣水站退房。",
+      "zhTW": "繼續集章，\n或在 MUSINSA Megastore聖水站退房。"
     }
   },
   "langs": [
@@ -422,5 +427,7 @@
       "image": "assets/seongsu/sinchon.png"
     }
   ],
-  "stamps": 7
+  "stamps": 7,
+  "nextPill": false,
+  "checkoutBox": true
 }

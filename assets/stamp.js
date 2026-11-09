@@ -252,11 +252,15 @@
     + 'L34.9 189.6 L21.4 190.1 L19.8 207.8 L0.5 206.2 Z';
 
   /* cap 을 주면 카드 위에 작은 글귀가 얹힙니다 (Congratulation! 같은 것) */
-  function card(gold, small, cap, used) {
-    // used 는 퇴실 뒤 화면에서만 켭니다 — 검정 바탕에 금색 표
+  function card(gold, small, cap, used, won) {
+    /* used 는 퇴실 뒤 화면에서만 켭니다 — 검정 바탕에 금색 표.
+       won 은 성수의 가운데 상태입니다 (시안 keycard 둘째 장):
+       초록 바탕 그대로인데 열쇠만 금색이고 「Congratulation !」 이 붙습니다.
+       카드 전체가 금색이 되는 것은 직원 확인을 받은 뒤입니다. */
     var c = CFG.card || {};
     return '<div class="rk' + (gold ? ' gold' : '') + (small ? ' sm' : '')
-      + (used ? ' used' : '') + '" role="img" aria-label="' + esc(c.title || '') + '">'
+      + (used ? ' used' : '') + (won ? ' won' : '')
+      + '" role="img" aria-label="' + esc(c.title || '') + '">'
       + (cap ? '<span class="cap">' + esc(U(cap)) + '</span>' : '')
       + '<svg class="key" viewBox="0 0 100 208.3" aria-hidden="true">'
       // 검정 카드의 표는 비스듬히 빛이 스친 금색입니다 (시안 keycard 아랫줄).
@@ -272,6 +276,8 @@
   }
 
   function nextPill() {
+    // 성수 시안에는 NEXT 줄이 없습니다 (config 에서 nextPill: false)
+    if (CFG.nextPill === false) return '';
     var sp = nextSpot();
     if (!sp) return '';
     var lb = U('nextLabel');
@@ -390,20 +396,35 @@
   R.board = function () {
     var gift = atCheckout();
     var canOut = gift && !S.redeemed;
+    /* 성수(checkoutBox)는 카드가 세 걸음입니다 — 시안 keycard 를 그대로 옮긴 것입니다.
+         기본            초록 바탕 · 흰 열쇠 · 글귀 없음
+         3개째부터       초록 바탕 · 금 열쇠 · 「Congratulation !」
+         직원 확인 뒤    카드 전체가 금색 · 「Golden key received!」
+       K-컬처는 쓰던 대로 두 걸음(기본 / 금색)입니다. */
     return ciBar() + journey()
       + '<div class="main">'
-      // 선물을 받은 뒤로는 스탬프 화면에서도 검정 카드입니다
-      + card(gift, false, gift ? 'goldenKey' : null, gift && !!S.redeemed)
+      + (CFG.checkoutBox
+        ? card(!!S.redeemed, false,
+            gift ? (S.redeemed ? 'goldenKey' : 'congrats') : null,
+            false, canOut)
+        // 선물을 받은 뒤로는 스탬프 화면에서도 검정 카드입니다
+        : card(gift, false, gift ? 'goldenKey' : null, gift && !!S.redeemed))
       + nextPill()
       + '<div class="grow"></div>'
       + stampRow(view.pop)
       + tools()
-      + (canOut
-        ? '<div class="btnrow">'
-          + '<button class="btn" data-act="ready">' + esc(U('readyBtn')) + '</button>'
-          + '<button class="btn" data-act="keepgoing">' + esc(U('continueBtn')) + '</button>'
-          + '</div>'
-        : '')
+      + (!canOut ? ''
+        /* 시안 05_3개 획득 · 4~7단계: 단추 둘이 아니라 테두리 상자 하나입니다.
+           「계속 모으거나, 무신사에서 체크아웃하세요」 라는 **안내**라서 글꼴도 가라앉혔습니다.
+           다만 직원이 확인창을 열 길은 있어야 해서 상자 자체를 누를 수 있게 뒀습니다. */
+        : CFG.checkoutBox
+          ? '<button type="button" class="outnote" data-act="ready">'
+            + '<b>' + esc(U('readyBtn')) + '</b>'
+            + '<span>' + lines('checkoutNote') + '</span></button>'
+          : '<div class="btnrow">'
+            + '<button class="btn" data-act="ready">' + esc(U('readyBtn')) + '</button>'
+            + '<button class="btn" data-act="keepgoing">' + esc(U('continueBtn')) + '</button>'
+            + '</div>')
       + '<div class="grow"></div>'
       + '</div>' + navBar(S.hist.length ? 'back' : null, null);
   };
