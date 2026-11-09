@@ -207,10 +207,9 @@
   /* ── 공통 조각 ─────────────────────────────────── */
   /* 위쪽 표기 — KOREA CHECK-IN 과 Imagine your Korea 가 한 장에 들어 있습니다 */
   function ciBar() {
-    /* 성수 시안은 왼쪽에 KOREA CHECK-IN 이 함께 있습니다.
-       K-컬처가 쓰던 그림에는 오른쪽 표밖에 없어서, 설정으로 갈아 끼웁니다. */
-    var head = CFG.head ? ('../' + CFG.head) : (A + 'head.png');
-    return '<div class="ci"><img class="head" src="' + esc(head) + '" alt="KOREA CHECK-IN">'
+    /* 머리말은 오른쪽 Imagine your Korea 하나뿐입니다.
+       시안에는 왼쪽에 KOREA CHECK-IN 도 있지만, 발주처가 빼 달라고 한 자리입니다. */
+    return '<div class="ci"><img class="head" src="' + A + 'head.png" alt="Imagine your Korea">'
       // Imagine your Korea 쪽을 세 번 누르면 관리자 확인 창이 열립니다
       + '<button class="tapzone" data-act="adm-tap" tabindex="-1" aria-hidden="true"></button>'
       + '</div>';

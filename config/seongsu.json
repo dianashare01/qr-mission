@@ -430,6 +430,5 @@
   "stamps": 7,
   "nextPill": false,
   "checkoutBox": true,
-  "ctaNeedsName": true,
-  "head": "assets/seongsu/head.png"
+  "ctaNeedsName": true
 }
