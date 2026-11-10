@@ -80,7 +80,24 @@ img { display: block; max-width: 100%; }
 .journey .ct { font-size: 13px; letter-spacing: .06em; color: var(--ink-sub); }
 .journey .ct b { color: var(--gold-light); font-weight: 700; }
 
-/* 일곱 칸 막대 */
+/* 한 줄짜리 막대 — 2026-11-10 시안을 재서 옮겼습니다.
+   선 두께 4, 손잡이 지름 10, 금색 #D9BB76, 남은 쪽 #46604A.
+   손잡이가 양끝에서 잘리지 않도록 선을 5px(반지름) 씩 들여 둡니다. */
+.rail { position: relative; flex: none; height: 10px; margin: 9px 24px 0; }
+.rail .trk, .rail .fill {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  height: 4px; border-radius: 2px;
+}
+.rail .trk { left: 5px; right: 5px; background: #46604A; }
+.rail .fill { left: 5px; width: 0; background: #D9BB76; }
+.rail .knob {
+  position: absolute; top: 50%; width: 10px; height: 10px;
+  margin: 0; border-radius: 50%; background: #D9BB76;
+  transform: translate(-50%, -50%);
+}
+.journey .ct.rail-ct { font-size: 13px; font-weight: 700; letter-spacing: .02em; color: #D9BB76; }
+
+/* 일곱 칸 막대 (K-컬처 쪽) */
 .bars { flex: none; padding: 9px 24px 0; display: flex; gap: 6px; }
 .bars i { flex: 1; height: 3px; border-radius: 2px; background: var(--bar-off); }
 .bars i.on { background: linear-gradient(90deg, var(--gold-deep), var(--gold-light)); }
@@ -120,10 +137,15 @@ img { display: block; max-width: 100%; }
 .nextpill b { font-weight: 700; }
 
 /* ── 스탬프 칸 ─────────────────────────────────── */
-.stamps { flex: none; width: 100%; display: flex; gap: 6px; justify-content: center; }
+/* 시안대로 한 줄에 일곱 개씩, 왼쪽에 붙여 7+4 로 접습니다.
+   (7*37 + 6*7 = 301 — 폭 327 안에 들어갑니다) */
+.stamps {
+  flex: none; width: 100%; max-width: 301px;
+  display: flex; flex-wrap: wrap; gap: 7px; row-gap: 9px;
+  justify-content: flex-start; align-self: flex-start;
+}
 .stamps .s {
-  /* 칸이 늘어도 줄에서 넘치지 않도록 — 37 을 넘지 않는 선에서 스스로 줄어듭니다.
-     (거점이 여덟 곳이 되면서 37+7 짜리로는 375 폭을 벗어났습니다) */
+  /* 그래도 더 늘어날 때를 대비해 37 을 넘지 않는 선에서 스스로 줄어듭니다 */
   flex: 0 1 37px; min-width: 0; max-width: 37px;
   aspect-ratio: 1; width: 37px; height: 37px;
   border-radius: 50%;
@@ -656,6 +678,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'seongsu' };
 </script>
-<script src="../assets/stamp.js?v=15"></script>
+<script src="../assets/stamp.js?v=17"></script>
 </body>
 </html>

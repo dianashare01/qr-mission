@@ -238,6 +238,24 @@
         bars += '<i class="' + (S.got[sp.id] ? 'on' : '') + '"></i>';
       });
     }
+    /* 성수는 칸칸이 끊긴 막대가 아니라 한 줄짜리 선에 손잡이가 미끄러집니다
+       (2026-11-10 시안). 왼쪽은 금색, 오른쪽은 짙은 풀색, 경계에 동그란 손잡이.
+       손잡이가 선 밖으로 나가지 않게 양끝을 반지름(5px)만큼 들여 둡니다. */
+    if (CFG.railBar) {
+      var done = total() ? (count() / total()) : 0;
+      if (done > 1) done = 1;
+      var at = 'calc(5px + (100% - 10px) * ' + done + ')';
+      return '<div class="journey">'
+        + '<span class="lb">' + esc(U('journey')) + '</span>'
+        + '<span class="ct rail-ct">' + n + '/' + total() + '</span>'
+        + '</div>'
+        + '<div class="rail">'
+        + '<i class="trk"></i>'
+        + '<i class="fill" style="width:calc((100% - 10px) * ' + done + ')"></i>'
+        + '<b class="knob" style="left:' + at + '"></b>'
+        + '</div>';
+    }
+
     return '<div class="journey">'
       + '<span class="lb">' + esc(U('journey')) + '</span>'
       + '<span class="ct"><b>' + n + '</b> / ' + total() + '</span>'
