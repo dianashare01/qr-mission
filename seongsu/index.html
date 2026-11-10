@@ -59,7 +59,8 @@ img { display: block; max-width: 100%; }
 /* ── 기관 표기 ─────────────────────────────────── */
 .ci {
   flex: none;
-  padding: 18px 24px 0;
+  /* 위 여백은 시안에서 잰 85 입니다 (디자이너 png 의 첫 내용이 여기서 시작합니다) */
+  padding: 85px 24px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -70,7 +71,8 @@ img { display: block; max-width: 100%; }
 /* ── YOUR STAMP JOURNEY + n / 7 ────────────────── */
 .journey {
   flex: none;
-  padding: 16px 24px 0;
+  /* 시안에서 머리말 아래 21, 글자 아래 12 로 재서 맞춘 값입니다 */
+  padding: 12px 24px 0;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -299,6 +301,12 @@ img { display: block; max-width: 100%; }
    카드→알약 9 · 알약→문구 41 · 문구→신촌 11 · 신촌→NOTICE 36 */
 .main.plain { gap: 0; }
 
+/* 스탬프 화면 — 시안(막대 아래 51, 카드 아래 21)을 재서 옮겼습니다.
+   카드와 도장 사이의 늘어나는 빈칸은 띄우기가 들쑥날쑥해져서 빼 둡니다. */
+.main.board { padding-top: 51px; }
+.main.board > .rk + .grow { display: none; }
+.main.board .stamps { margin-top: 5px; }
+
 /* 시안: 알약 아래 41, 신촌 줄 위 11 */
 .sectitle { align-self: flex-start; margin-top: 41px; font-size: 13px; font-weight: 700; letter-spacing: .02em; }
 .sectitle + .annex { margin-top: 11px; }
@@ -471,13 +479,13 @@ img { display: block; max-width: 100%; }
 /* ── v0.4 룸키 카드 — 그려서 냅니다 ──────────────
    디자이너 그림(160x242)은 한 배뿐이라 휴대폰에서 뭉갰습니다.
    결·모서리·글자는 CSS, K 열쇠 표는 선 그림(SVG)이라 아무리 키워도 또렷합니다.
-   숫자는 모두 원래 그림을 재서 옮긴 것입니다 (카드 속살 152 x 230). */
+   숫자는 보내 주신 시안(카드 161 x 231)을 재서 옮긴 것입니다. */
 .rk {
-  --w: 172px;
+  --w: 161px;
   position: relative;
   flex: none;
   width: var(--w);
-  height: calc(var(--w) * 230 / 152);
+  height: calc(var(--w) * 231 / 161);
   border-radius: calc(var(--w) * .053);
   background: linear-gradient(90deg, #385A45 0%, #18392C 50%, #0E2A1F 100%);
   box-shadow: 0 16px 30px rgba(0, 0, 0, .38);
@@ -494,8 +502,8 @@ img { display: block; max-width: 100%; }
 
 .rk .key {
   position: absolute;
-  left: 36.8%; top: 20.9%;
-  width: 31.6%; height: 43.5%;
+  left: 35.4%; top: 25.5%;
+  width: 29.8%; height: 43.3%;
   fill: #FFFFFF;
 }
 .rk.gold .key { fill: #12291F; }
@@ -505,12 +513,12 @@ img { display: block; max-width: 100%; }
   transform: translateY(-50%);
   text-align: center; white-space: nowrap; font-style: normal;
 }
-.rk .t1 { top: 73%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
-.rk .t2 { top: 80.9%; font-size: calc(var(--w) * .038); letter-spacing: .045em; opacity: .62; }
+.rk .t1 { top: 81.8%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
+.rk .t2 { top: 87%; font-size: calc(var(--w) * .038); letter-spacing: .045em; opacity: .62; }
 .rk.gold .t2 { opacity: .72; }
 
 .rk .cap {
-  position: absolute; left: 0; right: 0; top: 12%;
+  position: absolute; left: 0; right: 0; top: 13.2%;
   transform: translateY(-50%);
   text-align: center;
   font-size: calc(var(--w) * .061);
@@ -681,6 +689,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'seongsu' };
 </script>
-<script src="../assets/stamp.js?v=18"></script>
+<script src="../assets/stamp.js?v=22"></script>
 </body>
 </html>

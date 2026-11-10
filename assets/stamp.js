@@ -438,7 +438,8 @@
          직원 확인 뒤    카드 전체가 금색 · 「Golden key received!」
        K-컬처는 쓰던 대로 두 걸음(기본 / 금색)입니다. */
     return ciBar() + journey()
-      + '<div class="main">'
+      /* 성수는 시안에서 잰 사이 띄우기를 씁니다 — 막대 아래 51, 카드 아래 21 */
+      + '<div class="main' + (CFG.checkoutBox ? ' board' : '') + '">'
       + (CFG.checkoutBox
         ? card(!!S.redeemed, false,
             gift ? (S.redeemed ? 'goldenKey' : 'congrats') : null,
