@@ -83,10 +83,11 @@ img { display: block; max-width: 100%; }
 /* 한 줄짜리 막대 — 2026-11-10 시안을 재서 옮겼습니다.
    선 두께 4, 손잡이 지름 10, 금색 #D9BB76, 남은 쪽 #46604A.
    손잡이가 양끝에서 잘리지 않도록 선을 5px(반지름) 씩 들여 둡니다. */
-.rail { position: relative; flex: none; height: 10px; margin: 9px 24px 0; }
+/* 높이는 선 두께(4)만 차지합니다 — 손잡이는 위아래로 3px 씩 넘쳐 나가되
+   아래 내용을 밀지 않습니다. 예전 칸막대와 같은 자리입니다. */
+.rail { position: relative; flex: none; height: 4px; margin: 9px 24px 0; }
 .rail .trk, .rail .fill {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  height: 4px; border-radius: 2px;
+  position: absolute; top: 0; height: 4px; border-radius: 2px;
 }
 .rail .trk { left: 5px; right: 5px; background: #46604A; }
 .rail .fill { left: 5px; width: 0; background: #D9BB76; }
@@ -137,12 +138,12 @@ img { display: block; max-width: 100%; }
 .nextpill b { font-weight: 700; }
 
 /* ── 스탬프 칸 ─────────────────────────────────── */
-/* 시안대로 한 줄에 일곱 개씩, 왼쪽에 붙여 7+4 로 접습니다.
-   (7*37 + 6*7 = 301 — 폭 327 안에 들어갑니다) */
+/* 시안대로 한 줄에 일곱 개씩 7+7 바둑판이고, 가운데 맞춤입니다.
+   (7*37 + 6*7 = 301 — 시안에서 잰 299 와 같습니다) */
 .stamps {
   flex: none; width: 100%; max-width: 301px;
   display: flex; flex-wrap: wrap; gap: 7px; row-gap: 9px;
-  justify-content: flex-start; align-self: flex-start;
+  justify-content: center; align-self: center;
 }
 .stamps .s {
   /* 그래도 더 늘어날 때를 대비해 37 을 넘지 않는 선에서 스스로 줄어듭니다 */
@@ -156,6 +157,8 @@ img { display: block; max-width: 100%; }
 /* 아직 안 찍힌 자리의 숫자 — 시안 04 를 재서 옮긴 색입니다 */
 .stamps .s .n { font-size: 14px; font-weight: 500; line-height: 1; color: #62766E; }
 .stamps .s.on { border: 0; }
+/* 마지막 줄의 남는 자리 — 시안에서 잰 색입니다 (#4A4A4A) */
+.stamps .s.pad { border: 0; background: #4A4A4A; }
 .stamps .s img { width: 100%; height: 100%; object-fit: contain; }
 .stamps .s.pop img { animation: pop .5s cubic-bezier(.2, .9, .3, 1.35) both; }
 @keyframes pop { from { transform: scale(.5); opacity: 0 } to { transform: scale(1); opacity: 1 } }
@@ -678,6 +681,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'seongsu' };
 </script>
-<script src="../assets/stamp.js?v=17"></script>
+<script src="../assets/stamp.js?v=18"></script>
 </body>
 </html>

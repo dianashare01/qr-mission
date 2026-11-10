@@ -319,10 +319,17 @@
 
     if (CFG.stamps) {
       /* 칸 수를 따로 정한 전시(성수)는 **몇 개 모았나**만 보여 줍니다.
-         여덟 곳 가운데 아무 세 곳이나 되는 방식이라 칸과 가게를 묶지 않습니다. */
+         열한 곳 가운데 아무 세 곳이나 되는 방식이라 칸과 가게를 묶지 않습니다. */
       var got = count();
       for (var i = 0; i < total(); i++) {
         out += cell(i < got, popIndex != null && i === got - 1, i + 1);
+      }
+      /* 시안은 한 줄에 일곱 칸인 바둑판입니다. 마지막 줄이 모자라면
+         남는 자리를 회색 동그라미로 메워 줄을 꽉 채웁니다 (11칸이면 3개). */
+      var per = CFG.stampGrid || 0;
+      if (per > 0) {
+        var pad = (per - (total() % per)) % per;
+        for (var k = 0; k < pad; k++) out += '<div class="s pad"></div>';
       }
       return '<div class="stamps">' + out + '</div>';
     }

@@ -481,5 +481,6 @@
   "nextPill": false,
   "checkoutBox": true,
   "ctaNeedsName": true,
-  "railBar": true
+  "railBar": true,
+  "stampGrid": 7
 }
