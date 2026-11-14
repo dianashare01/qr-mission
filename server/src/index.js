@@ -217,7 +217,7 @@ async function redeem(req, env) {
   // K-컬처는 직원이 앱 화면에서 확인코드를 넣어 끝내므로 서버 번호를 따로 묻지 않습니다.
   // (여기 남는 줄은 보고용 숫자일 뿐, 선물을 내주는 문은 앱 쪽에 있습니다.)
   // 앱 화면에서 확인코드로 끝내는 전시들 — 서버 번호를 따로 묻지 않습니다
-  const noPin = ['kcheckin', 'seongsu'].indexOf(String(b.project || '')) >= 0;
+  const noPin = ['kcheckin', 'seongsu', 'sinchon'].indexOf(String(b.project || '')) >= 0;
   const expected = String(env.STAFF_PIN || '').trim();
   if (!noPin && expected && String(b.pin || '').trim() !== expected) {
     return bad('번호가 맞지 않습니다', env, req, 403);
@@ -621,7 +621,7 @@ async function adminMessages(req, env, url) {
 /* ── 홈페이지 접속자 수 ──────────────────────────── */
 
 /* 셀 수 있는 사이트. 아무 이름이나 들어와 표가 지저분해지는 것을 막습니다. */
-const SITES = new Set(['testimony', 'kcheckin', 'seongsu']);
+const SITES = new Set(['testimony', 'kcheckin', 'seongsu', 'sinchon']);
 
 /* 엑셀에서 바로 열리는 표.
    맨 앞 \ufeff 가 없으면 엑셀이 한글을 깨뜨립니다. */

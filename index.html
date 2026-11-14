@@ -15,7 +15,7 @@
    스탬프 투어로 만든 전시는 전용 화면으로 넘겨 줍니다.
    (주소에 담긴 s·t 는 그대로 넘깁니다) */
 (function () {
-  var GO = { kcheckin: "stamp/", seongsu: "seongsu/", photo: "photo/" };
+  var GO = { kcheckin: "stamp/", seongsu: "seongsu/", sinchon: "sinchon/", photo: "photo/" };
   var p = new URLSearchParams(location.search).get("p");
   if (p && GO[p]) location.replace(GO[p] + location.search);
 })();

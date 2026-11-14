@@ -558,7 +558,9 @@
         : card(true, true, more ? 'congrats' : 'goldenKey', !!S.redeemed))
       + '<div class="pill">' + esc(U('thanks')) + '</div>'
       + ((S.redeemed && !plain) ? '<div class="once">' + esc(U('onceOnly')) + '</div>' : '')
-      + '<div class="sectitle">' + esc(U('nextStay')) + '</div>'
+      /* 신촌은 이 자리가 여러 줄짜리 인사말입니다 — 줄바꿈을 살립니다
+         (성수·K-컬처 글귀에는 줄바꿈이 없어 보이는 것은 그대로입니다) */
+      + '<div class="sectitle">' + lines('nextStay') + '</div>'
       + '<div class="annex">' + rows + '</div>'
       + '<div class="btnrow' + (plain ? ' out' : '') + '">'
       + '<button class="btn" data-act="notice">' + esc(U('noticeBtn')) + '</button>'

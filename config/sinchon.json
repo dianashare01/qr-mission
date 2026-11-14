@@ -1,0 +1,494 @@
+{
+  "_주의": "거점·주소·글귀는 2026-11-14 「한국체크인_신촌 스탬프투어_영간번 번역 반영_v0.3」 을 그대로 옮긴 것입니다.",
+  "_토큰": "spots 의 id 와 token 은 인쇄한 QR 에 들어갑니다. 한 번 인쇄한 뒤에는 절대 바꾸지 마세요.",
+  "project": "sinchon",
+  "title": "SINCHON STAMP TOUR",
+  "event": "KOREA CHECK-IN",
+  "place": "KOREA CHECK IN RECEPTION",
+  "spots": [
+    {
+      "order": 0,
+      "id": "sc1",
+      "token": "8bxwha",
+      "place": "입구_리셉션",
+      "name": {
+        "ko": "리셉션",
+        "en": "KOREA CHECK IN RECEPTION",
+        "zhCN": "KOREA CHECK IN RECEPTION",
+        "zhTW": "KOREA CHECK IN RECEPTION"
+      },
+      "addr": {
+        "en": "Hyundai Department Store Sinchon U-PLEX (B2F)",
+        "zhCN": "现代百货新村店 U-PLEX（地下2层）",
+        "zhTW": "現代百貨新村店 U-PLEX（地下2層）"
+      }
+    },
+    {
+      "order": 1,
+      "id": "sc2",
+      "token": "dx6fc8",
+      "place": "지점 01_글로벌 데스크",
+      "name": {
+        "ko": "글로벌 데스크",
+        "en": "Global Desk (1F)",
+        "zhCN": "Global Desk (1F)",
+        "zhTW": "Global Desk (1F)"
+      },
+      "addr": {
+        "en": "Hyundai Department Store Sinchon Main Building Global Desk (1F)",
+        "zhCN": "现代百货新村店本馆 Global Desk（1层）",
+        "zhTW": "現代百貨新村店本館 Global Desk（1層）"
+      }
+    },
+    {
+      "order": 2,
+      "id": "sc3",
+      "token": "nfc6te",
+      "place": "지점 02_K-POP SHOW",
+      "name": {
+        "ko": "케이팝 쇼",
+        "en": "K-POP SHOW (1F)",
+        "zhCN": "K-POP SHOW (1F)",
+        "zhTW": "K-POP SHOW (1F)"
+      },
+      "addr": {
+        "en": "Hyundai Department Store Sinchon U-PLEX STAR SQUARE (1F)",
+        "zhCN": "现代百货新村店 U-PLEX STAR SQUARE（室外1层）",
+        "zhTW": "現代百貨新村店 U-PLEX STAR SQUARE（室外1層）"
+      }
+    },
+    {
+      "order": 3,
+      "id": "sc4",
+      "token": "p4gyhf",
+      "place": "지점 03_정관장",
+      "name": {
+        "ko": "정관장",
+        "en": "JUNG KWAN JANG (B1F)",
+        "zhCN": "JUNG KWAN JANG (B1F)",
+        "zhTW": "JUNG KWAN JANG (B1F)"
+      },
+      "addr": {
+        "en": "Hyundai Department Store Sinchon Main Building JUNG KWAN JANG (B1F)",
+        "zhCN": "现代百货新村店本店 JUNG KWAN JANG（地下1层）",
+        "zhTW": "現代百貨新村店本店 JUNG KWAN JANG（地下1層）"
+      }
+    },
+    {
+      "order": 4,
+      "id": "sc5",
+      "token": "thj4wg",
+      "place": "지점 04_실버패밀리",
+      "name": {
+        "ko": "실버패밀리",
+        "en": "SILVER FAMILY",
+        "zhCN": "SILVER FAMILY",
+        "zhTW": "SILVER FAMILY"
+      },
+      "addr": {
+        "en": "Basement, 21, Seogang-ro 20-gil, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区西江路20街 21号 半地下层",
+        "zhTW": "首爾特別市麻浦區西江路20街 21號 半地下層"
+      }
+    },
+    {
+      "order": 5,
+      "id": "sc6",
+      "token": "94zun6",
+      "place": "지점 05_와다다",
+      "name": {
+        "ko": "와다다",
+        "en": "WADADA Arcade Game&Music room",
+        "zhCN": "WADADA Arcade Game&Music room",
+        "zhTW": "WADADA Arcade Game&Music room"
+      },
+      "addr": {
+        "en": "1F, 40, Myeongmul-gil, Seodaemun-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市西大门区名物街 40号 1层",
+        "zhTW": "首爾特別市西大門區名物街 40號 1層"
+      }
+    },
+    {
+      "order": 6,
+      "id": "sc7",
+      "token": "u9b892",
+      "place": "지점 06_와펜하우스 홍대A",
+      "name": {
+        "ko": "와펜하우스 홍대A",
+        "en": "WAPPEN HOUSE (Hongdae A)",
+        "zhCN": "WAPPEN HOUSE (Hongdae A)",
+        "zhTW": "WAPPEN HOUSE (Hongdae A)"
+      },
+      "addr": {
+        "en": "124, Eoulmadang-ro, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区和谐广场路 124号",
+        "zhTW": "首爾特別市麻浦區和諧廣場路 124號"
+      }
+    },
+    {
+      "order": 7,
+      "id": "sc8",
+      "token": "7p35f6",
+      "place": "지점 07_리얼샷 사격장",
+      "name": {
+        "ko": "리얼샷 사격장",
+        "en": "REAL SHOT Shooting Range",
+        "zhCN": "REAL SHOT Shooting Range",
+        "zhTW": "REAL SHOT Shooting Range"
+      },
+      "addr": {
+        "en": "2F, 100, Eoulmadang-ro, Seoul Metropolitan City",
+        "zhCN": "首尔特别市和谐广场路 100号 2层",
+        "zhTW": "首爾特別市和諧廣場路 100號 2層"
+      }
+    },
+    {
+      "order": 8,
+      "id": "sc9",
+      "token": "gvr6ag",
+      "place": "지점 08_에이콘 캐리커처 홍대",
+      "name": {
+        "ko": "에이콘 캐리커처 홍대",
+        "en": "ACORN CARICATURE (Hongdae)",
+        "zhCN": "ACORN CARICATURE (Hongdae)",
+        "zhTW": "ACORN CARICATURE (Hongdae)"
+      },
+      "addr": {
+        "en": "1F, 29, Hongik-ro 3-gil, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区弘益路3街 29号 1层",
+        "zhTW": "首爾特別市麻浦區弘益路3街 29號 1層"
+      }
+    },
+    {
+      "order": 9,
+      "id": "sc10",
+      "token": "rzww88",
+      "place": "지점 09_내 맘대로 폰케이스",
+      "name": {
+        "ko": "내 맘대로 폰케이스",
+        "en": "NEMAMDAERO PHONE CASE",
+        "zhCN": "NEMAMDAERO PHONE CASE",
+        "zhTW": "NEMAMDAERO PHONE CASE"
+      },
+      "addr": {
+        "en": "3F, Big Mama Building, 21, Wausan-ro 19-gil, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区卧牛山路19街 21号 Big Mama大楼 3层",
+        "zhTW": "首爾特別市麻浦區臥牛山路19街 21號 Big Mama大樓 3層"
+      }
+    },
+    {
+      "order": 10,
+      "id": "sc11",
+      "token": "jg3qx4",
+      "place": "지점 10_에이콘 캐리커처 연남",
+      "name": {
+        "ko": "에이콘 캐리커처 연남",
+        "en": "ACORN CARICATURE (Hongdae Yeonnam)",
+        "zhCN": "ACORN CARICATURE (Hongdae Yeonnam)",
+        "zhTW": "ACORN CARICATURE (Hongdae Yeonnam)"
+      },
+      "addr": {
+        "en": "1F, 34, Donggyo-ro 38-gil, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区东桥路38街 34号 1层 橡果人物漫画",
+        "zhTW": "首爾特別市麻浦區東橋路38街 34號 1層 橡果人物漫畫"
+      }
+    },
+    {
+      "order": 11,
+      "id": "sc12",
+      "token": "ankjpu",
+      "place": "지점 11_피클",
+      "name": {
+        "ko": "피클",
+        "en": "Piccle",
+        "zhCN": "Piccle",
+        "zhTW": "Piccle"
+      },
+      "addr": {
+        "en": "B1 & 1F, 65, Yeonnam-ro 3-gil, Mapo-gu, Seoul Metropolitan City",
+        "zhCN": "首尔特别市麻浦区延南路3街 65号 地下1层、地上1层",
+        "zhTW": "首爾特別市麻浦區延南路3街 65號 地下1層 地上1層"
+      }
+    }
+  ],
+  "checkout": {
+    "at": 3,
+    "desk": {
+      "ko": "현대백화점 신촌점 유플렉스",
+      "en": "Hyundai Department Store Sinchon U-PLEX"
+    }
+  },
+  "ui": {
+    "journey": {
+      "en": "STEPS",
+      "zhCN": "进度",
+      "zhTW": "階段"
+    },
+    "stampTour": {
+      "en": "SINCHON STAMP TOUR",
+      "zhCN": "新村集邮之旅",
+      "zhTW": "新村集郵之旅"
+    },
+    "tagline": {
+      "en": "COLLECT 3 STAMPS & GET A GIFT",
+      "zhCN": "集齐3个印章换取纪念品。",
+      "zhTW": "集齊3個印章換取禮品。"
+    },
+    "continueCta": {
+      "en": "CONTINUE TO CHECK-IN",
+      "zhCN": "继续办理入住",
+      "zhTW": "繼續辦理入住"
+    },
+    "langTitle": {
+      "en": "SCAN QR CODE TO CHECK-IN",
+      "zhCN": "扫描二维码即可办理入住。",
+      "zhTW": "掃描QR碼即可辦理入住。"
+    },
+    "langSub": {
+      "en": "Please select your language.",
+      "zhCN": "请选择语言。",
+      "zhTW": "請選擇語言。"
+    },
+    "guestLabel": {
+      "en": "Please enter guest name here.",
+      "zhCN": "请输入访客姓名。",
+      "zhTW": "請輸入訪客姓名。"
+    },
+    "guestPh": {
+      "en": "Please enter guest name from 2 to 10 characters.",
+      "zhCN": "2至10个字符",
+      "zhTW": "2至10個字元"
+    },
+    "checkinCta": {
+      "en": "Press here to move to next screen",
+      "zhCN": "点击此按钮前往下一页面",
+      "zhTW": "點擊此按鈕前往下一個畫面"
+    },
+    "errShort": {
+      "en": "Please enter at least 2 characters.",
+      "zhCN": "请至少输入2个字符。",
+      "zhTW": "請至少輸入2個字元。"
+    },
+    "noSignup": {
+      "en": "No sign-up required.\nData is saved only in the browser on this phone.",
+      "zhCN": "无需注册会员。仅保存在此手机的浏览器中。",
+      "zhTW": "無需註冊會員。僅儲存於此手機的瀏覽器中。"
+    },
+    "scanHow": {
+      "en": "Find the QR code at each shop.",
+      "zhCN": "找到各地点的二维码后并扫描。",
+      "zhTW": "找到各地點的QR碼後並掃描。"
+    },
+    "next": {
+      "en": "NEXT",
+      "zhCN": "NEXT",
+      "zhTW": "NEXT"
+    },
+    "back": {
+      "en": "BACK",
+      "zhCN": "返回",
+      "zhTW": "返回"
+    },
+    "stampGot": {
+      "en": "Stamp collected",
+      "zhCN": "已获得印章",
+      "zhTW": "已獲得印章"
+    },
+    "already": {
+      "en": "You already have this stamp.",
+      "zhCN": "这个印章已经收集过了。",
+      "zhTW": "這個印章已經收集過了。"
+    },
+    "badQr": {
+      "en": "This QR code is not part of the tour.",
+      "zhCN": "这不是本次活动的二维码。",
+      "zhTW": "這不是本次活動的QR碼。"
+    },
+    "congrats": {
+      "en": "Congratulation !",
+      "zhCN": "恭喜您！",
+      "zhTW": "恭喜您！"
+    },
+    "readyTitle": {
+      "en": "READY TO CHECK-OUT",
+      "zhCN": "现在可以退房了。",
+      "zhTW": "現在可以退房了"
+    },
+    "readyBody": {
+      "en": "Please check out at the {desk}.\nPlease show this screen to one of our staff member.",
+      "zhCN": "请前往5楼退房柜台办理退房。\n请将该画面向职员出示。",
+      "zhTW": "請至5樓退房櫃台辦理退房。\n請向工作人員出示此畫面。"
+    },
+    "readyCta": {
+      "en": "Do not press the button yet",
+      "zhCN": "请先不要点击按钮",
+      "zhTW": "請先不要按下按鈕"
+    },
+    "goldenKey": {
+      "en": "Golden key received!",
+      "zhCN": "领取金钥匙！",
+      "zhTW": "已領取黃金鑰匙！"
+    },
+    "thanks": {
+      "en": "Thank you for staying with us!",
+      "zhCN": "感谢您的光临。",
+      "zhTW": "感謝您的光臨。"
+    },
+    "nextStay": {
+      "en": "You’ve successfully checked out.\nThank you for taking part in the stamp tour.",
+      "zhCN": "退房已完成。\n感谢您参加集章之旅。\n期待下次再见！",
+      "zhTW": "退房已完成。\n感謝您參加集章之旅。\n期待下次再見！"
+    },
+    "noticeBtn": {
+      "en": "NOTICE",
+      "zhCN": "说明",
+      "zhTW": "說明"
+    },
+    "continueBtn": {
+      "en": "Would you like to continue?",
+      "zhCN": "是否要继续?",
+      "zhTW": "是否要繼續？"
+    },
+    "noticeBody": {
+      "en": "Your stamp tour records will be saved until November 30, 2026.\nEach stamp can be earned only once per branch.",
+      "zhCN": "集章之旅记录将保存至2026年11月30日。\n各站点的印章仅可累积1次。",
+      "zhTW": "集章之旅紀錄將保存至2026年11月30日。\n各據點的印章僅可累積1次。"
+    },
+    "closedTitle": {
+      "en": "STAMP TOUR CLOSED",
+      "zhCN": "活动已结束",
+      "zhTW": "活動已結束"
+    },
+    "closedBody": {
+      "en": "This stamp tour has ended. Thank you for joining us.",
+      "zhCN": "本次集章之旅已结束，感谢您的参与。",
+      "zhTW": "本次集章之旅已結束，感謝您的參與。"
+    },
+    "scanTitle": {
+      "en": "SCAN CHECK-IN QR CODE",
+      "zhCN": "请扫描二维码",
+      "zhTW": "請掃描QR碼"
+    },
+    "doneTitle": {
+      "en": "CHECK-OUT COMPLETE",
+      "zhCN": "退房完成",
+      "zhTW": "退房完成"
+    },
+    "doneBody": {
+      "en": "Thank you for staying with us!",
+      "zhCN": "感谢你的入住！",
+      "zhTW": "感謝你的入住！"
+    },
+    "nextLabel": {
+      "en": "NEXT",
+      "zhCN": "下一站：",
+      "zhTW": "下一站："
+    },
+    "usedBadge": {
+      "en": "COMPLETED",
+      "zhCN": "已完成",
+      "zhTW": "已完成"
+    },
+    "onceOnly": {
+      "en": "Your gift has been handed over. It can be claimed only once.",
+      "zhCN": "礼物已领取，每人仅限一次。",
+      "zhTW": "禮物已領取，每人僅限一次。"
+    },
+    "waitStaff": {
+      "en": "Please show this screen to one of our staff member.",
+      "zhCN": "请将该画面向职员出示。",
+      "zhTW": "請向工作人員出示此畫面。"
+    },
+    "readyBtn": {
+      "en": "READY TO CHECK OUT",
+      "zhCN": "退房准备完毕",
+      "zhTW": "退房準備完畢"
+    },
+    "guideBtn": {
+      "en": "LOCATIONS",
+      "zhCN": "地址",
+      "zhTW": "地址"
+    },
+    "mapBtn": {
+      "en": "MAP",
+      "zhCN": "地图",
+      "zhTW": "地圖"
+    },
+    "scanBtn": {
+      "en": "SCAN QR CODE",
+      "zhCN": "请扫描二维码",
+      "zhTW": "請掃描QR碼"
+    },
+    "guideLead": {
+      "en": "Choose any 3 of the 12 stops and collect your stamps.\nTap a stop to see its address.",
+      "zhCN": "请从12个地点中任选3处收集印章。点击地点即可查看地址。",
+      "zhTW": "請從12個地點中任選3處，收集印章。點擊地點即可顯示地址。"
+    },
+    "mapLead": {
+      "en": "Find the QR code at each shop.",
+      "zhCN": "找到各地点的二维码后并扫描。",
+      "zhTW": "找到各地點的QR碼後並掃描。"
+    },
+    "readyNote": {
+      "en": "Keep collecting stamps, or check out at KOREA CHECK IN RECEPTION.",
+      "zhCN": "可以继续集章，或前往 KOREA CHECK IN RECEPTION 办理退房。",
+      "zhTW": "可以繼續集章，或前往 KOREA CHECK IN RECEPTION 辦理退房。"
+    },
+    "checkoutNote": {
+      "en": "Continue your stamp tour\nor check out at KOREA CHECK IN RECEPTION.",
+      "zhCN": "继续集章，\n或在 KOREA CHECK IN RECEPTION 退房。",
+      "zhTW": "繼續集章，\n或在 KOREA CHECK IN RECEPTION 退房。"
+    }
+  },
+  "langs": [
+    "en",
+    "zhCN",
+    "zhTW"
+  ],
+  "langNames": {
+    "en": "English",
+    "zhCN": "中文(简体)",
+    "zhTW": "中文(繁體)"
+  },
+  "defaultLang": "en",
+  "mode": "stamp",
+  "prototype": false,
+  "theme": {
+    "bg": "#0D2B20",
+    "gold": "#C9A961",
+    "goldLight": "#F0DE9E",
+    "goldDeep": "#A8873F",
+    "ink": "#F2F0E9",
+    "inkSub": "#9FB3A6",
+    "barOff": "#2A4B38",
+    "ring": "#3E5C48",
+    "paper": "#F2F0E9",
+    "paperInk": "#163123"
+  },
+  "admin": {
+    "_note": "확인코드는 적어 두지 않고 흩뜨린 값(codeKey)만 둡니다. 코드를 바꾸려면 node _tools/admin-code.js <새 코드> 로 새 값을 받아 여기에 넣으세요.",
+    "codeKey": "46a538fad57b1fbc",
+    "taps": 3,
+    "title": "관리자 확인",
+    "label": "확인코드",
+    "ph": "6자리 숫자를 입력해 주세요",
+    "bad": "코드가 맞지 않습니다",
+    "doneAlready": "이미 완료 처리된 카드입니다",
+    "notReady": "아직 완료 처리할 카드가 아닙니다",
+    "reset": "시험용 — 이 휴대폰 기록 지우기",
+    "resetAgain": "정말 지울까요? 한 번 더 누르세요"
+  },
+  "card": {
+    "title": "KOREA CHECK-IN",
+    "sub": "Hyundai Department Store Sinchon U-PLEX"
+  },
+  "tools": true,
+  "map": "assets/sinchon/map.png",
+  "annex": [],
+  "stamps": 12,
+  "nextPill": false,
+  "checkoutBox": true,
+  "ctaNeedsName": true,
+  "railBar": true,
+  "stampGrid": 7
+}

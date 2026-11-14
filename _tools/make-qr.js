@@ -30,6 +30,7 @@ const ALL_PROJECTS = [
   { key: 'inje', name: '박인환' },
   { key: 'kcheckin', name: 'K-체크인' },
   { key: 'seongsu', name: '성수팝업' },
+  { key: 'sinchon', name: '신촌팝업' },
   { key: 'photo', name: '사진올리기' },
 ];
 
