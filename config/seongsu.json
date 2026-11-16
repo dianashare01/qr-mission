@@ -466,7 +466,7 @@
     "sub": "KOREA CHECK IN RECEPTION"
   },
   "tools": true,
-  "map": "assets/seongsu/map.png?v=3",
+  "map": "assets/seongsu/map.svg",
   "annex": [
     {
       "id": "sinchon",
