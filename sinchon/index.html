@@ -436,9 +436,11 @@ img { display: block; max-width: 100%; }
    그리고 완료 처리된 뒤 투명해지는 카드입니다. */
 .ci { position: relative; }
 .ci .tapzone {
-  /* 오른쪽 Imagine your Korea 표 위. 머리말 띠가 20px 밖에 안 돼서
-     손가락이 닿게 아래로 조금 더 내려 잡았습니다. */
-  position: absolute; top: 0; right: 0;
+  /* 오른쪽 Imagine your Korea 표 **위**에 얹습니다.
+     위 여백이 85 로 늘면서 top:0 으로 잡으면 표에서 한참 떨어진
+     화면 꼭대기가 눌리는 자리가 됩니다 — 그래서 아래쪽에 붙여 둡니다.
+     표 자체는 20px 밖에 안 돼서 손가락이 닿게 44 로 넉넉히 잡았습니다. */
+  position: absolute; top: auto; bottom: -12px; right: 0;
   width: 34%; height: 44px;
   background: none; border: 0;
 }
@@ -696,6 +698,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'sinchon' };
 </script>
-<script src="../assets/stamp.js?v=25"></script>
+<script src="../assets/stamp.js?v=26"></script>
 </body>
 </html>
