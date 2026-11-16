@@ -480,15 +480,16 @@
   },
   "card": {
     "title": "KOREA CHECK-IN",
-    "sub": "Hyundai Department Store Sinchon U-PLEX"
+    "sub": "Hyundai Department Store\nSinchon U-PLEX"
   },
   "tools": true,
-  "map": "assets/sinchon/map.png",
+  "map": "assets/sinchon/map.webp",
   "annex": [],
   "stamps": 12,
   "nextPill": false,
   "checkoutBox": true,
   "ctaNeedsName": true,
   "railBar": true,
-  "stampGrid": 7
+  "stampGrid": 7,
+  "goldAtGift": true
 }

@@ -518,12 +518,14 @@ img { display: block; max-width: 100%; }
   transform: translateY(-50%);
   text-align: center; white-space: nowrap; font-style: normal;
 }
-.rk .t1 { top: 81.8%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
-.rk .t2 { top: 87%; font-size: calc(var(--w) * .038); letter-spacing: .045em; opacity: .62; }
+/* 신촌 카드는 아래 글씨가 두 줄이라 자리가 성수와 다릅니다.
+   시안 keycard 를 재서 옮긴 값입니다 — KOREA CHECK-IN 75.8%, 아래 두 줄 가운데 86.8%. */
+.rk .t1 { top: 75.8%; font-size: calc(var(--w) * .058); font-weight: 700; letter-spacing: .005em; }
+.rk .t2 { top: 86.8%; font-size: calc(var(--w) * .038); line-height: 1.55; letter-spacing: .045em; opacity: .62; }
 .rk.gold .t2 { opacity: .72; }
 
 .rk .cap {
-  position: absolute; left: 0; right: 0; top: 13.2%;
+  position: absolute; left: 0; right: 0; top: 11.5%;   /* 신촌 시안 keycard 에서 잰 값 */
   transform: translateY(-50%);
   text-align: center;
   font-size: calc(var(--w) * .061);
@@ -694,6 +696,6 @@ img { display: block; max-width: 100%; }
   // 어느 전시인지 — 설정·저장칸·서버 이름이 여기서 갈립니다
   window.STAMP = { project: 'sinchon' };
 </script>
-<script src="../assets/stamp.js?v=23"></script>
+<script src="../assets/stamp.js?v=25"></script>
 </body>
 </html>

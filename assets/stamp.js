@@ -291,7 +291,8 @@
       + '<stop offset="1" stop-color="#F5D489"/></linearGradient></defs>'
       + '<path d="' + KEY_PATH + '"/></svg>'
       + '<b class="t1">' + esc(c.title || '') + '</b>'
-      + '<i class="t2">' + esc(c.sub || '') + '</i>'
+      /* 신촌은 카드 아래 글씨가 두 줄입니다 (시안 keycard) — 줄바꿈을 살립니다 */
+      + '<i class="t2">' + esc(c.sub || '').split('\n').join('<br>') + '</i>'
       + '</div>';
   }
 
@@ -436,14 +437,17 @@
          기본            초록 바탕 · 흰 열쇠 · 글귀 없음
          3개째부터       초록 바탕 · 금 열쇠 · 「Congratulation !」
          직원 확인 뒤    카드 전체가 금색 · 「Golden key received!」
+       신촌(goldAtGift)은 가운데 걸음이 없습니다 — 시안 21쪽에서 **3개째부터
+       바로 카드 전체가 금색**이고 글귀도 「Golden key received!」 입니다.
        K-컬처는 쓰던 대로 두 걸음(기본 / 금색)입니다. */
+    var early = !!CFG.goldAtGift;
     return ciBar() + journey()
       /* 성수는 시안에서 잰 사이 띄우기를 씁니다 — 막대 아래 51, 카드 아래 21 */
       + '<div class="main' + (CFG.checkoutBox ? ' board' : '') + '">'
       + (CFG.checkoutBox
-        ? card(!!S.redeemed, false,
-            gift ? (S.redeemed ? 'goldenKey' : 'congrats') : null,
-            false, canOut)
+        ? card(early ? gift : !!S.redeemed, false,
+            gift ? ((early || S.redeemed) ? 'goldenKey' : 'congrats') : null,
+            false, early ? false : canOut)
         // 선물을 받은 뒤로는 스탬프 화면에서도 검정 카드입니다
         : card(gift, false, gift ? 'goldenKey' : null, gift && !!S.redeemed))
       + nextPill()
