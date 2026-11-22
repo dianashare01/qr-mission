@@ -767,6 +767,10 @@ async function putContent(req, env, url) {
 const ART_MAX = 12 * 1024 * 1024;   // 한 장 12MB. 2280×1520 품질 90 이면 1MB 안팎입니다
 const ART_TOKEN_ABC = 'abcdefghjkmnpqrstuvwxyz23456789';   // 헷갈리는 글자(0 o 1 l i) 뺌
 
+/* 손님에게 보여 줄 수 있는 상태. hidden(숨김) · deleted(삭제) · blocked(부적절)은 빠집니다.
+   fallback 은 시화를 못 만들어 원화만 있는 작품이라 보여 줍니다. */
+const ART_VISIBLE = new Set(['done', 'fallback']);
+
 function artToken(n = 10) {
   const b = new Uint8Array(n);
   crypto.getRandomValues(b);
@@ -861,7 +865,8 @@ async function sihwaUp(req, env, url) {
     cleanKey(form.get('poem_id'), 16),
     cleanKey(form.get('style_id'), 16),
     str(form.get('style_name'), 32),
-    kResult ? 'done' : 'fallback',
+    // 키오스크는 부적절한 그림을 'blocked' 로 보냅니다. 기록에만 남고 벽면·저장 페이지에서는 빠집니다.
+    form.get('status') === 'blocked' ? 'blocked' : (kResult ? 'done' : 'fallback'),
     kOrig, kResult, total, now()
   ).run();
 
@@ -878,7 +883,7 @@ async function sihwaGet(req, env, url) {
      FROM artworks WHERE token = ?`
   ).bind(token).first();
 
-  if (!row || row.status === 'hidden' || row.status === 'deleted') {
+  if (!row || !ART_VISIBLE.has(row.status)) {
     return json({ ok: false, error: '이 작품은 지금 볼 수 없어요' }, env, req, 404);
   }
 
@@ -907,7 +912,10 @@ async function sihwaImg(req, env, url) {
     'SELECT status, k_orig, k_result FROM artworks WHERE token = ?'
   ).bind(token).first();
 
-  if (!row || row.status === 'hidden' || row.status === 'deleted') {
+  // 관리자는 숨김·차단된 그림도 봅니다. 무엇을 내리는지 못 보면 내릴 수가 없습니다
+  const asAdmin = isAdmin(req, env, url);
+
+  if (!row || (!ART_VISIBLE.has(row.status) && !asAdmin) || row.status === 'deleted') {
     return bad('이 작품은 지금 볼 수 없어요', env, req, 404);
   }
 
@@ -920,8 +928,9 @@ async function sihwaImg(req, env, url) {
   return new Response(got.body, {
     headers: {
       'Content-Type': 'image/jpeg',
-      // 작품은 바뀌지 않으므로 오래 두고 씁니다. 숨김은 이 길 자체가 막혀 바로 반영됩니다
-      'Cache-Control': 'public, max-age=86400',
+      // 작품은 바뀌지 않으므로 오래 두고 씁니다. 숨김은 이 길 자체가 막혀 바로 반영됩니다.
+      // 관리자로 받은 것은 캐시에 남기지 않습니다 — 숨긴 그림이 손님 쪽 캐시에 남으면 안 됩니다
+      'Cache-Control': asAdmin ? 'private, no-store' : 'public, max-age=86400',
       'Content-Disposition': `inline; filename="sihwa-${token}-${kind}.jpg"`,
       ...cors(env, req),
     },
@@ -939,7 +948,23 @@ async function sihwaAdminList(req, env, url) {
      FROM artworks WHERE project = ? ORDER BY created_at DESC LIMIT ?`
   ).bind(project, limit).all();
 
-  return json({ ok: true, items: rows.results || [] }, env, req);
+  // 참여 건수는 목록과 따로 셉니다 — 목록은 최근 몇 건만 보내므로 그것으로는 셀 수 없습니다.
+  // 작품 번호가 IJ-YYYYMMDD-#### 이라 오늘치는 번호 앞자리로 가립니다
+  const today = (await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM artworks
+     WHERE project = ? AND status != 'deleted' AND id LIKE ?`
+  ).bind(project, '%' + kstDay().replace(/-/g, '') + '%').first()) || { n: 0 };
+
+  const total = (await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM artworks WHERE project = ? AND status != 'deleted'`
+  ).bind(project).first()) || { n: 0 };
+
+  return json({
+    ok: true,
+    today: Number(today.n) || 0,
+    total: Number(total.n) || 0,
+    items: rows.results || [],
+  }, env, req);
 }
 
 /** 관리자 — 숨김 · 되살리기 · 삭제 */
@@ -950,13 +975,16 @@ async function sihwaAdminSet(req, env, url) {
   try { body = await req.json(); } catch (e) { return bad('보낸 값을 읽지 못했습니다', env, req); }
 
   const token = cleanKey(body.token, 16);
-  const status = ['done', 'fallback', 'hidden', 'deleted'].includes(body.status) ? body.status : null;
+  let status = ['done', 'fallback', 'hidden', 'deleted'].includes(body.status) ? body.status : null;
   if (!token || !status) return bad('작품 번호와 상태가 필요합니다', env, req);
 
   const row = await env.DB.prepare(
     'SELECT k_orig, k_result FROM artworks WHERE token = ?'
   ).bind(token).first();
   if (!row) return bad('그런 작품이 없습니다', env, req, 404);
+
+  // 되살릴 때 시화가 없던 작품을 'done' 으로 올려 버리면 손님 화면이 없는 그림을 찾습니다
+  if (status === 'done' && !row.k_result) status = 'fallback';
 
   // 삭제는 창고의 파일까지 지웁니다. 숨김은 파일을 그대로 두고 길만 막습니다
   if (status === 'deleted' && sbReady(env)) {
