@@ -59,6 +59,9 @@
   .orig .side p{font-size:14px;color:var(--note);margin-bottom:8px;text-align:center}
   .orig .btn{width:100%;margin:0;height:44px;line-height:40px;font-size:15px}
 
+  .hint{text-align:center;margin-top:14px;padding:0 24px;
+        font-size:12.5px;color:var(--note);line-height:1.7}
+  .hint b{color:var(--navy)}
   .tags-title{text-align:center;margin-top:24px;font-size:14px;color:var(--note)}
   .tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 20px 0}
   .tags span{background:var(--navy);color:var(--paper-light);border-radius:999px;
@@ -110,6 +113,8 @@
         <a class="btn btn-sub" id="saveOrig" download>원화 저장</a>
       </div>
     </div>
+
+    <p class="hint">저장이 안 되면 그림을 <b>길게 눌러</b> 저장할 수 있어요.</p>
 
     <p class="tags-title">해시태그와 함께 SNS에 공유해 주세요</p>
     <div class="tags" id="tags"></div>
@@ -205,9 +210,16 @@
     })
     .catch(fail);
 
-  // 저장 버튼 — 브라우저는 다른 도메인 주소에는 download 속성을 무시하고
-  // 그냥 그림을 열어 버린다. 받아서 blob 으로 바꿔야 실제로 내려받아진다.
-  function saveAs(url, filename, label) {
+  // 저장 버튼.
+  //
+  // 웹페이지는 사진 갤러리에 직접 쓸 수 없다. 갤러리에 넣으려면 공유 시트를 띄워
+  // 「이미지 저장」을 고르게 해야 한다(iOS·안드로이드 모두 여기서 사진 앱으로 들어간다).
+  //   1순위 공유 시트 — 갤러리로 저장됨
+  //   2순위 blob 내려받기 — 안드로이드는 다운로드 폴더로
+  //   3순위 새 창 — 길게 눌러 저장
+  // download 속성만으로는 안 된다. 다른 도메인 주소에는 무시되고,
+  // iOS 는 blob 도 내려받지 않고 그냥 열어 버린다.
+  function saveAs(url, filename) {
     return function (e) {
       e.preventDefault();
       var btn = e.currentTarget;
@@ -217,6 +229,13 @@
       fetch(url)
         .then(function (r) { return r.ok ? r.blob() : Promise.reject(); })
         .then(function (blob) {
+          var file = new File([blob], filename, { type: 'image/jpeg' });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            return navigator.share({ files: [file] })
+              .catch(function () { /* 사용자가 닫은 것도 여기로 온다 — 조용히 넘어간다 */ });
+          }
+
           var href = URL.createObjectURL(blob);
           var a = document.createElement('a');
           a.href = href;
@@ -225,13 +244,11 @@
           a.click();
           document.body.removeChild(a);
           setTimeout(function () { URL.revokeObjectURL(href); }, 4000);
-          btn.textContent = before;
         })
         .catch(function () {
-          // 내려받기가 막히면 새 창으로 열어 길게 눌러 저장하게 둔다
-          btn.textContent = before;
           window.open(url, '_blank');
-        });
+        })
+        .then(function () { btn.textContent = before; });
     };
   }
 
