@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F3ECDC">
+<title>나의 시화 — AI 시화전</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  /* 기획서 5장 색표 */
+  :root{
+    --cream:#F3ECDC; --paper:#FFFDF7; --paper-light:#FBF7EC;
+    --red:#8E2B23; --navy:#1F2A4A; --ink:#1A1614;
+    --gold:#B8882F; --frame:#F0CE8C; --note:#6A5F55;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    background:var(--cream); color:var(--ink);
+    font-family:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+    min-height:100vh;
+  }
+  /* 기획서 9장: 360~430px 휴대폰 기준, 더 넓으면 480 으로 가운데 */
+  .wrap{max-width:480px;margin:0 auto;padding-bottom:28px}
+
+  .head{
+    display:flex;align-items:center;justify-content:space-between;
+    height:56px;padding:0 20px;border-bottom:1px solid rgba(26,22,20,.08);
+  }
+  .head .brand{font-weight:700;font-size:13px;color:var(--red);letter-spacing:2px}
+  .head .sub{font-size:12px;color:var(--note)}
+
+  .label{text-align:center;margin-top:22px;font-family:"Noto Serif KR",serif;
+         font-weight:700;font-size:13px;color:var(--red);letter-spacing:3px}
+  h1{text-align:center;margin-top:6px;font-family:"Noto Serif KR",serif;
+     font-weight:900;font-size:26px;color:var(--navy)}
+
+  .art{margin:18px 20px 0;border:8px solid var(--frame);border-radius:4px;
+       background:var(--paper);line-height:0;box-shadow:0 6px 20px rgba(26,58,143,.10)}
+  .art img{width:100%;display:block;border-radius:1px}
+
+  .caption{text-align:center;margin-top:14px;padding:0 20px;
+           font-family:"Noto Serif KR",serif;font-weight:700;font-size:17px;color:var(--navy)}
+  .meta{text-align:center;margin-top:6px;font-size:13px;color:var(--red)}
+
+  .btn{display:block;width:calc(100% - 40px);margin:16px 20px 0;height:52px;
+       border:none;border-radius:999px;font-family:inherit;font-size:16px;font-weight:700;
+       cursor:pointer;text-decoration:none;line-height:52px;text-align:center}
+  .btn-main{background:var(--red);color:var(--paper-light)}
+  .btn-sub{background:var(--paper);color:var(--navy);border:2px solid var(--navy);line-height:48px}
+  .btn-ghost{background:var(--paper);color:var(--red);border:2px solid var(--red);line-height:48px}
+  .btn:active{transform:scale(.97)}
+
+  .orig{display:flex;align-items:center;gap:14px;margin:18px 20px 0}
+  .orig img{width:132px;border-radius:4px;background:var(--paper);display:block}
+  .orig .side{flex:1}
+  .orig .side p{font-size:14px;color:var(--note);margin-bottom:8px;text-align:center}
+  .orig .btn{width:100%;margin:0;height:44px;line-height:40px;font-size:15px}
+
+  .tags-title{text-align:center;margin-top:24px;font-size:14px;color:var(--note)}
+  .tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 20px 0}
+  .tags span{background:var(--navy);color:var(--paper-light);border-radius:999px;
+             padding:7px 14px;font-size:13px;font-weight:700}
+
+  .foot{text-align:center;margin-top:26px;padding:0 20px;
+        font-size:11.5px;color:var(--note);line-height:1.8}
+
+  .toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(12px);
+         background:var(--navy);color:var(--paper-light);padding:11px 22px;border-radius:999px;
+         font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .state{text-align:center;padding:90px 30px;color:var(--note);font-size:16px;line-height:1.8}
+  .state b{display:block;font-family:"Noto Serif KR",serif;font-weight:900;
+           font-size:22px;color:var(--navy);margin-bottom:12px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="brand">MARIE SEOSA</span>
+    <span class="sub">마리서사 RE:OPEN in 인제</span>
+  </div>
+
+  <div id="loading" class="state">불러오는 중…</div>
+
+  <div id="error" class="state hide">
+    <b>이 작품은 지금 볼 수 없어요</b>
+    주소가 잘못되었거나<br>보관 기간이 지났습니다.
+  </div>
+
+  <main id="art" class="hide">
+    <p class="label">AI 시화전 詩畵展</p>
+    <h1 id="title">나의 시화가 완성되었어요</h1>
+
+    <div class="art"><img id="result" alt="완성된 시화"></div>
+
+    <p class="caption" id="caption"></p>
+    <p class="meta" id="meta"></p>
+
+    <a class="btn btn-main" id="saveResult" download>시화 이미지 저장</a>
+
+    <div class="orig">
+      <img id="origThumb" alt="내가 그린 그림">
+      <div class="side">
+        <p>내가 그린 그림</p>
+        <a class="btn btn-sub" id="saveOrig" download>원화 저장</a>
+      </div>
+    </div>
+
+    <p class="tags-title">해시태그와 함께 SNS에 공유해 주세요</p>
+    <div class="tags" id="tags"></div>
+    <button class="btn btn-ghost" id="copyTags" type="button">해시태그 복사</button>
+
+    <p class="foot" id="foot"></p>
+  </main>
+</div>
+
+<div class="toast" id="toast">복사했어요</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  var API = LOCAL ? 'http://127.0.0.1:8787' : 'https://qr-mission-api.jhmonounity.workers.dev';
+
+  var HASHTAGS = ['#마리서사', '#박인환100', '#인제', '#AI시화전'];
+  var FOOT = '2026. 11. 25 – 12. 16 · 강원 인제군 인제읍 인제로 228, 2층';
+  var EXPIRE = '2027. 1. 31';
+
+  // 기획서 9장: 번호를 짐작해 남의 작품을 찾기 어렵게 — 주소는 무작위 토큰 하나뿐
+  var token = new URLSearchParams(location.search).get('t') || '';
+
+  var $ = function (id) { return document.getElementById(id); };
+  function show(id) { $(id).classList.remove('hide'); }
+  function hide(id) { $(id).classList.add('hide'); }
+
+  function fail() {
+    hide('loading');
+    hide('art');
+    show('error');
+  }
+
+  if (!/^[a-z0-9]{4,32}$/.test(token)) { fail(); return; }
+
+  var imgUrl = function (kind) {
+    return API + '/api/sihwa/img?t=' + encodeURIComponent(token) + '&k=' + kind;
+  };
+
+  fetch(API + '/api/sihwa?t=' + encodeURIComponent(token))
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || !d.ok) { fail(); return; }
+
+      // 대체 처리된 작품은 시화가 없다 — 원화를 대신 크게 보여 준다
+      var mainKind = d.has_result ? 'result' : 'orig';
+      $('result').src = imgUrl(mainKind);
+      $('saveResult').href = imgUrl(mainKind);
+      $('saveResult').setAttribute('download', 'sihwa-' + token + '.jpg');
+
+      $('origThumb').src = imgUrl('orig');
+      $('saveOrig').href = imgUrl('orig');
+      $('saveOrig').setAttribute('download', 'sihwa-' + token + '-orig.jpg');
+
+      if (!d.has_result) {
+        $('title').textContent = '내 그림이 벽면에 걸렸어요';
+        $('saveResult').textContent = '그림 저장';
+      }
+
+      // 「시 제목」을 읽고 · 이름
+      var poems = { p1: '목마와 숙녀', p2: '세월이 가면', p3: '인제' };
+      var who = d.name || '이름 없는 시인';
+      var poem = d.poem_id && poems[d.poem_id];
+      $('caption').textContent = poem ? '「' + poem + '」를 읽고 · ' + who : who;
+
+      var parts = [];
+      if (d.style_name) parts.push('화풍 — ' + d.style_name);
+      if (d.created_at) {
+        var t = new Date(d.created_at);
+        if (!isNaN(t)) {
+          parts.push(t.getFullYear() + '. ' + (t.getMonth() + 1) + '. ' + t.getDate());
+        }
+      }
+      $('meta').textContent = parts.join(' · ');
+
+      HASHTAGS.forEach(function (tag) {
+        var el = document.createElement('span');
+        el.textContent = tag;
+        $('tags').appendChild(el);
+      });
+
+      $('saveResult').addEventListener('click',
+        saveAs(imgUrl(mainKind), 'sihwa-' + token + '.jpg'));
+      $('saveOrig').addEventListener('click',
+        saveAs(imgUrl('orig'), 'sihwa-' + token + '-orig.jpg'));
+
+      $('foot').innerHTML = FOOT + '<br>이 페이지는 ' + EXPIRE + '까지 열립니다';
+
+      hide('loading');
+      show('art');
+    })
+    .catch(fail);
+
+  // 저장 버튼 — 브라우저는 다른 도메인 주소에는 download 속성을 무시하고
+  // 그냥 그림을 열어 버린다. 받아서 blob 으로 바꿔야 실제로 내려받아진다.
+  function saveAs(url, filename, label) {
+    return function (e) {
+      e.preventDefault();
+      var btn = e.currentTarget;
+      var before = btn.textContent;
+      btn.textContent = '저장하는 중…';
+
+      fetch(url)
+        .then(function (r) { return r.ok ? r.blob() : Promise.reject(); })
+        .then(function (blob) {
+          var href = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = href;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(href); }, 4000);
+          btn.textContent = before;
+        })
+        .catch(function () {
+          // 내려받기가 막히면 새 창으로 열어 길게 눌러 저장하게 둔다
+          btn.textContent = before;
+          window.open(url, '_blank');
+        });
+    };
+  }
+
+  // 해시태그 복사 — 「복사했어요」 2초 (기획서 9-1 G)
+  $('copyTags').addEventListener('click', function () {
+    var text = HASHTAGS.join(' ');
+    var done = function () {
+      var toast = $('toast');
+      toast.classList.add('on');
+      setTimeout(function () { toast.classList.remove('on'); }, 2000);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+      return;
+    }
+    // 구형 브라우저 대비
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* 그래도 알림은 띄운다 */ }
+    document.body.removeChild(ta);
+    done();
+  });
+})();
+</script>
+</body>
+</html>

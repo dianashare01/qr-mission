@@ -756,6 +756,221 @@ async function putContent(req, env, url) {
   return json({ ok: true, saved: jobs.length, at }, env, req);
 }
 
+/* ══ AI 시화전 (마리서사 RE:OPEN in 인제) ═══════════════════
+   키오스크가 원화·시화 두 장을 올리면 작품 주소를 돌려줍니다.
+   손님은 QR 로 그 주소를 열어 그림을 내려받습니다.
+
+   파일은 사진과 같은 Supabase 창고를 쓰고, D1 의 artworks 표에 위치만 둡니다.
+   창고를 비공개로 두기 위해 그림은 워커를 거쳐 내보냅니다 — 주소가 만료되지 않고,
+   숨김 처리하면 그 순간부터 막힙니다. */
+
+const ART_MAX = 12 * 1024 * 1024;   // 한 장 12MB. 2280×1520 품질 90 이면 1MB 안팎입니다
+const ART_TOKEN_ABC = 'abcdefghjkmnpqrstuvwxyz23456789';   // 헷갈리는 글자(0 o 1 l i) 뺌
+
+function artToken(n = 10) {
+  const b = new Uint8Array(n);
+  crypto.getRandomValues(b);
+  let s = '';
+  for (const x of b) s += ART_TOKEN_ABC[x % ART_TOKEN_ABC.length];
+  return s;
+}
+
+/** 오늘 몇 번째 작품인지로 사람이 읽는 번호를 만듭니다 (IJ-20261125-0012). */
+async function artNextId(env, project, day) {
+  const row = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM artworks WHERE project = ? AND substr(id, 4, 8) = ?"
+  ).bind(project, day.replace(/-/g, '')).first();
+  const seq = String(Number(row.n) + 1).padStart(4, '0');
+  return 'IJ-' + day.replace(/-/g, '') + '-' + seq;
+}
+
+async function artPut(env, key, bytes) {
+  const up = await fetch(sbUrl(env, key), {
+    method: 'POST',
+    headers: sbHead(env, { 'Content-Type': 'image/jpeg', 'x-upsert': 'false' }),
+    body: bytes,
+  });
+  if (!up.ok) {
+    let why = '';
+    try { why = (await up.text()).slice(0, 300); } catch (e) { /* 본문이 없을 수도 */ }
+    console.log('시화 올리기 실패', up.status, why);
+    return false;
+  }
+  return true;
+}
+
+/** 키오스크 → 작품 올리기. multipart/form-data 로 orig(필수) · result(선택) */
+async function sihwaUp(req, env, url) {
+  if (!sbReady(env)) return bad('창고가 아직 없습니다', env, req, 503);
+
+  const project = cleanKey(url.searchParams.get('p'), 32) || 'inje-sihwa';
+
+  let form;
+  try { form = await req.formData(); }
+  catch (e) { return bad('보낸 꾸러미를 읽지 못했습니다', env, req); }
+
+  const orig = form.get('orig');
+  const result = form.get('result');
+  if (!orig || typeof orig === 'string') return bad('원화가 없습니다', env, req);
+
+  const origBuf = await orig.arrayBuffer();
+  if (!origBuf.byteLength) return bad('원화가 비어 있습니다', env, req);
+  if (origBuf.byteLength > ART_MAX) return bad('원화가 너무 큽니다', env, req, 413);
+
+  let resultBuf = null;
+  if (result && typeof result !== 'string') {
+    resultBuf = await result.arrayBuffer();
+    if (!resultBuf.byteLength) resultBuf = null;
+    else if (resultBuf.byteLength > ART_MAX) return bad('시화가 너무 큽니다', env, req, 413);
+  }
+
+  const total = origBuf.byteLength + (resultBuf ? resultBuf.byteLength : 0);
+
+  // 창고가 꽉 찼으면 받지 않습니다 — 받아 놓고 잃어버리는 것보다 낫습니다
+  const usedPhoto = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM photos').first();
+  const usedArt = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM artworks').first();
+  if (Number(usedPhoto.b) + Number(usedArt.b) + total > PHOTO_QUOTA) {
+    return bad('창고가 가득 찼습니다. 운영자에게 알려 주세요', env, req, 507);
+  }
+
+  const day = kstDay();
+  const id = await artNextId(env, project, day);
+  const token = artToken();
+
+  const kOrig = `sihwa/${project}/${day}/${id}_orig.jpg`;
+  if (!await artPut(env, kOrig, origBuf)) return bad('창고에 넣지 못했습니다', env, req, 502);
+
+  let kResult = null;
+  if (resultBuf) {
+    kResult = `sihwa/${project}/${day}/${id}_result.jpg`;
+    if (!await artPut(env, kResult, resultBuf)) kResult = null;   // 원화만으로도 페이지는 열립니다
+  }
+
+  const str = (v, max) => {
+    const s = String(v == null ? '' : v).trim().slice(0, max);
+    return s || null;
+  };
+
+  await env.DB.prepare(
+    `INSERT INTO artworks (token, id, project, name, poem_id, style_id, style_name,
+                           status, k_orig, k_result, bytes, created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+  ).bind(
+    token, id, project,
+    str(form.get('name'), 24),
+    cleanKey(form.get('poem_id'), 16),
+    cleanKey(form.get('style_id'), 16),
+    str(form.get('style_name'), 32),
+    kResult ? 'done' : 'fallback',
+    kOrig, kResult, total, now()
+  ).run();
+
+  return json({ ok: true, id, token }, env, req);
+}
+
+/** 손님 화면이 읽는 작품 정보. 숨김·삭제된 작품은 알려 주지 않습니다. */
+async function sihwaGet(req, env, url) {
+  const token = cleanKey(url.searchParams.get('t'), 16);
+  if (!token) return bad('작품 주소가 올바르지 않습니다', env, req);
+
+  const row = await env.DB.prepare(
+    `SELECT id, name, poem_id, style_id, style_name, status, k_result, created_at
+     FROM artworks WHERE token = ?`
+  ).bind(token).first();
+
+  if (!row || row.status === 'hidden' || row.status === 'deleted') {
+    return json({ ok: false, error: '이 작품은 지금 볼 수 없어요' }, env, req, 404);
+  }
+
+  return json({
+    ok: true,
+    id: row.id,
+    name: row.name || null,
+    poem_id: row.poem_id || null,
+    style_id: row.style_id || null,
+    style_name: row.style_name || null,
+    // 시화가 없으면(대체 처리) 손님 화면은 원화만 보여 줍니다
+    has_result: !!row.k_result,
+    created_at: row.created_at,
+  }, env, req);
+}
+
+/** 그림 내보내기. 창고를 비공개로 둔 채 워커가 대신 읽어 보냅니다. */
+async function sihwaImg(req, env, url) {
+  if (!sbReady(env)) return bad('창고가 아직 없습니다', env, req, 503);
+
+  const token = cleanKey(url.searchParams.get('t'), 16);
+  const kind = url.searchParams.get('k') === 'orig' ? 'orig' : 'result';
+  if (!token) return bad('작품 주소가 올바르지 않습니다', env, req);
+
+  const row = await env.DB.prepare(
+    'SELECT status, k_orig, k_result FROM artworks WHERE token = ?'
+  ).bind(token).first();
+
+  if (!row || row.status === 'hidden' || row.status === 'deleted') {
+    return bad('이 작품은 지금 볼 수 없어요', env, req, 404);
+  }
+
+  const key = kind === 'orig' ? row.k_orig : row.k_result;
+  if (!key) return bad('그림이 없습니다', env, req, 404);
+
+  const got = await fetch(sbUrl(env, key), { headers: sbHead(env) });
+  if (!got.ok) return bad('그림을 찾지 못했습니다', env, req, 502);
+
+  return new Response(got.body, {
+    headers: {
+      'Content-Type': 'image/jpeg',
+      // 작품은 바뀌지 않으므로 오래 두고 씁니다. 숨김은 이 길 자체가 막혀 바로 반영됩니다
+      'Cache-Control': 'public, max-age=86400',
+      'Content-Disposition': `inline; filename="sihwa-${token}-${kind}.jpg"`,
+      ...cors(env, req),
+    },
+  });
+}
+
+/** 관리자 — 작품 목록 */
+async function sihwaAdminList(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+  const project = cleanKey(url.searchParams.get('p'), 32) || 'inje-sihwa';
+  const limit = Math.min(Number(url.searchParams.get('n') || 50), 200);
+
+  const rows = await env.DB.prepare(
+    `SELECT token, id, name, poem_id, style_name, status, created_at
+     FROM artworks WHERE project = ? ORDER BY created_at DESC LIMIT ?`
+  ).bind(project, limit).all();
+
+  return json({ ok: true, items: rows.results || [] }, env, req);
+}
+
+/** 관리자 — 숨김 · 되살리기 · 삭제 */
+async function sihwaAdminSet(req, env, url) {
+  if (!isAdmin(req, env, url)) return bad('권한이 없습니다', env, req, 401);
+
+  let body;
+  try { body = await req.json(); } catch (e) { return bad('보낸 값을 읽지 못했습니다', env, req); }
+
+  const token = cleanKey(body.token, 16);
+  const status = ['done', 'fallback', 'hidden', 'deleted'].includes(body.status) ? body.status : null;
+  if (!token || !status) return bad('작품 번호와 상태가 필요합니다', env, req);
+
+  const row = await env.DB.prepare(
+    'SELECT k_orig, k_result FROM artworks WHERE token = ?'
+  ).bind(token).first();
+  if (!row) return bad('그런 작품이 없습니다', env, req, 404);
+
+  // 삭제는 창고의 파일까지 지웁니다. 숨김은 파일을 그대로 두고 길만 막습니다
+  if (status === 'deleted' && sbReady(env)) {
+    for (const key of [row.k_orig, row.k_result]) {
+      if (!key) continue;
+      try { await fetch(sbUrl(env, key), { method: 'DELETE', headers: sbHead(env) }); }
+      catch (e) { console.log('시화 지우기 실패', key); }
+    }
+  }
+
+  await env.DB.prepare('UPDATE artworks SET status = ? WHERE token = ?').bind(status, token).run();
+  return json({ ok: true, token, status }, env, req);
+}
+
 /* ── 들어오는 요청 나누기 ────────────────────────── */
 export default {
   async fetch(req, env) {
@@ -779,6 +994,13 @@ export default {
       if (p === '/api/admin/photos' && req.method === 'GET') return await adminPhotos(req, env, url);
       if (p === '/api/admin/photo' && req.method === 'GET') return await adminPhoto(req, env, url);
       if (p === '/api/admin/photo' && req.method === 'DELETE') return await adminPhotoDel(req, env, url);
+      // AI 시화전
+      if (p === '/api/sihwa' && req.method === 'POST') return await sihwaUp(req, env, url);
+      if (p === '/api/sihwa' && req.method === 'GET') return await sihwaGet(req, env, url);
+      if (p === '/api/sihwa/img' && req.method === 'GET') return await sihwaImg(req, env, url);
+      if (p === '/api/admin/sihwa' && req.method === 'GET') return await sihwaAdminList(req, env, url);
+      if (p === '/api/admin/sihwa' && req.method === 'POST') return await sihwaAdminSet(req, env, url);
+
       if (p === '/api/hit' && req.method === 'POST') return await hit(req, env);
       if (p === '/api/content' && req.method === 'GET') return await getContent(req, env, url);
       if (p === '/api/admin/visits' && req.method === 'GET') return await visits(req, env, url);
