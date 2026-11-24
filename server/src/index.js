@@ -780,9 +780,13 @@ function artToken(n = 10) {
 }
 
 /** 오늘 몇 번째 작품인지로 사람이 읽는 번호를 만듭니다 (IJ-20261125-0012). */
+/* 작품 번호는 IJ-YYYYMMDD-NNNN 입니다.
+   센 개수가 아니라 그날 쓰인 가장 큰 번호 다음을 씁니다 — 세기로 하면 중간을 삭제했을 때
+   이미 있는 번호가 다시 나옵니다. (id 의 13번째 글자부터가 네 자리 번호) */
 async function artNextId(env, project, day) {
   const row = await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM artworks WHERE project = ? AND substr(id, 4, 8) = ?"
+    `SELECT COALESCE(MAX(CAST(substr(id, 13) AS INTEGER)), 0) AS n
+     FROM artworks WHERE project = ? AND substr(id, 4, 8) = ?`
   ).bind(project, day.replace(/-/g, '')).first();
   const seq = String(Number(row.n) + 1).padStart(4, '0');
   return 'IJ-' + day.replace(/-/g, '') + '-' + seq;
@@ -832,7 +836,10 @@ async function sihwaUp(req, env, url) {
 
   // 창고가 꽉 찼으면 받지 않습니다 — 받아 놓고 잃어버리는 것보다 낫습니다
   const usedPhoto = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM photos').first();
-  const usedArt = await env.DB.prepare('SELECT COALESCE(SUM(bytes), 0) AS b FROM artworks').first();
+  // 지운 작품은 창고에서도 파일이 빠졌으므로 쓰는 양에서 뺍니다
+  const usedArt = await env.DB.prepare(
+    "SELECT COALESCE(SUM(bytes), 0) AS b FROM artworks WHERE status != 'deleted'"
+  ).first();
   if (Number(usedPhoto.b) + Number(usedArt.b) + total > PHOTO_QUOTA) {
     return bad('창고가 가득 찼습니다. 운영자에게 알려 주세요', env, req, 507);
   }
@@ -943,9 +950,11 @@ async function sihwaAdminList(req, env, url) {
   const project = cleanKey(url.searchParams.get('p'), 32) || 'inje-sihwa';
   const limit = Math.min(Number(url.searchParams.get('n') || 50), 200);
 
+  // 지운 작품은 보이지 않습니다. 새 삭제는 행까지 지우지만, 예전에 상태만 바꿔 둔 것이 남아 있습니다
   const rows = await env.DB.prepare(
     `SELECT token, id, name, poem_id, style_name, status, created_at
-     FROM artworks WHERE project = ? ORDER BY created_at DESC LIMIT ?`
+     FROM artworks WHERE project = ? AND status != 'deleted'
+     ORDER BY created_at DESC LIMIT ?`
   ).bind(project, limit).all();
 
   // 참여 건수는 목록과 따로 셉니다 — 목록은 최근 몇 건만 보내므로 그것으로는 셀 수 없습니다.
@@ -986,13 +995,19 @@ async function sihwaAdminSet(req, env, url) {
   // 되살릴 때 시화가 없던 작품을 'done' 으로 올려 버리면 손님 화면이 없는 그림을 찾습니다
   if (status === 'done' && !row.k_result) status = 'fallback';
 
-  // 삭제는 창고의 파일까지 지웁니다. 숨김은 파일을 그대로 두고 길만 막습니다
+  // 삭제는 창고의 파일도, 기록도 지웁니다. 숨김은 파일을 그대로 두고 길만 막습니다.
+  // 흔적만 남겨 두면 운영자 목록에 계속 보여 「안 지워졌다」로 보입니다.
   if (status === 'deleted' && sbReady(env)) {
     for (const key of [row.k_orig, row.k_result]) {
       if (!key) continue;
       try { await fetch(sbUrl(env, key), { method: 'DELETE', headers: sbHead(env) }); }
       catch (e) { console.log('시화 지우기 실패', key); }
     }
+  }
+
+  if (status === 'deleted') {
+    await env.DB.prepare('DELETE FROM artworks WHERE token = ?').bind(token).run();
+    return json({ ok: true, token, status: 'deleted' }, env, req);
   }
 
   await env.DB.prepare('UPDATE artworks SET status = ? WHERE token = ?').bind(status, token).run();
