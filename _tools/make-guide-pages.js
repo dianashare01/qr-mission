@@ -347,7 +347,7 @@ const SWITCH = [
 const COPYRIGHT = '© 2026 Diana Insight Inc.';
 
 /* 만족도 설문 — 네 언어 페이지가 같은 구글 설문지로 갑니다 */
-const SURVEY_URL = 'https://forms.gle/nEc7DDsexUAXtfrN9';
+const SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd05ea-xTvJ_bzrCC2PA7Wepkcmmlx2_zkuFKAeSKdIf6reqA/viewform';
 
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
