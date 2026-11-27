@@ -553,6 +553,19 @@ ${rooms(me)}
 `;
 }
 
+/* ⚠ 이 대본은 3D 전시관이 생기기 전에 멈춰 있습니다.
+   아래 틀에는 #tour(360 둘러보기), tour.js·tour.css·site.js(다녀간 수 세기),
+   자막 쪽지가 하나도 없습니다. 그냥 돌리면 네 쪽에서 전시관이 통째로 사라집니다.
+   문구만 고치실 거면 index.html 을 직접 고치세요.
+   틀을 지금 쪽들에 맞춰 손본 뒤에만 아래 딱지를 붙여 쓰십시오. */
+if (process.argv.indexOf('--틀을-고쳤음') < 0) {
+  console.log('');
+  console.log('이 대본은 3D 전시관이 빠진 옛 틀이라, 돌리면 네 쪽의 전시관이 지워집니다.');
+  console.log('문구만 고치실 거면 index.html 을 직접 고치세요.');
+  console.log('틀을 먼저 손보셨다면  node _tools/make-guide-pages.js --틀을-고쳤음  으로 돌리세요.');
+  process.exit(1);
+}
+
 LANGS.forEach(function (me) {
   // pre = 쪽에서 assets 폴더까지 거슬러 올라가는 길. 저장소 맨 위에 두는 국문만 '' 입니다.
   me.pre = me.pre == null ? '../' : me.pre;
